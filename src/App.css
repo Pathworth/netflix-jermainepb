@@ -1,0 +1,61 @@
+/* src/App.css */
+:root {
+  --bg: #000;         /* change later to your brand */
+  --text: #fff;
+  --muted: #999;
+  --accent: #e11d48;  /* placeholder accent */
+}
+
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, Arial, sans-serif; }
+
+.main {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 48px 16px;
+}
+
+.title { font-size: clamp(28px, 4vw, 48px); margin: 0 0 24px; text-align: center; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 220px));
+  gap: 20px;
+  justify-content: center;
+}
+
+.card {
+  list-style: none;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.card a {
+  display: block;
+  padding: 28px 16px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.avatar {
+  width: 96px; height: 96px; margin: 0 auto 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #333, #222);
+  display: grid; place-items: center;
+  font-size: 40px; font-weight: 700; color: #ddd;
+}
+
+.label { letter-spacing: .5px; font-weight: 600; }
+
+.card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.card:hover .avatar { background: linear-gradient(135deg, #444, #333); }
+.hint { color: var(--muted); margin-top: 18px; font-size: 14px; text-align: center; }
+
+/* mobile: stack */
+@media (max-width: 520px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
