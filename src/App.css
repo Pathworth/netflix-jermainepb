@@ -1,14 +1,22 @@
-/* src/App.css */
+/* src/App.css - Jermaine brand + polish */
+/* ---------- Brand tokens ---------- */
 :root {
-  --bg: #000;         /* change later to your brand */
-  --text: #fff;
-  --muted: #999;
-  --accent: #e11d48;  /* placeholder accent */
+  --bg: #000000;     /* page background */
+  --text: #ffffff;   /* main text */
+  --muted: #f4f4f4;  /* subtle text and borders */
+  --accent: #007bff; /* brand pop - links, hovers, focus */
 }
 
+/* ---------- Base ---------- */
 html, body, #root { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, Arial, sans-serif; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, Arial, sans-serif;
+}
 
+/* ---------- Layout ---------- */
 .main {
   min-height: 100%;
   display: grid;
@@ -16,8 +24,13 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-san
   padding: 48px 16px;
 }
 
-.title { font-size: clamp(28px, 4vw, 48px); margin: 0 0 24px; text-align: center; }
+.title {
+  font-size: clamp(28px, 4vw, 48px);
+  margin: 0 0 24px;
+  text-align: center;
+}
 
+/* ---------- Grid ---------- */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(140px, 220px));
@@ -25,13 +38,15 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-san
   justify-content: center;
 }
 
+/* ---------- Cards ---------- */
 .card {
   list-style: none;
   background: #111;
-  border: 1px solid #222;
+  border: 1px solid #1e1e1e;          /* polish: tighter border */
   border-radius: 12px;
   text-align: center;
-  transition: transform .2s ease, border-color .2s ease;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  box-shadow: 0 0 0 rgba(0,0,0,0);     /* polish: subtle hover lift */
 }
 
 .card a {
@@ -51,11 +66,27 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-san
 
 .label { letter-spacing: .5px; font-weight: 600; }
 
-.card:hover { transform: translateY(-3px); border-color: var(--accent); }
-.card:hover .avatar { background: linear-gradient(135deg, #444, #333); }
+/* polish: hover state */
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 18px rgba(0,0,0,.35);
+}
+.card:hover .avatar {
+  background: linear-gradient(135deg, #444, #333);
+}
+
+/* polish: accessible focus ring */
+a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* ---------- Hint ---------- */
 .hint { color: var(--muted); margin-top: 18px; font-size: 14px; text-align: center; }
 
-/* mobile: stack */
+/* ---------- Mobile ---------- */
 @media (max-width: 520px) {
   .grid { grid-template-columns: 1fr 1fr; }
 }
