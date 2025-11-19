@@ -1,92 +1,122 @@
-/* src/App.css - Jermaine brand + polish */
-/* ---------- Brand tokens ---------- */
-:root {
-  --bg: #000000;     /* page background */
-  --text: #ffffff;   /* main text */
-  --muted: #f4f4f4;  /* subtle text and borders */
-  --accent: #007bff; /* brand pop - links, hovers, focus */
-}
-
-/* ---------- Base ---------- */
-html, body, #root { height: 100%; }
+/* Global body styles */
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
+  background-color: #0b0b0b;
+  color: #ffffff;
 }
 
-/* ---------- Layout ---------- */
+/* Main wrapper so the app centers correctly */
 .main {
-  min-height: 100%;
-  display: grid;
-  place-items: center;
-  padding: 48px 16px;
-}
-
-.title {
-  font-size: clamp(28px, 4vw, 48px);
-  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0b0b0b;
+  overflow: hidden;
 }
 
-/* ---------- Grid ---------- */
+/* Grid for the “Who’s watching / Where should we start?” tiles */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(140px, 220px));
-  gap: 20px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 900px;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 40px;
 }
 
-/* ---------- Cards ---------- */
+/* Individual tiles */
 .card {
-  list-style: none;
-  background: #111;
-  border: 1px solid #1e1e1e;          /* polish: tighter border */
-  border-radius: 12px;
+  background: linear-gradient(135deg, #8a5cff 0%, #00d4ff 100%);
+  border-radius: 20px;
+  padding: 40px 20px;
+  transition: all 0.3s ease;
   text-align: center;
-  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-  box-shadow: 0 0 0 rgba(0,0,0,0);     /* polish: subtle hover lift */
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .card a {
-  display: block;
-  padding: 28px 16px;
-  color: var(--text);
+  color: #fff;
   text-decoration: none;
+  font-weight: 600;
+  display: block;
 }
 
+/* Round letter avatar on each tile */
 .avatar {
-  width: 96px; height: 96px; margin: 0 auto 12px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #333, #222);
-  display: grid; place-items: center;
-  font-size: 40px; font-weight: 700; color: #ddd;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #00d4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 20px;
+  font-weight: bold;
 }
 
-.label { letter-spacing: .5px; font-weight: 600; }
-
-/* polish: hover state */
-.card:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-  box-shadow: 0 10px 18px rgba(0,0,0,.35);
-}
-.card:hover .avatar {
-  background: linear-gradient(135deg, #444, #333);
+/* Tile label */
+.label {
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-/* polish: accessible focus ring */
-a:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 10px;
+/* Hint text under the grid */
+.hint {
+  color: #aaa;
+  font-size: 0.9rem;
 }
 
-/* ---------- Hint ---------- */
-.hint { color: var(--muted); margin-top: 18px; font-size: 14px; text-align: center; }
-
-/* ---------- Mobile ---------- */
-@media (max-width: 520px) {
-  .grid { grid-template-columns: 1fr 1fr; }
+/* Responsive tweaks for smaller screens */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fullscreen splash overlay */
+.splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Splash name text */
+.splash h1 {
+  color: #00d4ff;
+  font-size: 6rem;
+  font-weight: 700;
+  transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+}
+
+/* Scale/vanish state for the splash text */
+.splash.scaled h1 {
+  transform: scale(2);
+  opacity: 0;
+}
+
