@@ -9,18 +9,23 @@ const NetflixTitle: React.FC = () => {
   const navigate = useNavigate();
 
   const handlePlaySound = () => {
+    // Play Netflix-style sound
     const audio = new Audio(netflixSound);
-    audio.play().catch((error) =>
-      console.error("Audio play error:", error)
-    );
-    setIsClicked(true); // start animation
+    audio.play().catch((error) => {
+      console.error("Audio play error:", error);
+    });
+
+    // Trigger zoom-out animation
+    setIsClicked(true);
   };
 
   useEffect(() => {
     if (isClicked) {
       const timer = setTimeout(() => {
+        // After animation, go to the “Where should we start?” page
         navigate("/browse");
-      }, 4000); // same delay you liked
+      }, 4000); // 4 seconds
+
       return () => clearTimeout(timer);
     }
   }, [isClicked, navigate]);
