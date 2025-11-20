@@ -1,20 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
 .netflix-container {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #141414;
+  background-color: #000000;
   overflow: hidden;
+  cursor: pointer;
 }
 
-.netflix-logo {
-  width: 500px;
-  height: auto;
+/* The name in the middle of the screen */
+.netflix-title-text {
+  font-family: "Bebas Neue", "Impact", "Arial Narrow", system-ui, sans-serif;
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #48b0ff; /* your blue */
   opacity: 0;
   transform: scale(0.8);
   animation: fadeIn 0.5s forwards ease-in;
 }
 
+/* initial fade-in / slight zoom */
 @keyframes fadeIn {
   to {
     opacity: 1;
@@ -22,13 +30,15 @@
   }
 }
 
-.animate.netflix-logo {
+/* zoom out + fade like Netflix after click */
+.animate.netflix-title-text {
   animation: zoomOut 3s forwards ease-in-out;
 }
 
 @keyframes zoomOut {
-  0%, 80% {
-    transform: scale(0.8);
+  0%,
+  80% {
+    transform: scale(1);
     opacity: 1;
   }
   100% {
