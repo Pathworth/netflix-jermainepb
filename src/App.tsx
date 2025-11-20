@@ -17,74 +17,80 @@ const tiles = [
 
 function Home() {
   return (
-    <section className="home-section flex flex-col items-center justify-center h-screen bg-black text-center px-4">
-      <h1 className="text-5xl md:text-7xl font-bold text-blue-600 mb-12">
-        Where should we start?
-      </h1>
+    <section className="home-section">
+      <h1 className="home-title">Where should we start?</h1>
 
-      <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <ul className="tiles-grid">
         {tiles.map((t) => (
-          <li
-            key={t.label}
-            className="card bg-gray-800 rounded-lg p-6 transform transition duration-500 hover:scale-105"
-          >
-            <Link to={t.href} className="flex flex-col items-center">
-              <div className="avatar w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3">
-                {t.label[0]}
-              </div>
-              <div className="label text-white text-lg font-semibold">
-                {t.label}
-              </div>
+          <li key={t.label} className="card">
+            <Link to={t.href} className="card-link">
+              <div className="avatar">{t.label[0]}</div>
+              <div className="label">{t.label}</div>
             </Link>
           </li>
         ))}
       </ul>
 
-      <p className="hint mt-6 text-gray-400 text-sm md:text-base">
-        Click any pillar to explore Jermaine’s expertise.
-      </p>
+      <p className="hint">Click any pillar to explore Jermaine’s expertise.</p>
     </section>
   );
 }
 
 export default function App() {
   const location = useLocation();
-  const [showSplash, setShowSplash] = useState(false);
-  const [animateSplash, setAnimateSplash] = useState(false);
+
+  // Show splash only on the root route
+  const [showSplash, setShowSplash] = useState(location.pathname === "/");
+  const [hasPlayedSound, setHasPlayedSound] = useState(false);
 
   useEffect(() => {
-    // Only show splash if on home page
-    if (location.pathname === "/") {
-      setShowSplash(true);
-
-      // Trigger scale animation
-      const scaleTimer = setTimeout(() => setAnimateSplash(true), 2500);
-      // Hide splash after 3.5s
-      const endTimer = setTimeout(() => setShowSplash(false), 3500);
-
-      return () => {
-        clearTimeout(scaleTimer);
-        clearTimeout(endTimer);
-      };
+    // If user lands directly on a sub-page, skip splash
+    if (location.pathname !== "/") {
+      setShowSplash(false);
     }
   }, [location.pathname]);
+
+  const handleSplashClick = () => {
+    // Play sound once
+    if (!hasPlayedSound) {
+      const audio = new Audio(
+        `${process.env.PUBLIC_URL || ""}/splash-sound.mp3`
+      );
+      setHasPlayedSound(true);
+      audio.play().catch(() => {
+        // Ignore autoplay errors
+      });
+    }
+
+    // Fade out splash after a short delay
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 900);
+  };
 
   return (
     <main className="main">
       <AnimatePresence mode="wait">
-        {showSplash && location.pathname === "/" ? (
+        {showSplash ? (
           <motion.div
             key="splash"
-            className={`splash ${animateSplash ? "scaled" : ""}`}
-            initial={{ opacity: 1, scale: 1 }}
-            animate={
-              animateSplash
-                ? { scale: 2, opacity: 0, transition: { duration: 1 } }
-                : { scale: 1, opacity: 1 }
-            }
-            exit={{ opacity: 0 }}
+            className="splash"
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{
+              opacity: 0,
+              scale: 1.05,
+              transition: { duration: 0.7, ease: "easeInOut" },
+            }}
+            onClick={handleSplashClick}
           >
-            <h1>Jermaine Peguese</h1>
+            <div className="splash-inner">
+              <h1 className="splash-title">Jermaine Peguese</h1>
+              <p className="splash-subtitle">Personal Brand • Ops &amp; AI</p>
+            </div>
+            <p className="splash-hint">
+              Click to continue &nbsp;•&nbsp; Best with sound on
+            </p>
           </motion.div>
         ) : (
           <Routes location={location} key={location.pathname}>
@@ -102,4 +108,3 @@ export default function App() {
     </main>
   );
 }
-
