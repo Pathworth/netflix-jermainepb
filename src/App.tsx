@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
+import NetflixTitle from "./NetflixTitle";
 import AIstrategist from "./pages/AIstrategist";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
@@ -37,74 +37,19 @@ function Home() {
 }
 
 export default function App() {
-  const location = useLocation();
-
-  // Show splash only on the root route
-  const [showSplash, setShowSplash] = useState(location.pathname === "/");
-  const [hasPlayedSound, setHasPlayedSound] = useState(false);
-
-  useEffect(() => {
-    // If user lands directly on a sub-page, skip splash
-    if (location.pathname !== "/") {
-      setShowSplash(false);
-    }
-  }, [location.pathname]);
-
-  const handleSplashClick = () => {
-    // Play sound once
-    if (!hasPlayedSound) {
-      const audio = new Audio(
-        `${process.env.PUBLIC_URL || ""}/splash-sound.mp3`
-      );
-      setHasPlayedSound(true);
-      audio.play().catch(() => {
-        // Ignore autoplay errors
-      });
-    }
-
-    // Fade out splash after a short delay
-    setTimeout(() => {
-      setShowSplash(false);
-    }, 900);
-  };
-
   return (
     <main className="main">
-      <AnimatePresence mode="wait">
-        {showSplash ? (
-          <motion.div
-            key="splash"
-            className="splash"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{
-              opacity: 0,
-              scale: 1.05,
-              transition: { duration: 0.7, ease: "easeInOut" },
-            }}
-            onClick={handleSplashClick}
-          >
-            <div className="splash-inner">
-              <h1 className="splash-title">Jermaine Peguese</h1>
-              <p className="splash-subtitle">Personal Brand • Ops &amp; AI</p>
-            </div>
-            <p className="splash-hint">
-              Click to continue &nbsp;•&nbsp; Best with sound on
-            </p>
-          </motion.div>
-        ) : (
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home />} />
-            <Route path="/ai-strategist" element={<AIstrategist />} />
-            <Route path="/community-builder" element={<CommunityBuilder />} />
-            <Route
-              path="/speaking-workshops"
-              element={<SpeakingWorkshops />}
-            />
-            <Route path="/meet-jermaine" element={<MeetJermaine />} />
-          </Routes>
-        )}
-      </AnimatePresence>
+      <Routes>
+        <Route path="/" element={<NetflixTitle />} />
+        <Route path="/browse" element={<Home />} />
+        <Route path="/ai-strategist" element={<AIstrategist />} />
+        <Route path="/community-builder" element={<CommunityBuilder />} />
+        <Route
+          path="/speaking-workshops"
+          element={<SpeakingWorkshops />}
+        />
+        <Route path="/meet-jermaine" element={<MeetJermaine />} />
+      </Routes>
     </main>
   );
 }
