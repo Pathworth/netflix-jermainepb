@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
@@ -8,13 +8,7 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
-type Tile = {
-  label: string;
-  href: string;
-  img: string;
-};
-
-const heroTiles: Tile[] = [
+const heroTiles = [
   {
     label: "AI Strategist",
     href: "/ai-strategist",
@@ -38,44 +32,37 @@ const heroTiles: Tile[] = [
 ];
 
 function Home() {
-  const [showHeroArt, setShowHeroArt] = useState(true);
+  const [showClassicTiles, setShowClassicTiles] = useState(false);
 
-  const toggleMode = () => setShowHeroArt((prev) => !prev);
+  const toggleTiles = () => {
+    setShowClassicTiles((prev) => !prev);
+  };
 
   return (
     <section className="home-screen">
       <h1 className="home-title">Where should we start?</h1>
 
-      <ul
-        className={`profile-grid ${
-          showHeroArt ? "profile-grid--hero" : "profile-grid--classic"
-        }`}
-      >
+      <ul className="profile-grid">
         {heroTiles.map((tile) => (
           <li key={tile.label} className="profile-card">
-            <a href={tile.href} className="profile-link">
-              <div
-                className={`profile-image-wrapper ${
-                  showHeroArt
-                    ? "profile-image-wrapper--hero"
-                    : "profile-image-wrapper--classic"
-                }`}
-              >
-                {showHeroArt ? (
+            <Link to={tile.href} className="profile-link">
+              <div className="profile-image-wrapper">
+                {showClassicTiles ? (
+                  <div className="classic-tile">
+                    <span className="classic-letter">
+                      {tile.label.charAt(0)}
+                    </span>
+                  </div>
+                ) : (
                   <img
                     src={tile.img}
                     alt={tile.label}
                     className="profile-image"
                   />
-                ) : (
-                  <span className="profile-initial">
-                    {tile.label.charAt(0)}
-                  </span>
                 )}
               </div>
-
               <div className="profile-label">{tile.label}</div>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -84,20 +71,14 @@ function Home() {
         Click any pillar to explore Jermaine’s expertise.
       </p>
 
-      <button
-        type="button"
-        onClick={toggleMode}
-        className={`manage-button ${
-          showHeroArt ? "manage-button--active" : ""
-        }`}
-      >
+      <button type="button" className="manage-button" onClick={toggleTiles}>
         MANAGE PROFILES
       </button>
 
-      <p className="manage-caption">
-        {showHeroArt
-          ? "Tap to switch to the classic blue tiles."
-          : "Tap to show the hero profile art."}
+      <p className="manage-sub">
+        {showClassicTiles
+          ? "Tap to show the hero profile art."
+          : "Tap to switch to the classic blue tiles."}
       </p>
     </section>
   );
@@ -111,9 +92,13 @@ export default function App() {
         <Route path="/browse" element={<Home />} />
         <Route path="/ai-strategist" element={<AIstrategist />} />
         <Route path="/community-builder" element={<CommunityBuilder />} />
-        <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
+        <Route
+          path="/speaking-workshops"
+          element={<SpeakingWorkshops />}
+        />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
       </Routes>
     </main>
   );
 }
+
