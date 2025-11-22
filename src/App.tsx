@@ -8,11 +8,12 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
-// IMPORTS POINT TO: src/pages/images/*.png
-import neoMatrixHero from "./pages/images/neo-matrix-jermaine-right.png";
-import blackPantherHero from "./pages/images/black-panther-jermaine.png";
-import ironManHero from "./pages/images/iron-man-jermaine-right.png";
-import batmanHero from "./pages/images/batman-jermaine.png";
+// IMPORTS POINT TO: src/images/*.png  (NOT src/pages/images)
+import neoMatrixHero from "./images/neo-matrix-jermaine-right.png";
+import blackPantherHero from "./images/black-panther-jermaine.png";
+import ironManHero from "./images/iron-man-jermaine-right.png";
+import batmanHero from "./images/batman-jermaine.png";
+
 
 type Tile = {
   label: string;
