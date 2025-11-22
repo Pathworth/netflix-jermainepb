@@ -1,13 +1,18 @@
 // src/App.tsx
 import React, { useState } from "react";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
+
+// If you still want these later, we can re-use them on other routes
 import AIstrategist from "./pages/AIstrategist";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
+
+// Legacy Netflix profile page (file: src/profilePage/profilePage.tsx)
+import ProfilePage from "./profilePage/profilePage";
 
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
@@ -22,28 +27,29 @@ import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
 // Tiles for the “Where should we start?” screen
+// NOTE: paths now point to /profile/:profileName to feed profilePage.tsx
 const tiles = [
   {
     label: "AI Strategist",
-    path: "/ai-strategist",
+    path: "/profile/developer",
     heroImg: neoHero,
     magImg: strategistCover,
   },
   {
     label: "Community Builder",
-    path: "/community-builder",
+    path: "/profile/stalker",
     heroImg: pantherHero,
     magImg: builderCover,
   },
   {
     label: "Speaking & Workshops",
-    path: "/speaking-workshops",
+    path: "/profile/recruiter",
     heroImg: ironHero,
     magImg: teacherCover,
   },
   {
     label: "Meet Jermaine",
-    path: "/meet-jermaine",
+    path: "/profile/adventure", // matches 'adventure' in ProfileType
     heroImg: batmanHero,
     magImg: adventurousCover,
   },
@@ -101,16 +107,16 @@ export default function App() {
   return (
     <main className="main">
       <Routes>
-        {/* Automatically send / to the working browse page */}
-        <Route path="/" element={<Navigate to="/browse" replace />} />
-
-        {/* Keep splash available on its own route if we want it later */}
-        <Route path="/splash" element={<NetflixTitle />} />
+        {/* Splash title card on root */}
+        <Route path="/" element={<NetflixTitle />} />
 
         {/* “Where should we start?” page */}
         <Route path="/browse" element={<Home />} />
 
-        {/* Simple content pages for each pillar */}
+        {/* Legacy Netflix profile experience */}
+        <Route path="/profile/:profileName" element={<ProfilePage />} />
+
+        {/* Keep these around on their original routes if you want them later */}
         <Route path="/ai-strategist" element={<AIstrategist />} />
         <Route path="/community-builder" element={<CommunityBuilder />} />
         <Route
