@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
@@ -8,78 +8,94 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
-const heroTiles = [
+// IMPORTS POINT TO: src/pages/images/*.png
+import neoMatrixHero from "./pages/images/neo-matrix-jermaine-right.png";
+import blackPantherHero from "./pages/images/black-panther-jermaine.png";
+import ironManHero from "./pages/images/iron-man-jermaine-right.png";
+import batmanHero from "./pages/images/batman-jermaine.png";
+
+type Tile = {
+  label: string;
+  href: string;
+  letter: string;
+  heroImg: string;
+};
+
+const baseTiles: Tile[] = [
   {
     label: "AI Strategist",
     href: "/ai-strategist",
-    img: "/images/neo-matrix-jermaine-right.png",
+    letter: "A",
+    heroImg: neoMatrixHero,
   },
   {
     label: "Community Builder",
     href: "/community-builder",
-    img: "/images/black-panther-jermaine.png",
+    letter: "C",
+    heroImg: blackPantherHero,
   },
   {
     label: "Speaking & Workshops",
     href: "/speaking-workshops",
-    img: "/images/iron-man-jermaine-right.png",
+    letter: "S",
+    heroImg: ironManHero,
   },
   {
     label: "Meet Jermaine",
     href: "/meet-jermaine",
-    img: "/images/batman-jermaine.png",
+    letter: "M",
+    heroImg: batmanHero,
   },
 ];
 
 function Home() {
-  const [showClassicTiles, setShowClassicTiles] = useState(false);
-
-  const toggleTiles = () => {
-    setShowClassicTiles((prev) => !prev);
-  };
+  const [showHeroArt, setShowHeroArt] = useState(true);
 
   return (
     <section className="home-screen">
       <h1 className="home-title">Where should we start?</h1>
 
       <ul className="profile-grid">
-        {heroTiles.map((tile) => (
+        {baseTiles.map((tile) => (
           <li key={tile.label} className="profile-card">
-            <Link to={tile.href} className="profile-link">
+            <a href={tile.href} className="profile-link">
               <div className="profile-image-wrapper">
-                {showClassicTiles ? (
-                  <div className="classic-tile">
-                    <span className="classic-letter">
-                      {tile.label.charAt(0)}
-                    </span>
-                  </div>
-                ) : (
+                {showHeroArt ? (
                   <img
-                    src={tile.img}
+                    src={tile.heroImg}
                     alt={tile.label}
                     className="profile-image"
                   />
+                ) : (
+                  <span className="profile-avatar-letter">{tile.letter}</span>
                 )}
               </div>
               <div className="profile-label">{tile.label}</div>
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
 
-      <p className="profile-hint">
-        Click any pillar to explore Jermaine’s expertise.
-      </p>
+      {/* Footer block pushed down for breathing room */}
+      <div className="home-footer">
+        <p className="profile-hint">
+          Click any pillar to explore Jermaine’s expertise.
+        </p>
 
-      <button type="button" className="manage-button" onClick={toggleTiles}>
-        MANAGE PROFILES
-      </button>
+        <button
+          type="button"
+          className="manage-profiles-btn"
+          onClick={() => setShowHeroArt((prev) => !prev)}
+        >
+          MANAGE PROFILES
+        </button>
 
-      <p className="manage-sub">
-        {showClassicTiles
-          ? "Tap to show the hero profile art."
-          : "Tap to switch to the classic blue tiles."}
-      </p>
+        <p className="manage-profiles-help">
+          {showHeroArt
+            ? "Tap to switch to the classic blue tiles."
+            : "Tap to show the hero profile art."}
+        </p>
+      </div>
     </section>
   );
 }
@@ -92,13 +108,9 @@ export default function App() {
         <Route path="/browse" element={<Home />} />
         <Route path="/ai-strategist" element={<AIstrategist />} />
         <Route path="/community-builder" element={<CommunityBuilder />} />
-        <Route
-          path="/speaking-workshops"
-          element={<SpeakingWorkshops />}
-        />
+        <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
       </Routes>
     </main>
   );
 }
-
