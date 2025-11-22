@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
@@ -7,6 +7,12 @@ import AIstrategist from "./pages/AIstrategist";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
+
+import Developer from "./profilePage/Developer";
+import Stalker from "./profilePage/Stalker";
+import Recruiter from "./profilePage/Recruiter";
+import Adventurous from "./profilePage/Adventurous";
+
 
 /**
  * IMAGE IMPORTS
@@ -28,25 +34,25 @@ import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 const tiles = [
   {
     label: "AI Strategist",
-    href: "/ai-strategist",
+    href: "//developer",        // was /ai-strategist
     heroImg: neoHero,
     classicImg: strategistCover, // strategist cover
   },
   {
     label: "Community Builder",
-    href: "/community-builder",
+    href: "/stalker",          // was /community-builder
     heroImg: pantherHero,
     classicImg: builderCover, // builder cover
   },
   {
     label: "Speaking & Workshops",
-    href: "/speaking-workshops",
+    href: "/recruiter",        // was /speaking-workshops
     heroImg: ironHero,
     classicImg: teacherCover, // teacher cover
   },
   {
     label: "Meet Jermaine",
-    href: "/meet-jermaine",
+    href: "/adventurous",      // was /meet-jermaine (or similar)
     heroImg: batmanHero,
     classicImg: adventurousCover, // adventurous cover
   },
@@ -59,35 +65,22 @@ function Home() {
     <section className="home-screen">
       <h1 className="home-title">Where should we start?</h1>
 
-      <ul className="profile-grid">
-        {tiles.map((tile) => (
-          <li key={tile.label} className="profile-card">
-            <a href={tile.href} className="profile-link">
-              <div
-                className={`profile-image-wrapper ${
-                  showHeroArt ? "mode-hero" : "mode-classic"
-                }`}
-              >
-                {showHeroArt ? (
-                  <img
-                    src={tile.heroImg}
-                    alt={tile.label}
-                    className="profile-image"
-                  />
-                ) : (
-                  <img
-                    src={tile.classicImg}
-                    alt={tile.label}
-                    className="profile-image classic-cover"
-                  />
-                )}
-              </div>
-              <div className="profile-label">{tile.label}</div>
-            </a>
-          </li>
-        ))}
-      </ul>
-
+     <ul className="profile-grid">
+  {heroTiles.map((tile) => (
+    <li key={tile.label} className="profile-card">
+      <Link to={tile.path} className="profile-link">
+        <div className="profile-image-wrapper">
+          <img
+            src={showHeroArt ? tile.heroImg : tile.magImg}
+            alt={tile.label}
+            className="profile-image"
+          />
+        </div>
+        <div className="profile-label">{tile.label}</div>
+      </Link>
+    </li>
+  ))}
+</ul>
       <div className="home-footer">
         <p className="profile-hint">
           Click any pillar to explore Jermaine’s expertise.
@@ -115,10 +108,17 @@ export default function App() {
       <Routes>
         <Route path="/" element={<NetflixTitle />} />
         <Route path="/browse" element={<Home />} />
-        <Route path="/ai-strategist" element={<AIstrategist />} />
-        <Route path="/community-builder" element={<CommunityBuilder />} />
-        <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
-        <Route path="/meet-jermaine" element={<MeetJermaine />} />
+        <Routes>
+        <Route path="/" element={<NetflixTitle />} />
+        <Route path="/browse" element={<Home />} />
+      
+        {/* Legacy Netflix profile pages */}
+        <Route path="/developer" element={<Developer />} />
+        <Route path="/stalker" element={<Stalker />} />
+        <Route path="/recruiter" element={<Recruiter />} />
+        <Route path="/adventurous" element={<Adventurous />} />
+      </Routes>
+
       </Routes>
     </main>
   );
