@@ -79,6 +79,13 @@ body,
   color: var(--jp-text-soft);
 }
 
+.splash-image {
+  max-width: min(80vw, 720px);
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 /* ====== HOME / WHO'S WATCHING ====== */
 
 .home-screen {
@@ -293,6 +300,7 @@ body,
 .classic-cover {
   object-fit: cover;
 }
+
 
 
 
