@@ -1,57 +1,58 @@
-// src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
 
-// Legacy Netflix profile pages (from the original repo)
-import Developer from "./profilePage/Developer";
-import Stalker from "./profilePage/Stalker";
-import Recruiter from "./profilePage/Recruiter";
-import Adventurous from "./profilePage/Adventurous";
+// Existing “pages” (you can keep or remove these if you want)
+import AIstrategist from "./pages/AIstrategist";
+import CommunityBuilder from "./pages/CommunityBuilder";
+import SpeakingWorkshops from "./pages/SpeakingWorkshops";
+import MeetJermaine from "./pages/MeetJermaine";
 
-// Superhero hero art
+// Dynamic Netflix profile page
+import ProfilePage from "./profilePage/profilePage";
+
+/**
+ * IMAGE IMPORTS
+ * Make sure the filenames here match exactly what you put in src/images
+ */
+
+// Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
 import pantherHero from "./images/black-panther-jermaine.png";
 import ironHero from "./images/iron-man-jermaine-right.png";
 import batmanHero from "./images/batman-jermaine.png";
 
-// Magazine covers
+// Magazine cover “classic” tiles
 import adventurousCover from "./images/Adventurous-Mag-cover-trans.png";
 import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
-type Tile = {
-  label: string;
-  path: string;
-  heroImg: string;
-  magImg: string;
-};
-
-const tiles: Tile[] = [
+// Browse-page tiles
+const tiles = [
   {
     label: "AI Strategist",
-    path: "/developer",
+    path: "/profile/developer",         // maps to developer profile
     heroImg: neoHero,
     magImg: strategistCover,
   },
   {
     label: "Community Builder",
-    path: "/stalker",
+    path: "/profile/stalker",           // maps to stalker profile
     heroImg: pantherHero,
     magImg: builderCover,
   },
   {
     label: "Speaking & Workshops",
-    path: "/recruiter",
+    path: "/profile/recruiter",         // maps to recruiter profile
     heroImg: ironHero,
     magImg: teacherCover,
   },
   {
     label: "Meet Jermaine",
-    path: "/adventurous",
+    path: "/profile/adventure",         // maps to adventure profile
     heroImg: batmanHero,
     magImg: adventurousCover,
   },
@@ -112,16 +113,18 @@ export default function App() {
         {/* Splash title card */}
         <Route path="/" element={<NetflixTitle />} />
 
-        {/* Browse / profiles */}
+        {/* Browse / “Who’s watching?” */}
         <Route path="/browse" element={<Home />} />
 
-        {/* Legacy Netflix profile pages */}
-        <Route path="/developer" element={<Developer />} />
-        <Route path="/stalker" element={<Stalker />} />
-        <Route path="/recruiter" element={<Recruiter />} />
-        <Route path="/adventurous" element={<Adventurous />} />
+        {/* Optional original pages (still reachable if you want them) */}
+        <Route path="/ai-strategist" element={<AIstrategist />} />
+        <Route path="/community-builder" element={<CommunityBuilder />} />
+        <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
+        <Route path="/meet-jermaine" element={<MeetJermaine />} />
+
+        {/* Dynamic Netflix-style profile page */}
+        <Route path="/profile/:profileName" element={<ProfilePage />} />
       </Routes>
     </main>
   );
 }
-
