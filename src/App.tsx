@@ -9,6 +9,9 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
+// NEW: dynamic Netflix profile page
+import ProfilePage from "./profilePage/profilePage";
+
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
 import pantherHero from "./images/black-panther-jermaine.png";
@@ -115,6 +118,9 @@ export default function App() {
           element={<SpeakingWorkshops />}
         />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
+
+        {/* NEW: original Netflix-style profile layout */}
+        <Route path="/profile/:profileName" element={<ProfilePage />} />
       </Routes>
     </main>
   );
