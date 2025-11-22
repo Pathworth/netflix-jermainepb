@@ -1,43 +1,38 @@
-import React, { useEffect, useState } from "react";
-import "./NetflixTitle.css";
-import netflixSound from "./netflix-sound.mp3";
+// src/NetflixTitle.tsx
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import titleCard from "./images/JP_TitleCard_Primary_Blue.png";
+import "./App.css";
+
+// Make sure this filename matches exactly what is in src/images
+import jpTitleCard from "./images/JP_TitleCard_Primary_Blue.png";
 
 const NetflixTitle: React.FC = () => {
-  const [isClicked, setIsClicked] = useState(false);
   const navigate = useNavigate();
 
-  const handlePlaySound = () => {
-    // Play Netflix-style sound
-    const audio = new Audio(netflixSound);
-    audio.play().catch((error) => {
-      console.error("Audio play error:", error);
-    });
-
-    // Trigger zoom-out animation
-    setIsClicked(true);
+  const handleEnter = () => {
+    navigate("/browse");
   };
 
-  useEffect(() => {
-    if (isClicked) {
-      const timer = setTimeout(() => {
-        // After animation, go to the “Where should we start?” page
-        navigate("/browse");
-      }, 4000); // 4 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, [isClicked, navigate]);
-
   return (
-    <div className="netflix-container" onClick={handlePlaySound}>
-      <img
-        src={titleCard}
-        alt="Jermaine Peguese title card"
-        className={`netflix-logo ${isClicked ? "animate" : ""}`}
-      />
-    </div>
+    <section className="splash" onClick={handleEnter}>
+      <div className="splash-inner">
+        {/* Title image */}
+        <img
+          src={jpTitleCard}
+          alt="Jermaine Peguese title card"
+          className="splash-image"
+        />
+
+        {/* Optional subtitle under the image */}
+        <p className="splash-subtitle">
+          Tap to enter Jermaine&apos;s world.
+        </p>
+      </div>
+
+      <p className="splash-hint">
+        Click or tap anywhere to continue
+      </p>
+    </section>
   );
 };
 
