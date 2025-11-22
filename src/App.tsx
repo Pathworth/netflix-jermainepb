@@ -8,44 +8,47 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
-// IMPORTS POINT TO: src/images/*.png  (NOT src/pages/images)
-import neoMatrixHero from "./images/neo-matrix-jermaine-right.png";
-import blackPantherHero from "./images/black-panther-jermaine.png";
-import ironManHero from "./images/iron-man-jermaine-right.png";
+/**
+ * IMAGE IMPORTS
+ * Make sure the filenames here match exactly what you put in src/images
+ */
+
+// Hero / superhero art
+import neoHero from "./images/neo-matrix-jermaine-right.png";
+import pantherHero from "./images/black-panther-jermaine.png";
+import ironHero from "./images/iron-man-jermaine-right.png";
 import batmanHero from "./images/batman-jermaine.png";
 
+// Magazine cover “classic” tiles
+import adventurousCover from "./images/Adventurous-Mag-cover-trans.png";
+import teacherCover from "./images/Teacher-Mag-cover-trans.png";
+import builderCover from "./images/Builder-Mag-cover-trans.png";
+import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
-type Tile = {
-  label: string;
-  href: string;
-  letter: string;
-  heroImg: string;
-};
-
-const baseTiles: Tile[] = [
+const tiles = [
   {
     label: "AI Strategist",
     href: "/ai-strategist",
-    letter: "A",
-    heroImg: neoMatrixHero,
+    heroImg: neoHero,
+    classicImg: strategistCover, // strategist cover
   },
   {
     label: "Community Builder",
     href: "/community-builder",
-    letter: "C",
-    heroImg: blackPantherHero,
+    heroImg: pantherHero,
+    classicImg: builderCover, // builder cover
   },
   {
     label: "Speaking & Workshops",
     href: "/speaking-workshops",
-    letter: "S",
-    heroImg: ironManHero,
+    heroImg: ironHero,
+    classicImg: teacherCover, // teacher cover
   },
   {
     label: "Meet Jermaine",
     href: "/meet-jermaine",
-    letter: "M",
     heroImg: batmanHero,
+    classicImg: adventurousCover, // adventurous cover
   },
 ];
 
@@ -57,10 +60,14 @@ function Home() {
       <h1 className="home-title">Where should we start?</h1>
 
       <ul className="profile-grid">
-        {baseTiles.map((tile) => (
+        {tiles.map((tile) => (
           <li key={tile.label} className="profile-card">
             <a href={tile.href} className="profile-link">
-              <div className="profile-image-wrapper">
+              <div
+                className={`profile-image-wrapper ${
+                  showHeroArt ? "mode-hero" : "mode-classic"
+                }`}
+              >
                 {showHeroArt ? (
                   <img
                     src={tile.heroImg}
@@ -68,7 +75,11 @@ function Home() {
                     className="profile-image"
                   />
                 ) : (
-                  <span className="profile-avatar-letter">{tile.letter}</span>
+                  <img
+                    src={tile.classicImg}
+                    alt={tile.label}
+                    className="profile-image classic-cover"
+                  />
                 )}
               </div>
               <div className="profile-label">{tile.label}</div>
@@ -77,7 +88,6 @@ function Home() {
         ))}
       </ul>
 
-      {/* Footer block pushed down for breathing room */}
       <div className="home-footer">
         <p className="profile-hint">
           Click any pillar to explore Jermaine’s expertise.
@@ -92,9 +102,7 @@ function Home() {
         </button>
 
         <p className="manage-profiles-help">
-          {showHeroArt
-            ? "Tap to switch to the classic blue tiles."
-            : "Tap to show the hero profile art."}
+          Tap to {showHeroArt ? "switch to the classic mag covers." : "show the hero profile art."}
         </p>
       </div>
     </section>
@@ -115,4 +123,3 @@ export default function App() {
     </main>
   );
 }
-
