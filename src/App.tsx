@@ -8,33 +8,62 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
-const tiles = [
-  { label: "AI Strategist", href: "/ai-strategist" },
-  { label: "Community Builder", href: "/community-builder" },
-  { label: "Speaking & Workshops", href: "/speaking-workshops" },
-  { label: "Meet Jermaine", href: "/meet-jermaine" },
+const heroTiles = [
+  {
+    label: "AI Strategist",
+    href: "/ai-strategist",
+    img: "/images/neo-matrix-jermaine-right.png",
+  },
+  {
+    label: "Community Builder",
+    href: "/community-builder",
+    img: "/images/black-panther-jermaine.png",
+  },
+  {
+    label: "Speaking & Workshops",
+    href: "/speaking-workshops",
+    img: "/images/iron-man-jermaine-right.png",
+  },
+  {
+    label: "Meet Jermaine",
+    href: "/meet-jermaine",
+    img: "/images/batman-jermaine.png",
+  },
 ];
+
 
 function Home() {
   return (
-    <section className="home-section">
+    <section className="home-screen">
       <h1 className="home-title">Where should we start?</h1>
 
-      <ul className="tiles-grid">
-        {tiles.map((t) => (
-          <li key={t.label} className="card">
-            <Link to={t.href} className="card-link">
-              <div className="avatar">{t.label[0]}</div>
-              <div className="label">{t.label}</div>
-            </Link>
+      <ul className="profile-grid">
+        {heroTiles.map((tile) => (
+          <li key={tile.label} className="profile-card">
+            <a href={tile.href} className="profile-link">
+              {/* Hero image */}
+              <div className="profile-image-wrapper">
+                <img
+                  src={tile.img}
+                  alt={tile.label}
+                  className="profile-image"
+                />
+              </div>
+
+              {/* Label */}
+              <div className="profile-label">{tile.label}</div>
+            </a>
           </li>
         ))}
       </ul>
 
-      <p className="hint">Click any pillar to explore Jermaine’s expertise.</p>
+      <p className="profile-hint">
+        Click any pillar to explore Jermaine’s expertise.
+      </p>
     </section>
   );
 }
+
 
 export default function App() {
   return (
