@@ -1,39 +1,36 @@
+// src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
 
-// Legacy Netflix profile pages
+// Legacy Netflix profile pages (from the original repo)
 import Developer from "./profilePage/Developer";
 import Stalker from "./profilePage/Stalker";
 import Recruiter from "./profilePage/Recruiter";
 import Adventurous from "./profilePage/Adventurous";
 
-/**
- * IMAGE IMPORTS
- * Make sure the filenames here match exactly what you put in src/images
- */
-
-// Hero / superhero art
+// Superhero hero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
 import pantherHero from "./images/black-panther-jermaine.png";
 import ironHero from "./images/iron-man-jermaine-right.png";
 import batmanHero from "./images/batman-jermaine.png";
 
-// Magazine cover “classic” tiles
+// Magazine covers
 import adventurousCover from "./images/Adventurous-Mag-cover-trans.png";
 import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
-/**
- * Tile config:
- * - path: where the tile links to
- * - heroImg: superhero art
- * - magImg: classic magazine cover
- */
-const tiles = [
+type Tile = {
+  label: string;
+  path: string;
+  heroImg: string;
+  magImg: string;
+};
+
+const tiles: Tile[] = [
   {
     label: "AI Strategist",
     path: "/developer",
@@ -112,10 +109,10 @@ export default function App() {
   return (
     <main className="main">
       <Routes>
-        {/* Splash → sends to /browse */}
+        {/* Splash title card */}
         <Route path="/" element={<NetflixTitle />} />
 
-        {/* “Where should we start?” screen */}
+        {/* Browse / profiles */}
         <Route path="/browse" element={<Home />} />
 
         {/* Legacy Netflix profile pages */}
@@ -127,3 +124,4 @@ export default function App() {
     </main>
   );
 }
+
