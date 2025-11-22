@@ -193,7 +193,7 @@ body,
 
 .classic-letter {
   font-family: "Bebas Neue", "Impact", "Arial Narrow", system-ui, sans-serif;
-  font-size: 4rem;
+  font-size: 20rem;
   color: #ffffff;
 }
 
@@ -280,4 +280,5 @@ body,
   font-size: 0.85rem;
   color: #9ca3af;
 }
+
 
