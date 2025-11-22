@@ -7,7 +7,7 @@ import ProfilePage from "./profilePage/profilePage";
 
 /**
  * IMAGE IMPORTS
- * Make sure these filenames match exactly what's in src/images
+ * (filenames must match exactly what’s in src/images)
  */
 
 // Hero / superhero art
@@ -22,31 +22,36 @@ import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
-// One source of truth for the 4 tiles
+// NOTE: profileName values must match the union type in profilePage.tsx:
+// type ProfileType = 'recruiter' | 'developer' | 'stalker' | 'adventure';
 const tiles = [
   {
     label: "AI Strategist",
-    href: "/profile/developer",
+    profileName: "developer",
+    path: "/profile/developer",
     heroImg: neoHero,
-    classicImg: strategistCover,
+    magImg: strategistCover,
   },
   {
     label: "Community Builder",
-    href: "/profile/stalker",
+    profileName: "stalker",
+    path: "/profile/stalker",
     heroImg: pantherHero,
-    classicImg: builderCover,
+    magImg: builderCover,
   },
   {
     label: "Speaking & Workshops",
-    href: "/profile/recruiter",
+    profileName: "recruiter",
+    path: "/profile/recruiter",
     heroImg: ironHero,
-    classicImg: teacherCover,
+    magImg: teacherCover,
   },
   {
     label: "Meet Jermaine",
-    href: "/profile/adventure",
+    profileName: "adventure", // matches 'adventure' in profilePage.tsx
+    path: "/profile/adventure",
     heroImg: batmanHero,
-    classicImg: adventurousCover,
+    magImg: adventurousCover,
   },
 ];
 
@@ -60,10 +65,10 @@ function Home() {
       <ul className="profile-grid">
         {tiles.map((tile) => (
           <li key={tile.label} className="profile-card">
-            <Link to={tile.href} className="profile-link">
+            <Link to={tile.path} className="profile-link">
               <div className="profile-image-wrapper">
                 <img
-                  src={showHeroArt ? tile.heroImg : tile.classicImg}
+                  src={showHeroArt ? tile.heroImg : tile.magImg}
                   alt={tile.label}
                   className="profile-image"
                 />
@@ -102,15 +107,16 @@ export default function App() {
   return (
     <main className="main">
       <Routes>
-        {/* Splash screen */}
+        {/* Splash title card */}
         <Route path="/" element={<NetflixTitle />} />
 
-        {/* “Who’s watching” screen */}
+        {/* “Where should we start?” page */}
         <Route path="/browse" element={<Home />} />
 
-        {/* Original Netflix-style profile page */}
+        {/* Original Netflix-style profile layout */}
         <Route path="/profile/:profileName" element={<ProfilePage />} />
       </Routes>
     </main>
   );
 }
+
