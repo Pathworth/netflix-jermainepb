@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
@@ -8,9 +8,6 @@ import AIstrategist from "./pages/AIstrategist";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
-
-// NEW: dynamic Netflix profile page
-import ProfilePage from "./profilePage/profilePage";
 
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
@@ -104,8 +101,11 @@ export default function App() {
   return (
     <main className="main">
       <Routes>
-        {/* Splash title card */}
-        <Route path="/" element={<NetflixTitle />} />
+        {/* Automatically send / to the working browse page */}
+        <Route path="/" element={<Navigate to="/browse" replace />} />
+
+        {/* Keep splash available on its own route if we want it later */}
+        <Route path="/splash" element={<NetflixTitle />} />
 
         {/* “Where should we start?” page */}
         <Route path="/browse" element={<Home />} />
@@ -118,12 +118,7 @@ export default function App() {
           element={<SpeakingWorkshops />}
         />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
-
-        {/* NEW: original Netflix-style profile layout */}
-        <Route path="/profile/:profileName" element={<ProfilePage />} />
       </Routes>
     </main>
   );
 }
-
-
