@@ -3,19 +3,11 @@ import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
-
-// Existing “pages” (you can keep or remove these if you want)
-import AIstrategist from "./pages/AIstrategist";
-import CommunityBuilder from "./pages/CommunityBuilder";
-import SpeakingWorkshops from "./pages/SpeakingWorkshops";
-import MeetJermaine from "./pages/MeetJermaine";
-
-// Dynamic Netflix profile page
 import ProfilePage from "./profilePage/profilePage";
 
 /**
  * IMAGE IMPORTS
- * Make sure the filenames here match exactly what you put in src/images
+ * Make sure these filenames match exactly what's in src/images
  */
 
 // Hero / superhero art
@@ -30,31 +22,31 @@ import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
-// Browse-page tiles
+// One source of truth for the 4 tiles
 const tiles = [
   {
     label: "AI Strategist",
-    path: "/profile/developer",         // maps to developer profile
+    href: "/profile/developer",
     heroImg: neoHero,
-    magImg: strategistCover,
+    classicImg: strategistCover,
   },
   {
     label: "Community Builder",
-    path: "/profile/stalker",           // maps to stalker profile
+    href: "/profile/stalker",
     heroImg: pantherHero,
-    magImg: builderCover,
+    classicImg: builderCover,
   },
   {
     label: "Speaking & Workshops",
-    path: "/profile/recruiter",         // maps to recruiter profile
+    href: "/profile/recruiter",
     heroImg: ironHero,
-    magImg: teacherCover,
+    classicImg: teacherCover,
   },
   {
     label: "Meet Jermaine",
-    path: "/profile/adventure",         // maps to adventure profile
+    href: "/profile/adventure",
     heroImg: batmanHero,
-    magImg: adventurousCover,
+    classicImg: adventurousCover,
   },
 ];
 
@@ -68,10 +60,10 @@ function Home() {
       <ul className="profile-grid">
         {tiles.map((tile) => (
           <li key={tile.label} className="profile-card">
-            <Link to={tile.path} className="profile-link">
+            <Link to={tile.href} className="profile-link">
               <div className="profile-image-wrapper">
                 <img
-                  src={showHeroArt ? tile.heroImg : tile.magImg}
+                  src={showHeroArt ? tile.heroImg : tile.classicImg}
                   alt={tile.label}
                   className="profile-image"
                 />
@@ -110,19 +102,13 @@ export default function App() {
   return (
     <main className="main">
       <Routes>
-        {/* Splash title card */}
+        {/* Splash screen */}
         <Route path="/" element={<NetflixTitle />} />
 
-        {/* Browse / “Who’s watching?” */}
+        {/* “Who’s watching” screen */}
         <Route path="/browse" element={<Home />} />
 
-        {/* Optional original pages (still reachable if you want them) */}
-        <Route path="/ai-strategist" element={<AIstrategist />} />
-        <Route path="/community-builder" element={<CommunityBuilder />} />
-        <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
-        <Route path="/meet-jermaine" element={<MeetJermaine />} />
-
-        {/* Dynamic Netflix-style profile page */}
+        {/* Original Netflix-style profile page */}
         <Route path="/profile/:profileName" element={<ProfilePage />} />
       </Routes>
     </main>
