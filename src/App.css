@@ -332,6 +332,53 @@ body,
   }
 }
 
+/* Mobile layout for the "Where should we start?" screen */
+@media (max-width: 640px) {
+  .home-screen {
+    padding: 2.75rem 1rem 3.5rem;
+    justify-content: flex-start;
+  }
+
+  .home-title {
+    font-size: 2.3rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .profile-grid {
+    max-width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;        /* space between cards */
+    justify-items: center;
+  }
+
+  .profile-image-wrapper {
+    width: 150px;        /* slightly smaller than desktop */
+    height: 150px;
+    border-radius: 24px;
+  }
+
+  .profile-label {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .home-footer {
+    margin-top: 2.5rem;
+    padding: 0 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .manage-profiles-btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .profile-hint,
+  .manage-profiles-help {
+    text-align: center;
+  }
+}
+
 
 
 
