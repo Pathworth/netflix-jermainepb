@@ -301,6 +301,37 @@ body,
   object-fit: cover;
 }
 
+/* Splash hint – sit higher above the bottom logo */
+.splash-hint {
+  position: absolute;
+  bottom: 96px;            /* was 40px */
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--jp-text-soft);
+  padding: 0 1.25rem;
+}
+
+/* Mobile tweaks for splash */
+@media (max-width: 640px) {
+  .splash-title {
+    font-size: clamp(3rem, 11vw, 3.8rem);
+  }
+
+  .splash-subtitle {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .splash-hint {
+    bottom: 88px;
+    font-size: 0.78rem;
+    padding: 0 1.5rem;
+  }
+}
+
 
 
 
