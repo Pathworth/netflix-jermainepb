@@ -4,15 +4,10 @@ import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
-
-// If you still want these later, we can re-use them on other routes
 import AIstrategist from "./pages/AIstrategist";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
-
-// Legacy Netflix profile page (file: src/profilePage/profilePage.tsx)
-import ProfilePage from "./profilePage/profilePage";
 
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
@@ -27,29 +22,28 @@ import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
 // Tiles for the “Where should we start?” screen
-// NOTE: paths now point to /profile/:profileName to feed profilePage.tsx
 const tiles = [
   {
     label: "AI Strategist",
-    path: "/profile/developer",
+    path: "/ai-strategist",
     heroImg: neoHero,
     magImg: strategistCover,
   },
   {
     label: "Community Builder",
-    path: "/profile/stalker",
+    path: "/community-builder",
     heroImg: pantherHero,
     magImg: builderCover,
   },
   {
     label: "Speaking & Workshops",
-    path: "/profile/recruiter",
+    path: "/speaking-workshops",
     heroImg: ironHero,
     magImg: teacherCover,
   },
   {
     label: "Meet Jermaine",
-    path: "/profile/adventure", // matches 'adventure' in ProfileType
+    path: "/meet-jermaine",
     heroImg: batmanHero,
     magImg: adventurousCover,
   },
@@ -107,24 +101,19 @@ export default function App() {
   return (
     <main className="main">
       <Routes>
-        {/* Splash title card on root */}
+        {/* Splash title card */}
         <Route path="/" element={<NetflixTitle />} />
 
         {/* “Where should we start?” page */}
         <Route path="/browse" element={<Home />} />
 
-        {/* Legacy Netflix profile experience */}
-        <Route path="/profile/:profileName" element={<ProfilePage />} />
-
-        {/* Keep these around on their original routes if you want them later */}
+        {/* Simple content pages for each pillar */}
         <Route path="/ai-strategist" element={<AIstrategist />} />
         <Route path="/community-builder" element={<CommunityBuilder />} />
-        <Route
-          path="/speaking-workshops"
-          element={<SpeakingWorkshops />}
-        />
+        <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
       </Routes>
     </main>
   );
 }
+
