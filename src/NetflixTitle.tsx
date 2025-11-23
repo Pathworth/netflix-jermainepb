@@ -1,47 +1,43 @@
 // src/NetflixTitle.tsx
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
-import netflixSound from "./netflix-sound.mp3";
 
 const NetflixTitle: React.FC = () => {
   const navigate = useNavigate();
-  const [hasPrimed, setHasPrimed] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [hasPlayedSound, setHasPlayedSound] = useState(false);
 
-  const handleClick = () => {
-    if (!hasPrimed) {
-      // First tap: play the sound
-      setHasPrimed(true);
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current
-          .play()
-          .catch(() => {
-            // ignore autoplay / gesture errors
-          });
-      }
-    } else {
-      // Second tap: go to browse
-      navigate("/browse");
+  const handleTap = () => {
+    // First tap: play the sound only
+    if (!hasPlayedSound) {
+      const audio = new Audio(process.env.PUBLIC_URL + "/netflix-sound.mp3");
+      audio.play().catch(() => {
+        // ignore autoplay errors (mobile mute, etc.)
+      });
+      setHasPlayedSound(true);
+      return;
     }
+
+    // Second tap: go to the browse screen
+    navigate("/browse");
   };
 
   return (
-    <section className="splash" onClick={handleClick}>
+    <section className="splash" onClick={handleTap}>
       <div className="splash-inner">
+        {/* Curved-style title like your earlier version */}
         <h1 className="splash-title">JERMAINE PEGUESE</h1>
-        <p className="splash-subtitle">AI · Community · Legacy</p>
+
+        {/* Circle mark under the name */}
+        <div className="splash-mark">
+          <span className="splash-mark-initials">JP</span>
+        </div>
       </div>
 
+      {/* Bottom hint text, away from the circle */}
       <p className="splash-hint">
-        {hasPrimed
-          ? "Tap anywhere again to enter."
-          : "Tap once for the sound, then tap again to enter."}
+        Tap once for the sound, then tap again to enter.
       </p>
-
-      {/* Audio element controlled via ref */}
-      <audio ref={audioRef} src={netflixSound} />
     </section>
   );
 };
