@@ -51,21 +51,33 @@ body,
   text-align: center;
 }
 
+/* Big curved Netflix-style name */
 .splash-title {
   font-family: "Bebas Neue", "Impact", "Arial Narrow", system-ui, sans-serif;
   font-size: clamp(3.5rem, 9vw, 6rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--jp-blue);
-  transform: scaleX(1.05);
+  transform: scaleX(1.05); /* slight visual arc like your earlier version */
 }
 
-.splash-subtitle {
-  margin-top: 0.75rem;
-  font-size: 0.95rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--jp-text-soft);
+/* Circle mark under the name */
+.splash-mark {
+  margin: 3rem auto 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  border: 2px solid var(--jp-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash-mark-initials {
+  font-family: "Bebas Neue", "Impact", "Arial Narrow", system-ui, sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.2em;
+  color: var(--jp-blue);
 }
 
 .splash-hint {
@@ -378,6 +390,7 @@ body,
     text-align: center;
   }
 }
+
 
 
 
