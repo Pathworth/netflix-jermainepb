@@ -9,25 +9,22 @@ const NetflixTitle: React.FC = () => {
   const navigate = useNavigate();
 
   const handlePlaySound = () => {
-    // If we've already started the animation, ignore extra taps
+    // Prevent double-trigger on fast taps
     if (isClicked) return;
 
-    // Play Netflix-style sound
     const audio = new Audio(netflixSound);
-    audio.play().catch((error) => {
-      console.error("Audio play error:", error);
-    });
+    audio.play().catch((error) =>
+      console.error("Audio play error:", error)
+    );
 
-    // Trigger zoom-out animation
-    setIsClicked(true);
+    setIsClicked(true); // start animation
   };
 
   useEffect(() => {
     if (isClicked) {
       const timer = setTimeout(() => {
-        // After animation, go to the “Where should we start?” page
         navigate("/browse");
-      }, 4000); // 4 seconds
+      }, 2800); // was 4000 – now ~2.8s for a snappier feel
 
       return () => clearTimeout(timer);
     }
@@ -45,4 +42,3 @@ const NetflixTitle: React.FC = () => {
 };
 
 export default NetflixTitle;
-
