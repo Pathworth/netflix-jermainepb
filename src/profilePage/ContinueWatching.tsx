@@ -19,6 +19,7 @@ const continueWatchingConfig: Record<ProfileType, WatchItem[]> = {
     { title: "Systems", imgSrc: "https://picsum.photos/id/1025/300/200", link: "/browse" },
     { title: "Automation", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/browse" },
     { title: "AI Playbook", imgSrc: "https://picsum.photos/id/1027/300/200", link: "/browse" },
+    { title: "Tool Resources", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/browse" },
     { title: "Book Jermaine", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/browse" },
   ],
   "community-builder": [
