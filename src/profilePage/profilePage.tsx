@@ -1,18 +1,11 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import "./ProfilePage.css";
-import type { ProfileType } from "./profileTypes";
 
 import ProfileBanner from "./ProfileBanner";
 import TopPicksRow from "./TopPicksRow";
 import ContinueWatching from "./ContinueWatching";
-
-// ✅ Rename ProfileType to match YOUR pillars
-export type ProfileType =
-  | "ai-strategist"
-  | "community-builder"
-  | "speaking-workshops"
-  | "meet-jermaine";
+import type { ProfileType } from "./profileTypes";
 
 type Props = {
   profile: ProfileType;
@@ -28,9 +21,8 @@ const defaultGifs: Record<ProfileType, string> = {
 const ProfilePage: React.FC<Props> = ({ profile }) => {
   const location = useLocation();
 
-  // Optional: if you ever want to pass a gif through navigation state
-  const backgroundGif =
-    location.state?.backgroundGif || defaultGifs[profile];
+  const backgroundGif: string =
+    (location.state as any)?.backgroundGif || defaultGifs[profile];
 
   return (
     <>
