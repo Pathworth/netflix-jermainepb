@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import "./ProfilePage.css";
+import type { ProfileType } from "./profileTypes";
 
 import ProfileBanner from "./ProfileBanner";
 import TopPicksRow from "./TopPicksRow";
