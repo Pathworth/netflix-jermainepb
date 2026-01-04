@@ -2,38 +2,44 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ContinueWatching.css';
 
-type ProfileType = 'recruiter' | 'developer' | 'stalker' | 'adventure';
+type ProfileType =
+  | "ai-strategist"
+  | "community-builder"
+  | "speaking-workshops"
+  | "meet-jermaine";
+
 
 interface ContinueWatchingProps {
   profile: ProfileType;
 }
 
-const continueWatchingConfig = {
-  recruiter: [
-    { title: "Music", imgSrc: "https://picsum.photos/id/1025/300/200", link: "/music" },
-    { title: "Reading", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/reading" },
-    { title: "Blogs", imgSrc: "https://picsum.photos/id/1027/300/200", link: "/blogs" },
-    { title: "Contact Me", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/contact-me" }
+const continueWatchingConfig: Record<ProfileType, { title: string; imgSrc: string; link: string }[]> = {
+  "ai-strategist": [
+    { title: "Systems", imgSrc: "https://picsum.photos/id/1025/300/200", link: "/browse" },
+    { title: "Automation", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/browse" },
+    { title: "AI Playbook", imgSrc: "https://picsum.photos/id/1027/300/200", link: "/browse" },
+    { title: "Book Jermaine", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/browse" },
   ],
-  developer: [
-    { title: "Music", imgSrc: "https://picsum.photos/id/1025/300/200", link: "/music" },
-    { title: "Reading", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/reading" },
-    { title: "Blogs", imgSrc: "https://picsum.photos/id/1027/300/200", link: "/blogs" },
-    { title: "Certifications", imgSrc: "https://picsum.photos/id/1028/300/200", link: "/certifications" },
-    { title: "Contact Me", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/contact-me" }
+  "community-builder": [
+    { title: "Programs", imgSrc: "https://picsum.photos/id/1035/300/200", link: "/browse" },
+    { title: "Partnerships", imgSrc: "https://picsum.photos/id/1036/300/200", link: "/browse" },
+    { title: "Events", imgSrc: "https://picsum.photos/id/1037/300/200", link: "/browse" },
+    { title: "Connect", imgSrc: "https://picsum.photos/id/1039/300/200", link: "/browse" },
   ],
-  stalker: [
-    { title: "Reading", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/reading" },
-    { title: "Blogs", imgSrc: "https://picsum.photos/id/1027/300/200", link: "/blogs" },
-    { title: "Contact Me", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/contact-me" }
+  "speaking-workshops": [
+    { title: "Keynotes", imgSrc: "https://picsum.photos/id/1045/300/200", link: "/browse" },
+    { title: "Workshops", imgSrc: "https://picsum.photos/id/1046/300/200", link: "/browse" },
+    { title: "Training", imgSrc: "https://picsum.photos/id/1047/300/200", link: "/browse" },
+    { title: "Book a Talk", imgSrc: "https://picsum.photos/id/1049/300/200", link: "/browse" },
   ],
-  adventure: [
-    { title: "Music", imgSrc: "https://picsum.photos/id/1025/300/200", link: "/music" },
-    { title: "Reading", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/reading" },
-    { title: "Certifications", imgSrc: "https://picsum.photos/id/1028/300/200", link: "/certifications" },
-    { title: "Contact Me", imgSrc: "https://picsum.photos/id/1029/300/200", link: "/contact-me" }
-  ]
+  "meet-jermaine": [
+    { title: "Story", imgSrc: "https://picsum.photos/id/1055/300/200", link: "/browse" },
+    { title: "Values", imgSrc: "https://picsum.photos/id/1056/300/200", link: "/browse" },
+    { title: "Work", imgSrc: "https://picsum.photos/id/1057/300/200", link: "/browse" },
+    { title: "Contact", imgSrc: "https://picsum.photos/id/1059/300/200", link: "/browse" },
+  ],
 };
+
 
 const ContinueWatching: React.FC<ContinueWatchingProps> = ({ profile }) => {
   const continueWatching = continueWatchingConfig[profile];
