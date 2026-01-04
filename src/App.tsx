@@ -9,6 +9,11 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
+// Extra / Pages
+import Contact from "./pages/Contact";
+import OnePager from "./pages/OnePager";
+
+
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
 import pantherHero from "./images/black-panther-jermaine.png";
@@ -113,6 +118,9 @@ export default function App() {
         <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
       </Routes>
+      <Route path="/contact" element={<Contact />} />
+<Route path="/one-pager" element={<OnePager />} />
+
     </main>
   );
 }
