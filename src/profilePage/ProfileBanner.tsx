@@ -15,33 +15,43 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchData() {
       const data = await getProfileBanner(profile);
-      setBannerData(data);
+      if (isMounted) setBannerData(data);
     }
+
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [profile]);
 
   if (!bannerData) return <div>Loading...</div>;
 
   const openOrRoute = (url: string) => {
+    if (!url) return;
+
     // Internal route
     if (url.startsWith("/")) {
       navigate(url);
       return;
     }
+
     // External link
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleResumeClick = () => openOrRoute(bannerData.resumeLink.url);
+  const handleResumeClick = () => openOrRoute(bannerData.resumeLink?.url || "/browse");
 
-  // Button 2 priority:
-  // 1) bookingLink if present (your /contact?intent=working-session)
-  // 2) fallback to /one-pager
-  // 3) fallback to LinkedIn
-  const secondUrl = bannerData.bookingLink ?? "/one-pager";
-  const secondLabel = bannerData.bookingLabel ?? "Download the One-Pager";
+  // Second button priority:
+  // 1) bookingLink (your /contact?intent=working-session)
+  // 2) /one-pager
+  // 3) LinkedIn
+  const secondUrl = bannerData.bookingLink ?? "/one-pager" ?? bannerData.linkedinLink;
+  const secondLabel = bannerData.bookingLabel || "Download the One-Pager";
 
   const handleSecondClick = () => openOrRoute(secondUrl);
 
