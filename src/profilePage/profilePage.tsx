@@ -5,7 +5,12 @@ import "./ProfilePage.css";
 import ProfileBanner from "./ProfileBanner";
 import TopPicksRow from "./TopPicksRow";
 import ContinueWatching from "./ContinueWatching";
-import type { ProfileType } from "./profileTypes";
+
+type ProfileType =
+  | "ai-strategist"
+  | "community-builder"
+  | "speaking-workshops"
+  | "meet-jermaine";
 
 type Props = {
   profile: ProfileType;
