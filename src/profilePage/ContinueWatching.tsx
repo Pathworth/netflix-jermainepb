@@ -3,12 +3,6 @@ import { Link } from 'react-router-dom';
 import type { ProfileType } from "./profileTypes";
 import './ContinueWatching.css';
 
-type ProfileType =
-  | "ai-strategist"
-  | "community-builder"
-  | "speaking-workshops"
-  | "meet-jermaine";
-
 
 interface ContinueWatchingProps {
   profile: ProfileType;
