@@ -1,14 +1,20 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import type { ProfileType } from "./profileTypes";
-import './ContinueWatching.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./ContinueWatching.css";
 
+type ProfileType =
+  | "ai-strategist"
+  | "community-builder"
+  | "speaking-workshops"
+  | "meet-jermaine";
 
 interface ContinueWatchingProps {
   profile: ProfileType;
 }
 
-const continueWatchingConfig: Record<ProfileType, { title: string; imgSrc: string; link: string }[]> = {
+type WatchItem = { title: string; imgSrc: string; link: string };
+
+const continueWatchingConfig: Record<ProfileType, WatchItem[]> = {
   "ai-strategist": [
     { title: "Systems", imgSrc: "https://picsum.photos/id/1025/300/200", link: "/browse" },
     { title: "Automation", imgSrc: "https://picsum.photos/id/1026/300/200", link: "/browse" },
@@ -35,13 +41,12 @@ const continueWatchingConfig: Record<ProfileType, { title: string; imgSrc: strin
   ],
 };
 
-
 const ContinueWatching: React.FC<ContinueWatchingProps> = ({ profile }) => {
-  const continueWatching = continueWatchingConfig[profile];
+  const continueWatching = continueWatchingConfig[profile] ?? [];
 
   return (
     <div className="continue-watching-row">
-      <h2 className="row-title">Continue Watching for {profile}</h2>
+      <h2 className="row-title">Continue Watching</h2>
       <div className="card-row">
         {continueWatching.map((pick, index) => (
           <Link to={pick.link} key={index} className="pick-card">
