@@ -12,7 +12,11 @@ import {
   FaBook,
 } from "react-icons/fa";
 
-import type { ProfileType } from "./profileTypes";
+type ProfileType =
+  | "ai-strategist"
+  | "community-builder"
+  | "speaking-workshops"
+  | "meet-jermaine";
 
 interface TopPicksRowProps {
   profile: ProfileType;
@@ -65,7 +69,7 @@ const topPicksConfig: Record<ProfileType, Pick[]> = {
 
 const TopPicksRow: React.FC<TopPicksRowProps> = ({ profile }) => {
   const navigate = useNavigate();
-  const topPicks = topPicksConfig[profile];
+  const topPicks = topPicksConfig[profile] ?? [];
 
   return (
     <div className="top-picks-row">
