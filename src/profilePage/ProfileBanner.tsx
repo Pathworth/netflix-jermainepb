@@ -6,8 +6,14 @@ import { getProfileBanner } from "../queries/getProfileBanner";
 import { ProfileBanner as ProfileBannerType } from "../types";
 import { useNavigate } from "react-router-dom";
 
+type ProfileType =
+  | "ai-strategist"
+  | "community-builder"
+  | "speaking-workshops"
+  | "meet-jermaine";
+
 type Props = {
-  profile: string;
+  profile: ProfileType;
 };
 
 const ProfileBanner: React.FC<Props> = ({ profile }) => {
