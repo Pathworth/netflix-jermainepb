@@ -35,7 +35,7 @@ const ProfilePage: React.FC<Props> = ({ profile }) => {
         className="profile-page"
         style={{ backgroundImage: `url(${backgroundGif})` }}
       >
-        <ProfileBanner />
+       <ProfileBanner profile={profile} />
       </div>
 
       <TopPicksRow profile={profile} />
