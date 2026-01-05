@@ -15,17 +15,32 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
 
     async function fetchData() {
-      const data = await getProfileBanner(profile);
-      if (isMounted) setBannerData(data);
+      try {
+        const data = await getProfileBanner(profile);
+        if (!cancelled) setBannerData(data);
+      } catch (err) {
+        // fail-safe: avoid crashing render
+        if (!cancelled) {
+          setBannerData({
+            headline: "Jermaine Peguese",
+            profileSummary:
+              "Practical AI for people who need the work done.\n\nThis page is loading a safe fallback banner. We’ll plug in final links soon.",
+            resumeLink: { url: "/browse" },
+            linkedinLink: "https://linkedin.com",
+            bookingLink: "/contact?intent=working-session",
+            bookingLabel: "Request a Working Session",
+          });
+        }
+      }
     }
 
     fetchData();
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, [profile]);
 
@@ -44,14 +59,18 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleResumeClick = () => openOrRoute(bannerData.resumeLink?.url || "/browse");
+  const handleResumeClick = () => {
+    const url = bannerData.resumeLink?.url || "/browse";
+    openOrRoute(url);
+  };
 
-  // Second button priority:
-  // 1) bookingLink (your /contact?intent=working-session)
-  // 2) /one-pager
-  // 3) LinkedIn
-  const secondUrl = bannerData.bookingLink ?? "/one-pager" ?? bannerData.linkedinLink;
-  const secondLabel = bannerData.bookingLabel || "Download the One-Pager";
+  // Second button: bookingLink first; otherwise go to /one-pager; final fallback LinkedIn
+  const secondUrl =
+    bannerData.bookingLink ?? "/one-pager" ?? bannerData.linkedinLink;
+
+  const secondLabel =
+    bannerData.bookingLabel ??
+    (bannerData.bookingLink ? "Request a Working Session" : "Download the One-Pager");
 
   const handleSecondClick = () => openOrRoute(secondUrl);
 
