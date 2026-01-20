@@ -1,24 +1,34 @@
-// types.ts
+// src/types.ts
 
 export interface ProfileBanner {
-  backgroundImage: { url: string };
+  // Optional because we're not using DatoCMS right now,
+  // and some fallbacks don't include it.
+  backgroundImage?: { url: string };
+
   headline: string;
-  resumeLink: {
-    url: string;
-  };
-  linkedinLink: string;
   profileSummary: string;
+
+  resumeLink: { url: string };
+  linkedinLink: string;
+
+  // Optional because not every profile needs these yet.
+  bookingLink?: string;
+  bookingLabel?: string;
 }
 
 export interface WorkPermit {
   visaStatus: string;
-  expiryDate: Date;
+
+  // Use string to avoid JSON/Date mismatch issues.
+  // (Dates from APIs come in as strings.)
+  expiryDate: string;
+
   summary: string;
   additionalInfo: string;
 }
 
 export interface TimelineItem {
-  timelineType: 'work' | 'education';
+  timelineType: "work" | "education";
   name: string;
   title: string;
   techStack: string;
@@ -52,7 +62,7 @@ export interface ContactMe {
   phoneNumber: string;
 }
 
-export interface Skill { 
+export interface Skill {
   name: string;
   category: string;
   description: string;
