@@ -112,16 +112,16 @@ export default function App() {
         {/* “Where should we start?” page */}
         <Route path="/browse" element={<Home />} />
 
-        {/* Simple content pages for each pillar */}
+        {/* Pillars */}
         <Route path="/ai-strategist" element={<AIstrategist />} />
         <Route path="/community-builder" element={<CommunityBuilder />} />
         <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
-      </Routes>
-      <Route path="/contact" element={<Contact />} />
-<Route path="/one-pager" element={<OnePager />} />
 
+        {/* Extra pages */}
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/one-pager" element={<OnePager />} />
+      </Routes>
     </main>
   );
 }
-
