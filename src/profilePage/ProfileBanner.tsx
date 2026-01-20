@@ -1,16 +1,11 @@
+// src/profilePage/ProfileBanner.tsx
 import React, { useEffect, useState } from "react";
 import "./ProfileBanner.css";
 import PlayButton from "../components/PlayButton";
 import MoreInfoButton from "../components/MoreInfoButton";
-import { getProfileBanner } from "../queries/getProfileBanner";
+import { getProfileBanner, ProfileType } from "../queries/getProfileBanner";
 import { ProfileBanner as ProfileBannerType } from "../types";
 import { useNavigate } from "react-router-dom";
-
-type ProfileType =
-  | "ai-strategist"
-  | "community-builder"
-  | "speaking-workshops"
-  | "meet-jermaine";
 
 type Props = {
   profile: ProfileType;
@@ -27,14 +22,14 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
       try {
         const data = await getProfileBanner(profile);
         if (!cancelled) setBannerData(data);
-      } catch (err) {
-        // fail-safe: avoid crashing render
+      } catch {
         if (!cancelled) {
           setBannerData({
+            backgroundImage: { url: "" },
             headline: "Jermaine Peguese",
             profileSummary:
-              "Practical AI for people who need the work done.\n\nThis page is loading a safe fallback banner. We’ll plug in final links soon.",
-            resumeLink: { url: "/browse" },
+              "Practical AI for people who need the work done.\n\nIf it’s not usable, it doesn’t go out.",
+            resumeLink: { url: "/one-pager" },
             linkedinLink: "https://linkedin.com",
             bookingLink: "/contact?intent=working-session",
             bookingLabel: "Request a Working Session",
@@ -44,7 +39,6 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
     }
 
     fetchData();
-
     return () => {
       cancelled = true;
     };
@@ -54,31 +48,15 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
 
   const openOrRoute = (url: string) => {
     if (!url) return;
-
-    // Internal route
-    if (url.startsWith("/")) {
-      navigate(url);
-      return;
-    }
-
-    // External link
+    if (url.startsWith("/")) return navigate(url);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleResumeClick = () => {
-    const url = bannerData.resumeLink?.url || "/browse";
-    openOrRoute(url);
-  };
+  const handleResumeClick = () => openOrRoute(bannerData.resumeLink?.url || "/browse");
 
-  // Second button: bookingLink first; otherwise go to /one-pager; final fallback LinkedIn
-  const secondUrl =
-    bannerData.bookingLink ?? "/one-pager" ?? bannerData.linkedinLink;
-
-  const secondLabel =
-    bannerData.bookingLabel ??
-    (bannerData.bookingLink ? "Request a Working Session" : "Download the One-Pager");
-
-  const handleSecondClick = () => openOrRoute(secondUrl);
+  // Second button: bookingLink first; otherwise go to /one-pager
+  const secondUrl = bannerData.bookingLink ?? "/one-pager";
+  const secondLabel = bannerData.bookingLabel ?? "Download the One-Pager";
 
   return (
     <div className="profile-banner">
@@ -91,7 +69,7 @@ const ProfileBanner: React.FC<Props> = ({ profile }) => {
 
         <div className="banner-buttons">
           <PlayButton onClick={handleResumeClick} label="Resume" />
-          <MoreInfoButton onClick={handleSecondClick} label={secondLabel} />
+          <MoreInfoButton onClick={() => openOrRoute(secondUrl)} label={secondLabel} />
         </div>
       </div>
     </div>
