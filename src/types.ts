@@ -1,6 +1,7 @@
 // types.ts
 
 export interface ProfileBanner {
+  backgroundImage: { url: string };
   backgroundImage?: { url: string }; // optional now
 
   headline: string;
@@ -66,4 +67,3 @@ export interface Skill {
   category: string;
   description: string;
   icon: string;
-}
