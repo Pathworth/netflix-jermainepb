@@ -2,23 +2,13 @@
 
 export interface ProfileBanner {
   backgroundImage: { url: string };
-  backgroundImage?: { url: string }; // optional now
-
   headline: string;
-
   resumeLink: {
     url: string;
   };
-
   linkedinLink: string;
-
-  // New: lets us use /contact?intent=working-session
-  bookingLink?: string;
-  bookingLabel?: string;
-
   profileSummary: string;
 }
-
 
 export interface WorkPermit {
   visaStatus: string;
@@ -67,3 +57,4 @@ export interface Skill {
   category: string;
   description: string;
   icon: string;
+}
