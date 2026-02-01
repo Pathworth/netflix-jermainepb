@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { useState } from "react";
-import { Routes, Route, Link, Outlet, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, Link, Outlet, useLocation } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
@@ -11,6 +11,7 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
+// Extra / Pages
 import Contact from "./pages/Contact";
 import OnePager from "./pages/OnePager";
 import Skills from "./pages/Skills";
@@ -27,6 +28,7 @@ import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
+// Tiles for the “Where should we start?” screen
 const tiles = [
   {
     label: "AI Strategist",
@@ -99,8 +101,7 @@ function Home() {
 }
 
 /**
- * Layout wraps all normal pages with the Navbar.
- * We hide Navbar only on the splash title card at "/".
+ * Global layout that shows Navbar on every page except "/"
  */
 function Layout() {
   const location = useLocation();
@@ -133,15 +134,12 @@ export default function App() {
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
 
         {/* Extra pages */}
-        <Route path="/skills" element={<Skills />} />
-        <Route path="/one-pager" element={<OnePager />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/one-pager" element={<OnePager />} />
+        <Route path="/skills" element={<Skills />} />
 
-        {/* Optional alias routes to prevent old links from 404 */}
-        <Route path="/contact-me" element={<Contact />} />
-
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/browse" replace />} />
+        {/* NOTE: We are NOT adding /work-experience, /projects, /contact-me yet.
+            Your NavBar will link to them, and they may 404 until added later. */}
       </Route>
     </Routes>
   );
