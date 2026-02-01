@@ -142,7 +142,7 @@ const groups: Group[] = [
     ],
   },
   {
-    title: "Growth & Creative",
+    title: "Growth & Creativity",
     ids: [
       "ai-digital-enablement",
       "marketing-brand-digital-strategy",
@@ -154,7 +154,6 @@ const groups: Group[] = [
 ];
 
 // Numbers and tags live here so you do not have to edit your data file.
-// Range stays 87–96 like you requested, never under 80.
 const pillarMeta: Record<string, { score: number; tags: string[] }> = {
   "leadership-communication": {
     score: 95,
@@ -194,7 +193,6 @@ const Skills: React.FC = () => {
   }, []);
 
   const openPillar = openId ? pillarById.get(openId) : null;
-
   const close = () => setOpenId(null);
 
   useEffect(() => {
@@ -218,7 +216,8 @@ const Skills: React.FC = () => {
   return (
     <div className="skills-page">
       <header className="skills-header">
-        <h1 className="skills-title">Skills</h1>
+        <h1 className="skills-title skills-title--netflix">Superpowers</h1>
+        <div className="skills-subtitle">Pick a pillar to open the full view.</div>
       </header>
 
       {groups.map((g) => {
@@ -228,9 +227,10 @@ const Skills: React.FC = () => {
 
         return (
           <section className="skills-section" key={g.title}>
-            <h2 className="skills-section-title">{g.title}</h2>
+            <h2 className="skills-section-title skills-section-title--accent">{g.title}</h2>
 
-            <div className="pillars-grid pillars-grid--three">
+            {/* 12-col grid on desktop for centered 3+2 layout */}
+            <div className="pillars-grid pillars-grid--twelve pillars-grid--five">
               {groupPillars.map((p) => {
                 const meta = pillarMeta[p.id] || { score: 90, tags: [] };
 
@@ -299,7 +299,6 @@ const Skills: React.FC = () => {
                     <div className="panel-micro">{openPillar.microHeadline}</div>
                   ) : null}
 
-                  {/* tags + score inside spotlight */}
                   <div className="panel-meta">
                     {(pillarMeta[openPillar.id]?.tags || []).slice(0, 4).map((t) => (
                       <span key={t} className="tag tag--soft">
@@ -317,7 +316,6 @@ const Skills: React.FC = () => {
                 </button>
               </div>
 
-              {/* Skill cards instead of spreadsheet rows */}
               <div className="panel-cards">
                 {openPillar.items.map((line, idx) => (
                   <div className="skill-card" key={`${openPillar.id}-${idx}`}>
@@ -344,4 +342,3 @@ const Skills: React.FC = () => {
 };
 
 export default Skills;
-
