@@ -208,4 +208,117 @@ function PillarModal({ pillar, meta, onClose }: ModalProps) {
                 <div className="sp-dot" aria-hidden="true" />
                 <div className="sp-detailText">
                   <div className="sp-detailSkill">{row.skill}</div>
-                  <div className="sp-detailExp">{row.experience}</
+                  <div className="sp-detailExp">{row.experience}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Skills() {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const all = useMemo(() => {
+    return skillsPillars.map((p) => ({ pillar: p, meta: clampMeta(p) }));
+  }, []);
+
+  const grouped = useMemo(() => {
+    const g = {
+      "Core Leadership": [] as { pillar: SkillPillar; meta: PillarMeta }[],
+      "Build & Deliver": [] as { pillar: SkillPillar; meta: PillarMeta }[],
+      "Growth & Creative": [] as { pillar: SkillPillar; meta: PillarMeta }[],
+    };
+
+    for (const x of all) g[x.meta.group].push(x);
+    return g;
+  }, [all]);
+
+  const openPillar = useMemo(() => {
+    if (!openId) return null;
+    return all.find((x) => x.pillar.id === openId) ?? null;
+  }, [openId, all]);
+
+  return (
+    <div className="sp-page">
+      <Navbar />
+
+      <section className="sp-wrap">
+        <header className="sp-hero">
+          <h1 className="sp-title">Superpowers</h1>
+          <p className="sp-subtitle">Pick a pillar to open the full view.</p>
+        </header>
+
+        <div className="sp-sections">
+          <section className="sp-section">
+            <div className="sp-sectionHeader">
+              <div className="sp-line" />
+              <h2 className="sp-sectionTitle">Core Leadership</h2>
+              <div className="sp-line" />
+            </div>
+
+            <div className="sp-grid">
+              {grouped["Core Leadership"].map(({ pillar, meta }) => (
+                <PillarCard
+                  key={pillar.id}
+                  pillar={pillar}
+                  meta={meta}
+                  onOpen={() => setOpenId(pillar.id)}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className="sp-section">
+            <div className="sp-sectionHeader">
+              <div className="sp-line" />
+              <h2 className="sp-sectionTitle">Build &amp; Deliver</h2>
+              <div className="sp-line" />
+            </div>
+
+            <div className="sp-grid">
+              {grouped["Build & Deliver"].map(({ pillar, meta }) => (
+                <PillarCard
+                  key={pillar.id}
+                  pillar={pillar}
+                  meta={meta}
+                  onOpen={() => setOpenId(pillar.id)}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className="sp-section">
+            <div className="sp-sectionHeader">
+              <div className="sp-line" />
+              <h2 className="sp-sectionTitle">Growth &amp; Creative</h2>
+              <div className="sp-line" />
+            </div>
+
+            <div className="sp-grid">
+              {grouped["Growth & Creative"].map(({ pillar, meta }) => (
+                <PillarCard
+                  key={pillar.id}
+                  pillar={pillar}
+                  meta={meta}
+                  onOpen={() => setOpenId(pillar.id)}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+      </section>
+
+      {openPillar ? (
+        <PillarModal
+          pillar={openPillar.pillar}
+          meta={openPillar.meta}
+          onClose={() => setOpenId(null)}
+        />
+      ) : null}
+    </div>
+  );
+}
