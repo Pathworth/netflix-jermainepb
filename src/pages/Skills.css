@@ -1,318 +1,339 @@
+/* Optional: Netflix-style condensed headline feel */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
 :root {
-  --jp-bg: #06070a;
-  --jp-card: rgba(18, 20, 26, 0.72);
-  --jp-card-strong: rgba(14, 16, 22, 0.92);
-  --jp-border: rgba(255, 255, 255, 0.10);
-  --jp-border-strong: rgba(120, 160, 255, 0.30);
-  --jp-text: rgba(255, 255, 255, 0.92);
-  --jp-subtext: rgba(255, 255, 255, 0.62);
-  --jp-blue: #6fa8ff;
-  --jp-blue2: #3f6bff;
-  --jp-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+  --sp-bg: #0b0f1a;
+  --sp-bg2: #070a12;
+  --sp-card: rgba(18, 22, 32, 0.72);
+  --sp-card2: rgba(12, 14, 22, 0.78);
+  --sp-border: rgba(120, 140, 255, 0.22);
+  --sp-border2: rgba(120, 140, 255, 0.35);
+  --sp-text: rgba(255, 255, 255, 0.92);
+  --sp-muted: rgba(255, 255, 255, 0.66);
+  --sp-blue: #6f8cff;
+  --sp-blue2: rgba(111, 140, 255, 0.35);
+  --sp-shadow: 0 26px 80px rgba(0, 0, 0, 0.55);
+  --sp-radius: 18px;
+  --sp-radius2: 22px;
 }
 
+/* Page */
 .sp-page {
   min-height: 100vh;
-  padding: 110px 28px 80px; /* pushes title DOWN away from navbar */
-  color: var(--jp-text);
   background:
-    radial-gradient(1100px 600px at 50% 10%, rgba(80, 120, 255, 0.18), transparent 60%),
-    radial-gradient(900px 520px at 20% 20%, rgba(80, 120, 255, 0.10), transparent 55%),
-    radial-gradient(900px 520px at 80% 20%, rgba(80, 120, 255, 0.10), transparent 55%),
-    var(--jp-bg);
+    radial-gradient(900px 520px at 50% 160px, rgba(111, 140, 255, 0.22), transparent 60%),
+    radial-gradient(900px 520px at 18% 220px, rgba(111, 140, 255, 0.12), transparent 60%),
+    radial-gradient(900px 520px at 82% 220px, rgba(111, 140, 255, 0.12), transparent 60%),
+    linear-gradient(180deg, var(--sp-bg), var(--sp-bg2));
+  color: var(--sp-text);
 }
 
-.sp-header {
+.sp-wrap {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 92px 0 72px; /* gives space under the navbar */
+}
+
+.sp-hero {
   text-align: center;
-  margin-bottom: 34px;
+  margin: 8px 0 26px;
 }
 
 .sp-title {
-  font-size: clamp(2.1rem, 3.6vw, 3.2rem);
-  letter-spacing: 0.5px;
   margin: 0;
-  color: var(--jp-blue); /* Skills -> Blue, and renamed to Superpowers in TSX */
-  text-shadow: 0 0 18px rgba(80, 120, 255, 0.22);
+  font-family: "Bebas Neue", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-size: clamp(44px, 5.6vw, 76px);
+  letter-spacing: 0.8px;
+  color: var(--sp-blue);
+  text-shadow: 0 14px 70px rgba(111, 140, 255, 0.25);
 }
 
 .sp-subtitle {
-  margin: 10px 0 0;
-  color: var(--jp-subtext);
-  font-size: 1rem;
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: var(--sp-muted);
 }
 
+/* Sections spacing */
 .sp-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 56px; /* comfortable cushion between the 3 sections */
+  margin-top: 18px;
 }
 
-.sp-sectionTitleRow {
-  display: flex;
+.sp-section {
+  margin-top: 44px; /* stronger break between the 3 groups */
+}
+
+.sp-sectionHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin-bottom: 22px;
+  gap: 14px;
+  margin: 0 auto 18px;
+  width: min(980px, 92vw);
 }
 
 .sp-sectionTitle {
-  font-size: 1.35rem;
   margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
   color: rgba(255, 255, 255, 0.92);
 }
 
-.sp-sectionRule {
+.sp-line {
   height: 2px;
-  width: min(360px, 30vw);
-  background: linear-gradient(90deg, transparent, rgba(111, 168, 255, 0.8), transparent);
-  filter: drop-shadow(0 0 8px rgba(80, 120, 255, 0.25));
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(111, 140, 255, 0.55), transparent);
+  box-shadow: 0 0 0 1px rgba(111, 140, 255, 0.08);
 }
 
-/* Grid: fixed-ish card width + centered rows (this centers the 2-card row) */
+/* Grid that centers the last row (2 cards) */
 .sp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 360px));
-  justify-content: center; /* centers partial rows like 2 cards */
-  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
+  justify-content: center;
+  gap: 18px;
 }
 
 /* Card */
 .sp-card {
   position: relative;
-  border-radius: 18px;
+  border-radius: var(--sp-radius2);
   padding: 18px 18px 16px;
-  background: linear-gradient(180deg, rgba(20, 24, 34, 0.82), rgba(10, 12, 18, 0.72));
-  border: 1px solid var(--jp-border);
-  box-shadow: var(--jp-shadow);
+  background: linear-gradient(180deg, var(--sp-card), var(--sp-card2));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 14px 60px rgba(0, 0, 0, 0.42);
   overflow: hidden;
-}
-
-.sp-card::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 18px;
-  background: radial-gradient(650px 260px at 20% 10%, rgba(111, 168, 255, 0.18), transparent 60%);
-  opacity: 0.75;
-  pointer-events: none;
+  min-height: 212px; /* keeps all cards same feel */
 }
 
 .sp-card:hover {
-  border-color: rgba(111, 168, 255, 0.35);
+  border-color: var(--sp-border2);
+  box-shadow: 0 18px 74px rgba(0, 0, 0, 0.52);
+  transform: translateY(-1px);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
 .sp-cardTop {
-  position: relative;
-  z-index: 2;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 10px;
 }
 
-.sp-cardIcons {
+/* Rotating aura (subtle) */
+.sp-cardAura {
+  position: absolute;
+  inset: -140px -120px auto -120px;
+  height: 340px;
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(111, 140, 255, 0.0),
+      rgba(111, 140, 255, 0.18),
+      rgba(111, 140, 255, 0.0),
+      rgba(111, 140, 255, 0.12),
+      rgba(111, 140, 255, 0.0)
+    );
+  filter: blur(22px);
+  opacity: 0.75;
+  animation: sp-spin 9s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-cardAura,
+  .sp-modalAura {
+    animation: none;
+  }
+}
+
+.sp-plus {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  border: 1px solid rgba(111, 140, 255, 0.20);
+  background: rgba(18, 22, 32, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+}
+
+.sp-plus:hover {
+  border-color: rgba(111, 140, 255, 0.40);
+  background: rgba(18, 22, 32, 0.72);
+}
+
+.sp-icons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
-/* Placeholder mark if you are not rendering an svg icon yet */
-.sp-iconMark {
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  border: 1px solid rgba(111, 168, 255, 0.55);
-  box-shadow: 0 0 14px rgba(80, 120, 255, 0.22);
-  background: radial-gradient(circle at 30% 30%, rgba(111, 168, 255, 0.25), rgba(0,0,0,0));
-}
-
-/* plus button */
-.sp-plusBtn {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  border: 1px solid rgba(111, 168, 255, 0.30);
-  background: rgba(20, 22, 30, 0.72);
-  color: rgba(255, 255, 255, 0.90);
-  cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-}
-
-.sp-plusBtn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(111, 168, 255, 0.55);
-  background: rgba(24, 28, 40, 0.78);
+.sp-icon {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  color: rgba(111, 140, 255, 0.92);
+  opacity: 0.95;
 }
 
 .sp-cardTitle {
-  position: relative;
-  z-index: 2;
-  font-size: 1.25rem;
-  margin: 10px 0 12px;
-  line-height: 1.25;
-  word-break: break-word; /* prevents ugly truncation */
+  margin: 10px 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  line-height: 1.22;
+
+  /* This prevents the "..." problem */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 /* Tags */
 .sp-tags {
-  position: relative;
-  z-index: 2;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.sp-tagsTight {
+  margin-top: 10px;
 }
 
 .sp-tag {
-  font-size: 0.86rem;
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.82);
-  background: rgba(0, 0, 0, 0.20);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 12, 18, 0.35);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.sp-tag--filled {
-  border-color: rgba(111, 168, 255, 0.35);
-  background: rgba(111, 168, 255, 0.10);
-}
-
-/* Score */
+/* Score + bar */
 .sp-scoreRow {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 14px;
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
 }
 
 .sp-scoreText {
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: rgba(255, 255, 255, 0.88);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.sp-scoreBar {
+.sp-bar {
   height: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.10);
   overflow: hidden;
 }
 
-.sp-scoreFill {
+.sp-barFill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(111,168,255,0.85), rgba(63,107,255,0.95));
-  box-shadow: 0 0 10px rgba(80, 120, 255, 0.35);
+  background: linear-gradient(90deg, rgba(111, 140, 255, 0.80), rgba(111, 140, 255, 0.30));
 }
 
-/* Actions */
-.sp-cardActions {
-  position: relative;
-  z-index: 2;
+/* Learn more button */
+.sp-actions {
   display: flex;
   justify-content: flex-end;
+  margin-top: 12px;
 }
 
-.sp-learnBtn {
+.sp-learn {
+  padding: 8px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(111, 168, 255, 0.38);
-  background: rgba(20, 22, 30, 0.78);
-  color: rgba(255, 255, 255, 0.92);
-  padding: 10px 16px;
+  border: 1px solid rgba(111, 140, 255, 0.22);
+  background: rgba(12, 14, 22, 0.45);
+  color: rgba(255, 255, 255, 0.86);
   font-weight: 700;
   cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
-.sp-learnBtn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(111, 168, 255, 0.65);
-  background: rgba(26, 32, 48, 0.82);
+.sp-learn:hover {
+  border-color: rgba(111, 140, 255, 0.40);
+  background: rgba(12, 14, 22, 0.62);
 }
 
-/* Rotating aura behind each card */
-.sp-aura {
-  position: absolute;
-  inset: -55px;
-  background: conic-gradient(
-    from 180deg,
-    rgba(111,168,255,0.00),
-    rgba(111,168,255,0.24),
-    rgba(63,107,255,0.00),
-    rgba(111,168,255,0.18),
-    rgba(111,168,255,0.00)
-  );
-  filter: blur(26px);
-  opacity: 0.55; /* subtle but visible */
-  animation: spSpin 10s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes spSpin {
-  to { transform: rotate(360deg); }
-}
-
-/* MODAL */
+/* Modal */
 .sp-modalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 999;
+  z-index: 60;
   display: grid;
   place-items: center;
-  padding: 28px;
 }
 
 .sp-modalBackdrop {
   position: absolute;
   inset: 0;
-  border: 0;
   background: rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
+  backdrop-filter: blur(6px);
 }
 
 .sp-modal {
   position: relative;
-  width: min(1120px, 96vw);
-  border-radius: 18px;
-  border: 1px solid rgba(111, 168, 255, 0.30);
-  background: rgba(8, 10, 14, 0.92); /* darker + more premium than gray */
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.65);
+  width: min(1100px, 94vw);
+  border-radius: 26px;
+  border: 1px solid rgba(111, 140, 255, 0.25);
+  background:
+    radial-gradient(900px 520px at 50% -120px, rgba(111, 140, 255, 0.22), transparent 60%),
+    linear-gradient(180deg, rgba(16, 18, 26, 0.90), rgba(10, 11, 17, 0.92));
+  box-shadow: var(--sp-shadow);
   overflow: hidden;
 }
 
+/* Modal aura (brighter than cards, still subtle) */
 .sp-modalAura {
   position: absolute;
-  inset: -90px;
-  background: conic-gradient(
-    from 120deg,
-    rgba(111,168,255,0.00),
-    rgba(111,168,255,0.34),
-    rgba(63,107,255,0.00),
-    rgba(111,168,255,0.24),
-    rgba(111,168,255,0.00)
-  );
-  filter: blur(34px);
-  opacity: 0.60; /* brighter than the card aura */
-  animation: spSpin 12s linear infinite;
+  inset: -200px -180px auto -180px;
+  height: 460px;
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(111, 140, 255, 0.0),
+      rgba(111, 140, 255, 0.22),
+      rgba(111, 140, 255, 0.0),
+      rgba(111, 140, 255, 0.14),
+      rgba(111, 140, 255, 0.0)
+    );
+  filter: blur(26px);
+  opacity: 0.9;
+  animation: sp-spin 10s linear infinite;
   pointer-events: none;
 }
 
 .sp-modalHeader {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   display: grid;
-  grid-template-columns: 48px 1fr auto;
+  grid-template-columns: auto 1fr auto;
   gap: 14px;
   align-items: start;
-  padding: 18px 18px 14px;
-  background: linear-gradient(180deg, rgba(22, 26, 38, 0.55), rgba(0,0,0,0));
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.sp-modalIcon {
-  margin-top: 2px;
+.sp-modalIcons {
+  display: flex;
+  gap: 10px;
+  padding-top: 6px;
 }
 
 .sp-modalTitleWrap {
@@ -320,61 +341,65 @@
 }
 
 .sp-modalTitle {
-  font-size: 1.55rem;
-  font-weight: 800;
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
   letter-spacing: 0.2px;
-  margin-bottom: 2px;
 }
 
 .sp-modalMicro {
-  color: rgba(255, 255, 255, 0.62);
-  margin-bottom: 10px;
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 14px;
 }
 
 .sp-modalMeta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 14px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .sp-modalScore {
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.90);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.82);
 }
 
-.sp-closeBtn {
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.06);
+.sp-close {
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 12, 18, 0.35);
   color: rgba(255, 255, 255, 0.90);
-  padding: 10px 14px;
   cursor: pointer;
 }
 
-.sp-closeBtn:hover {
-  border-color: rgba(111, 168, 255, 0.45);
-  background: rgba(111, 168, 255, 0.10);
+.sp-close:hover {
+  border-color: rgba(111, 140, 255, 0.35);
 }
 
-/* Modal content grid */
-.sp-modalGrid {
+.sp-modalBody {
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  padding: 18px;
+}
+
+/* Detail cards (premium feel, not excel rows) */
+.sp-detailGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  padding: 14px 18px 18px;
 }
 
-.sp-itemCard {
-  display: flex;
+.sp-detailCard {
+  display: grid;
+  grid-template-columns: 14px 1fr;
   gap: 12px;
-  align-items: flex-start;
-  border-radius: 14px;
+  align-items: start;
+  padding: 14px 14px;
+  border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 14px;
+  background: rgba(10, 12, 18, 0.35);
 }
 
 .sp-dot {
@@ -382,43 +407,42 @@
   height: 10px;
   border-radius: 999px;
   margin-top: 6px;
-  background: rgba(111, 168, 255, 0.92);
-  box-shadow: 0 0 12px rgba(80, 120, 255, 0.45);
-  flex: 0 0 auto;
+  background: rgba(111, 140, 255, 0.95);
+  box-shadow: 0 0 0 6px rgba(111, 140, 255, 0.12);
 }
 
-.sp-itemSkill {
-  font-weight: 800;
-  margin-bottom: 4px;
+.sp-detailSkill {
+  font-weight: 900;
+  letter-spacing: 0.2px;
 }
 
-.sp-itemExp {
+.sp-detailExp {
+  margin-top: 6px;
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.35;
 }
 
 /* Mobile */
-@media (max-width: 820px) {
-  .sp-page {
-    padding: 105px 16px 70px;
+@media (max-width: 860px) {
+  .sp-wrap {
+    padding-top: 86px;
   }
 
-  .sp-modal {
-    width: min(980px, 96vw);
+  .sp-grid {
+    grid-template-columns: repeat(auto-fit, minmax(290px, 290px));
+  }
+
+  .sp-detailGrid {
+    grid-template-columns: 1fr;
   }
 
   .sp-modalHeader {
-    grid-template-columns: 44px 1fr;
-    gap: 10px;
-  }
-
-  .sp-closeBtn {
-    grid-column: 1 / -1;
-    justify-self: end;
-  }
-
-  .sp-modalGrid {
     grid-template-columns: 1fr;
   }
+
+  .sp-close {
+    justify-self: start;
+  }
 }
+
 
