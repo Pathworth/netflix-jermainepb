@@ -12,6 +12,9 @@ import MeetJermaine from "./pages/MeetJermaine";
 // Extra / Pages
 import Contact from "./pages/Contact";
 import OnePager from "./pages/OnePager";
+import Skills from "./pages/Skills";
+
+
 
 
 // Hero / superhero art
@@ -121,6 +124,7 @@ export default function App() {
         {/* Extra pages */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/one-pager" element={<OnePager />} />
+        <Route path="/skills" element={<Skills />} />
       </Routes>
     </main>
   );
