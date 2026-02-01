@@ -49,16 +49,12 @@
   display: block;
 }
 
+/* Make all cards visually consistent */
 .pillar-card {
-  width: 100%;
-  background: linear-gradient(180deg, var(--jp-card), #101010);
-  border: 1px solid var(--jp-border);
-  border-radius: 14px;
-  padding: 16px 14px;
-  color: var(--jp-text);
-  text-align: left;
-  cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  padding: 16px 16px;
 }
 
 .pillar-card:hover {
@@ -73,10 +69,13 @@
   gap: 12px;
 }
 
+/* Make titles wrap cleanly but not blow up the card */
 .pillar-card-title {
-  font-size: 1.02rem;
-  line-height: 1.2;
-  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* max 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .pillar-card-icon {
