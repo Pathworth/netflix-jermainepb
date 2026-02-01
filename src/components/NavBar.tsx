@@ -1,74 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaBriefcase, FaTools, FaProjectDiagram, FaEnvelope } from 'react-icons/fa'; // Import icons
-import './Navbar.css';
-import netflixLogo from '../images/JP Netflix Blue Logo_sz3125.png';
-import blueImage from '../images/blue.png';
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  FaHome,
+  FaIdCard,
+  FaTools,
+  FaEnvelope,
+  FaFileAlt,
+} from "react-icons/fa";
+import "./Navbar.css";
+
+import netflixLogo from "../images/JP Netflix Blue Logo_sz3125.png";
+import blueImage from "../images/blue.png";
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const profileImage = location.state?.profileImage || blueImage;
 
-  const handleScroll = () => {
-    setIsScrolled(window.scrollY > 80);
-  };
-
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
+  // Only routes that exist right now
+  const navLinks = [
+    { label: "Home", path: "/browse", icon: <FaHome /> },
+    { label: "One Pager", path: "/one-pager", icon: <FaFileAlt /> },
+    { label: "Skills", path: "/skills", icon: <FaTools /> },
+    { label: "Contact", path: "/contact", icon: <FaEnvelope /> },
+  ];
 
   return (
     <>
-      <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
+      <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
         <div className="navbar-left">
-          <Link to="/" className="navbar-logo">
-            <img src={netflixLogo} alt="Netflix" />
+          <Link to="/browse" className="navbar-logo" onClick={closeSidebar}>
+            <img src={netflixLogo} alt="Jermaine Peguese" />
           </Link>
+
           <ul className="navbar-links">
-            <li><Link to="/browse">Home</Link></li>
-            <li><Link to="/work-experience">Professional</Link></li>
-            <li><Link to="/skills">Skills</Link></li>
-            <li><Link to="/projects">Projects</Link></li>
-            <li><Link to="/contact-me">Hire Me</Link></li>
+            {navLinks.map((l) => (
+              <li key={l.path}>
+                <Link to={l.path}>{l.label}</Link>
+              </li>
+            ))}
           </ul>
         </div>
+
         <div className="navbar-right">
           {/* Hamburger menu for mobile */}
-          <div className="hamburger" onClick={toggleSidebar}>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <img src={profileImage} alt="Profile" className="profile-icon" onClick={() => { navigate('/browse') }} />
+          <button
+            type="button"
+            className="hamburger"
+            onClick={toggleSidebar}
+            aria-label="Open menu"
+            aria-expanded={isSidebarOpen}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="profile-icon"
+            onClick={() => navigate("/browse")}
+          />
         </div>
       </nav>
 
       {/* Sidebar Overlay */}
-      <div className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} onClick={closeSidebar}></div>
+      <div
+        className={`sidebar-overlay ${isSidebarOpen ? "open" : ""}`}
+        onClick={closeSidebar}
+      />
 
-      {/* Sidebar (only visible on mobile) */}
-      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      {/* Sidebar (mobile) */}
+      <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-logo">
-          <img src={netflixLogo} alt="Netflix Logo" />
+          <img src={netflixLogo} alt="Jermaine Peguese" />
         </div>
+
         <ul>
-          <li><Link to="/browse" onClick={closeSidebar}><FaHome /> Home</Link></li>
-          <li><Link to="/work-experience" onClick={closeSidebar}><FaBriefcase /> Professional</Link></li>
-          <li><Link to="/skills" onClick={closeSidebar}><FaTools /> Skills</Link></li>
-          <li><Link to="/projects" onClick={closeSidebar}><FaProjectDiagram /> Projects</Link></li>
-          <li><Link to="/contact-me" onClick={closeSidebar}><FaEnvelope /> Hire Me</Link></li>
+          {navLinks.map((l) => (
+            <li key={l.path}>
+              <Link to={l.path} onClick={closeSidebar}>
+                {l.icon} {l.label}
+              </Link>
+            </li>
+          ))}
+
+          {/* Optional: quick jump back to profile tiles */}
+          <li>
+            <Link to="/browse" onClick={closeSidebar}>
+              <FaIdCard /> Profiles
+            </Link>
+          </li>
         </ul>
       </div>
     </>
