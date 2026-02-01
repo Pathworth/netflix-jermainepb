@@ -9,7 +9,6 @@
   --jp-muted: rgba(255,255,255,0.86);
   --jp-dim: rgba(255,255,255,0.62);
 
-  /* keep your site brand blue */
   --jp-accent: #007BFF;
 
   --jp-border: rgba(255, 255, 255, 0.10);
@@ -30,49 +29,72 @@
   min-height: 100vh;
 
   /* breathing room under navbar */
-  padding: 72px 18px 110px;
+  padding: 64px 18px 90px;
 }
 
 .skills-header {
   text-align: center;
   max-width: 1100px;
-  margin: 0 auto 22px;
+  margin: 0 auto 18px;
 }
 
-/* Netflix-ish title treatment (no external font dependency) */
-.skills-title {
+/* Premium title plate (soft) */
+.title-plate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px 22px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(0,123,255,0.20);
+
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.55),
+    0 0 26px rgba(0,123,255,0.12);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Superpowers headline: premium, cinematic, controlled glow */
+.superpowers-title {
   margin: 0;
-  font-size: 2.2rem;
-  font-weight: 950;
-  letter-spacing: 0.2px;
-  opacity: 0.92;
-}
-
-.skills-title--netflix {
-  color: var(--jp-accent);
-  font-size: clamp(2.4rem, 4vw, 3.6rem);
-  font-weight: 1000;
-  letter-spacing: 1.2px;
   text-transform: uppercase;
-  font-family: "Bebas Neue", "Oswald", "Impact", "Arial Narrow", sans-serif;
+
+  /* "Netflix-ish" tall/marketing feel via safe fallbacks */
+  font-family: "Bebas Neue", "Oswald", "Montserrat", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  font-size: 2.35rem;
+  font-weight: 950;
+  letter-spacing: 1.2px;
+  line-height: 1;
+
+  /* bright face + brand-blue energy */
+  color: rgba(255,255,255,0.92);
+
   text-shadow:
-    0 0 22px rgba(0, 123, 255, 0.22),
-    0 0 44px rgba(0, 123, 255, 0.12);
+    0 0 10px rgba(0,123,255,0.18),
+    0 0 22px rgba(0,123,255,0.12),
+    0 10px 26px rgba(0,0,0,0.55);
 }
 
+/* Subtitle under title */
 .skills-subtitle {
-  margin-top: 8px;
-  color: var(--jp-dim);
-  font-size: 0.98rem;
+  margin: 10px auto 0;
+  max-width: 620px;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.68);
 }
 
 /* Sections */
 .skills-section {
   max-width: 1100px;
-  margin: 0 auto 64px; /* more spacing between categories */
+  margin: 0 auto 56px; /* more space between categories */
 }
 
-/* Bracket lines + title centered */
+/* Category title: bigger + blue */
 .skills-section-title {
   position: relative;
   display: flex;
@@ -82,11 +104,12 @@
   gap: 14px;
   text-align: center;
 
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin: 26px 0 18px;
-  color: var(--jp-text);
-  letter-spacing: 0.2px;
+  font-size: 1.38rem;
+  font-weight: 950;
+  margin: 30px 0 18px;
+
+  color: var(--jp-accent);
+  letter-spacing: 0.3px;
 }
 
 .skills-section-title::before,
@@ -94,20 +117,13 @@
   content: "";
   height: 2px;
   flex: 1;
-  max-width: 240px;
+  max-width: 260px;
   background: linear-gradient(90deg, transparent, var(--jp-accent), transparent);
-  opacity: 0.85;
+  opacity: 0.9;
   border-radius: 999px;
 }
 
-.skills-section-title--accent {
-  color: var(--jp-accent);
-  font-size: 1.45rem;
-  font-weight: 950;
-  text-shadow: 0 0 18px rgba(0,123,255,0.14);
-}
-
-/* Grid base */
+/* Grid: top 3 */
 .pillars-grid {
   max-width: 1100px;
   margin: 0 auto;
@@ -116,19 +132,67 @@
   gap: 18px;
 }
 
-/*
-  Desktop: 12-column grid.
-  Each card spans 4 columns (12/3).
-  For 5 cards: first row is 3 cards; second row is 2 cards centered.
-*/
-.pillars-grid--twelve {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+.pillars-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/* each card uses 4 columns on desktop */
-.pillar-card {
-  grid-column: span 4;
+/* Bottom two centered */
+.pillars-row {
+  max-width: 1100px;
+  margin: 18px auto 0;
 
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+/* Keep bottom cards same visual weight as grid columns */
+.pillars-row .pillar-card {
+  flex: 0 1 350px;
+  max-width: 350px;
+}
+
+/* Responsive */
+@media (max-width: 1050px) {
+  .pillars-grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* On tablet, let bottom row match the same 2-col rhythm */
+  .pillars-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pillars-row .pillar-card {
+    max-width: none;
+    flex: initial;
+  }
+}
+
+@media (max-width: 640px) {
+  .skills-page {
+    padding: 56px 14px 80px;
+  }
+
+  .superpowers-title {
+    font-size: 2.05rem;
+    letter-spacing: 1px;
+  }
+
+  .pillars-grid--three {
+    grid-template-columns: 1fr;
+  }
+
+  .pillars-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pillar card (job-card style) */
+.pillar-card {
   background: linear-gradient(180deg, var(--jp-card), #0f0f0f);
   border: 1px solid var(--jp-border);
   border-radius: var(--radius);
@@ -146,40 +210,6 @@
   transform: translateY(-2px);
   box-shadow: 0 18px 40px var(--jp-glow);
   border-color: var(--jp-border-strong);
-}
-
-/* Center the last two cards for a 5-card section */
-.pillars-grid--five .pillar-card:nth-child(4) {
-  grid-column: 3 / span 4; /* centered left */
-}
-.pillars-grid--five .pillar-card:nth-child(5) {
-  grid-column: 7 / span 4; /* centered right */
-}
-
-/* Breakpoints */
-@media (max-width: 1050px) {
-  .pillars-grid--twelve {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .pillar-card {
-    grid-column: auto;
-  }
-  .pillars-grid--five .pillar-card:nth-child(4),
-  .pillars-grid--five .pillar-card:nth-child(5) {
-    grid-column: auto;
-  }
-}
-
-@media (max-width: 640px) {
-  .skills-page {
-    padding: 64px 14px 90px;
-  }
-  .skills-section {
-    margin-bottom: 56px;
-  }
-  .pillars-grid--twelve {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* top row: icon + plus */
@@ -548,4 +578,3 @@
     to { transform: translateY(0px); opacity: 1.0; }
   }
 }
-
