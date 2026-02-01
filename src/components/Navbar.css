@@ -20,15 +20,15 @@
 }
 
 .navbar-left, .navbar-right {
-  display: flex;
+  gap: 18px;            /* gives breathing room between logo + links */
   align-items: center;
 }
 
 .navbar-logo img {
-  height: 30px;
-  margin-right: 30px;
-  margin-left: 10px;
-  margin-top: 5px;
+ height: 34px;         /* try 32–38 */
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 /* Navbar Links */
