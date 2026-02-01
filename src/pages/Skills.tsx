@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./Skills.css";
 import { skillsPillars } from "../data/skillsPillars";
 
-// Title art (your exact file paths)
+// Title art (SVG primary + PNG fallback)
 import titleSvg from "../images/My Superpower Title Page final svg.svg";
 import titlePng from "../images/My Superpower Title Page final.png";
 
-// Icons (same iconKey setup you already use)
+// Icons
 import {
   FiShield,
   FiZap,
@@ -157,23 +157,13 @@ const groups: Group[] = [
   },
 ];
 
-// Numbers and tags live here so you do not have to edit your data file.
 // Range stays 87–96, never under 80.
 const pillarMeta: Record<string, { score: number; tags: string[] }> = {
-  "leadership-communication": {
-    score: 95,
-    tags: ["Professional", "Nonprofit", "Youth"],
-  },
+  "leadership-communication": { score: 95, tags: ["Professional", "Nonprofit", "Youth"] },
   "human-insight-talent": { score: 94, tags: ["Professional", "Youth"] },
-  "leadership-presence-character": {
-    score: 96,
-    tags: ["Professional", "Stakeholders"],
-  },
+  "leadership-presence-character": { score: 96, tags: ["Professional", "Stakeholders"] },
   "crisis-conflict": { score: 92, tags: ["Professional", "Nonprofit"] },
-  "consulting-strategic-advisory": {
-    score: 93,
-    tags: ["Professional", "Stakeholders"],
-  },
+  "consulting-strategic-advisory": { score: 93, tags: ["Professional", "Stakeholders"] },
 
   "strategy-systems": { score: 94, tags: ["Professional", "Small Business"] },
   "program-project-execution": { score: 93, tags: ["Professional", "Nonprofit"] },
@@ -219,23 +209,59 @@ const Skills: React.FC = () => {
     };
   }, [openId]);
 
+  const renderPillarCard = (p: (typeof skillsPillars)[number]) => {
+    const meta = pillarMeta[p.id] || { score: 90, tags: [] };
+
+    return (
+      <button
+        key={p.id}
+        className="pillar-card"
+        type="button"
+        onClick={() => setOpenId(p.id)}
+        aria-haspopup="dialog"
+        aria-expanded={openId === p.id}
+        aria-controls="skills-dialog"
+      >
+        <div className="pillar-top">
+          <div className="pillar-icon">{iconMap[p.iconKey]}</div>
+          <div className="pillar-plus" aria-hidden="true">
+            +
+          </div>
+        </div>
+
+        <div className="pillar-title">{p.title}</div>
+
+        <div className="pillar-tags">
+          {meta.tags.slice(0, 3).map((t) => (
+            <span key={t} className="tag">
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <div className="pillar-bottom">
+          <div className="pillar-score">
+            <div className="score-number">{meta.score}/100</div>
+            <div className="score-bar">
+              <span className="score-fill" style={{ width: `${meta.score}%` }} />
+            </div>
+          </div>
+
+          <span className="pillar-cta">Learn more</span>
+        </div>
+      </button>
+    );
+  };
+
   return (
     <div className="skills-page">
       <header className="skills-header">
-        <div className="superpowers-hero" aria-label="My Superpowers">
-          <picture>
-            <source srcSet={titleSvg} type="image/svg+xml" />
-            <img
-              src={titlePng}
-              alt="My Superpowers"
-              className="superpowers-title-img"
-              loading="eager"
-              decoding="async"
-            />
-          </picture>
+        <picture className="skills-title-art">
+          <source srcSet={titleSvg} type="image/svg+xml" />
+          <img src={titlePng} alt="My Superpowers" />
+        </picture>
 
-          <div className="superpowers-subtitle">Pick a pillar to open the full view.</div>
-        </div>
+        <div className="skills-subtitle">Pick a pillar to open the full view.</div>
       </header>
 
       {groups.map((g) => {
@@ -243,53 +269,24 @@ const Skills: React.FC = () => {
           .map((id) => pillarById.get(id))
           .filter((p): p is (typeof skillsPillars)[number] => Boolean(p));
 
+        const firstRow = groupPillars.slice(0, 3);
+        const secondRow = groupPillars.slice(3, 5);
+
         return (
           <section className="skills-section" key={g.title}>
             <h2 className="skills-section-title">{g.title}</h2>
 
-            <div className="pillars-grid pillars-grid--three">
-              {groupPillars.map((p) => {
-                const meta = pillarMeta[p.id] || { score: 90, tags: [] };
-
-                return (
-                  <button
-                    key={p.id}
-                    className="pillar-card"
-                    type="button"
-                    onClick={() => setOpenId(p.id)}
-                    aria-haspopup="dialog"
-                    aria-expanded={openId === p.id}
-                    aria-controls="skills-dialog"
-                  >
-                    <div className="pillar-top">
-                      <div className="pillar-icon">{iconMap[p.iconKey]}</div>
-                      <div className="pillar-plus">+</div>
-                    </div>
-
-                    <div className="pillar-title">{p.title}</div>
-
-                    <div className="pillar-tags">
-                      {meta.tags.slice(0, 3).map((t) => (
-                        <span key={t} className="tag">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="pillar-bottom">
-                      <div className="pillar-score">
-                        <div className="score-number">{meta.score}/100</div>
-                        <div className="score-bar">
-                          <span className="score-fill" style={{ width: `${meta.score}%` }} />
-                        </div>
-                      </div>
-
-                      <span className="pillar-cta">Learn more</span>
-                    </div>
-                  </button>
-                );
-              })}
+            {/* Row 1: 3 cards */}
+            <div className="pillars-row pillars-row--three">
+              {firstRow.map((p) => renderPillarCard(p))}
             </div>
+
+            {/* Row 2: 2 cards centered between the 3 above */}
+            {secondRow.length ? (
+              <div className="pillars-row pillars-row--two">
+                {secondRow.map((p) => renderPillarCard(p))}
+              </div>
+            ) : null}
           </section>
         );
       })}
@@ -314,7 +311,9 @@ const Skills: React.FC = () => {
 
                   {openPillar.microHeadline ? (
                     <div className="panel-micro">{openPillar.microHeadline}</div>
-                  ) : null}
+                  ) : (
+                    <div className="panel-micro">What people actually experience</div>
+                  )}
 
                   <div className="panel-meta">
                     {(pillarMeta[openPillar.id]?.tags || []).slice(0, 4).map((t) => (
@@ -322,7 +321,6 @@ const Skills: React.FC = () => {
                         {t}
                       </span>
                     ))}
-
                     <span className="panel-score">
                       {(pillarMeta[openPillar.id]?.score || 90)}/100
                     </span>
@@ -338,7 +336,7 @@ const Skills: React.FC = () => {
                 {openPillar.items.map((line, idx) => (
                   <div className="skill-card" key={`${openPillar.id}-${idx}`}>
                     <div className="skill-card-top">
-                      <span className="skill-dot" />
+                      <span className="skill-dot" aria-hidden="true" />
                       <div className="skill-card-title">{line.skill}</div>
                     </div>
                     <div className="skill-card-exp">{line.experience}</div>
