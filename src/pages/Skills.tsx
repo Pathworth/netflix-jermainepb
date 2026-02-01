@@ -141,6 +141,31 @@ const groups: Group[] = [
   },
 ];
 
+// Numbers and tags live here so you do not have to edit your data file.
+// Range stays 87–96 like you requested, never under 80.
+const pillarMeta: Record<
+  string,
+  { score: number; tags: string[] }
+> = {
+  "leadership-communication": { score: 95, tags: ["Professional", "Nonprofit", "Youth"] },
+  "human-insight-talent": { score: 94, tags: ["Professional", "Youth"] },
+  "leadership-presence-character": { score: 96, tags: ["Professional", "Stakeholders"] },
+  "crisis-conflict": { score: 92, tags: ["Professional", "Nonprofit"] },
+  "consulting-strategic-advisory": { score: 93, tags: ["Professional", "Stakeholders"] },
+
+  "strategy-systems": { score: 94, tags: ["Professional", "Small Business"] },
+  "program-project-execution": { score: 93, tags: ["Professional", "Nonprofit"] },
+  "training-design-curriculum": { score: 92, tags: ["Professional", "Youth"] },
+  "construction-project-ops-management": { score: 88, tags: ["Professional"] },
+  "community-governance-impact": { score: 91, tags: ["Nonprofit", "Community"] },
+
+  "ai-digital-enablement": { score: 92, tags: ["Small Business", "Nonprofit"] },
+  "marketing-brand-digital-strategy": { score: 90, tags: ["Small Business", "Professional"] },
+  "entrepreneurship-business-foundations": { score: 90, tags: ["Small Business", "Founders"] },
+  "nonprofit-creation-scaling-governance": { score: 89, tags: ["Nonprofit", "Boards"] },
+  "creative-design-digital-production": { score: 87, tags: ["Professional", "Small Business"] },
+};
+
 const Skills: React.FC = () => {
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -163,7 +188,6 @@ const Skills: React.FC = () => {
 
     document.addEventListener("keydown", onKeyDown);
 
-    // lock scroll behind modal
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -188,23 +212,44 @@ const Skills: React.FC = () => {
           <section className="skills-section" key={g.title}>
             <h2 className="skills-section-title">{g.title}</h2>
 
-            <div className="pillars-grid">
+            <div className="pillars-grid pillars-grid--three">
               {groupPillars.map((p) => {
-                const isActive = openId === p.id;
+                const meta = pillarMeta[p.id] || { score: 90, tags: [] };
 
                 return (
                   <button
                     key={p.id}
-                    className={`pillar-card ${isActive ? "pillar-card--active" : ""}`}
+                    className="pillar-card"
                     type="button"
                     onClick={() => setOpenId(p.id)}
                     aria-haspopup="dialog"
-                    aria-expanded={isActive}
+                    aria-expanded={openId === p.id}
                     aria-controls="skills-dialog"
                   >
-                    <div className="pillar-card-inner">
-                      <div className="pillar-card-icon">{iconMap[p.iconKey]}</div>
-                      <div className="pillar-card-title">{p.title}</div>
+                    <div className="pillar-top">
+                      <div className="pillar-icon">{iconMap[p.iconKey]}</div>
+                      <div className="pillar-plus">+</div>
+                    </div>
+
+                    <div className="pillar-title">{p.title}</div>
+
+                    <div className="pillar-tags">
+                      {meta.tags.slice(0, 3).map((t) => (
+                        <span key={t} className="tag">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="pillar-bottom">
+                      <div className="pillar-score">
+                        <div className="score-number">{meta.score}/100</div>
+                        <div className="score-bar">
+                          <span className="score-fill" style={{ width: `${meta.score}%` }} />
+                        </div>
+                      </div>
+
+                      <span className="pillar-cta">Learn more</span>
                     </div>
                   </button>
                 );
@@ -216,11 +261,7 @@ const Skills: React.FC = () => {
 
       {/* Spotlight modal / bottom sheet */}
       {openPillar ? (
-        <div
-          className="skills-modal-overlay"
-          role="presentation"
-          onClick={close}
-        >
+        <div className="skills-modal-overlay" role="presentation" onClick={close}>
           <div
             id="skills-dialog"
             className="skills-modal"
@@ -238,6 +279,18 @@ const Skills: React.FC = () => {
                   {openPillar.microHeadline ? (
                     <div className="panel-micro">{openPillar.microHeadline}</div>
                   ) : null}
+
+                  {/* tags + score inside spotlight */}
+                  <div className="panel-meta">
+                    {(pillarMeta[openPillar.id]?.tags || []).slice(0, 4).map((t) => (
+                      <span key={t} className="tag tag--soft">
+                        {t}
+                      </span>
+                    ))}
+                    <span className="panel-score">
+                      {(pillarMeta[openPillar.id]?.score || 90)}/100
+                    </span>
+                  </div>
                 </div>
 
                 <button className="panel-close" type="button" onClick={close}>
@@ -245,11 +298,15 @@ const Skills: React.FC = () => {
                 </button>
               </div>
 
-              <div className="panel-rows" role="list">
+              {/* Skill cards instead of spreadsheet rows */}
+              <div className="panel-cards">
                 {openPillar.items.map((line, idx) => (
-                  <div className="panel-row" role="listitem" key={`${openPillar.id}-${idx}`}>
-                    <div className="panel-skill">{line.skill}</div>
-                    <div className="panel-exp">{line.experience}</div>
+                  <div className="skill-card" key={`${openPillar.id}-${idx}`}>
+                    <div className="skill-card-top">
+                      <span className="skill-dot" />
+                      <div className="skill-card-title">{line.skill}</div>
+                    </div>
+                    <div className="skill-card-exp">{line.experience}</div>
                   </div>
                 ))}
               </div>
