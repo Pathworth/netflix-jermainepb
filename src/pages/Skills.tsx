@@ -213,11 +213,55 @@ const Skills: React.FC = () => {
     };
   }, [openId]);
 
+  const renderPillarCard = (p: (typeof skillsPillars)[number]) => {
+    const meta = pillarMeta[p.id] || { score: 90, tags: [] };
+
+    return (
+      <button
+        key={p.id}
+        className="pillar-card"
+        type="button"
+        onClick={() => setOpenId(p.id)}
+        aria-haspopup="dialog"
+        aria-expanded={openId === p.id}
+        aria-controls="skills-dialog"
+      >
+        <div className="pillar-top">
+          <div className="pillar-icon">{iconMap[p.iconKey]}</div>
+          <div className="pillar-plus">+</div>
+        </div>
+
+        <div className="pillar-title">{p.title}</div>
+
+        <div className="pillar-tags">
+          {meta.tags.slice(0, 3).map((t) => (
+            <span key={t} className="tag">
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <div className="pillar-bottom">
+          <div className="pillar-score">
+            <div className="score-number">{meta.score}/100</div>
+            <div className="score-bar">
+              <span className="score-fill" style={{ width: `${meta.score}%` }} />
+            </div>
+          </div>
+
+          <span className="pillar-cta">Learn more</span>
+        </div>
+      </button>
+    );
+  };
+
   return (
     <div className="skills-page">
       <header className="skills-header">
-        <h1 className="skills-title skills-title--netflix">Superpowers</h1>
-        <div className="skills-subtitle">Pick a pillar to open the full view.</div>
+        <div className="title-plate">
+          <h1 className="superpowers-title">Superpowers</h1>
+        </div>
+        <p className="skills-subtitle">Pick a pillar to open the full view.</p>
       </header>
 
       {groups.map((g) => {
@@ -225,54 +269,22 @@ const Skills: React.FC = () => {
           .map((id) => pillarById.get(id))
           .filter((p): p is (typeof skillsPillars)[number] => Boolean(p));
 
+        const topThree = groupPillars.slice(0, 3);
+        const bottomTwo = groupPillars.slice(3);
+
         return (
           <section className="skills-section" key={g.title}>
-            <h2 className="skills-section-title skills-section-title--accent">{g.title}</h2>
+            <h2 className="skills-section-title">{g.title}</h2>
 
-            {/* 12-col grid on desktop for centered 3+2 layout */}
-            <div className="pillars-grid pillars-grid--twelve pillars-grid--five">
-              {groupPillars.map((p) => {
-                const meta = pillarMeta[p.id] || { score: 90, tags: [] };
-
-                return (
-                  <button
-                    key={p.id}
-                    className="pillar-card"
-                    type="button"
-                    onClick={() => setOpenId(p.id)}
-                    aria-haspopup="dialog"
-                    aria-expanded={openId === p.id}
-                    aria-controls="skills-dialog"
-                  >
-                    <div className="pillar-top">
-                      <div className="pillar-icon">{iconMap[p.iconKey]}</div>
-                      <div className="pillar-plus">+</div>
-                    </div>
-
-                    <div className="pillar-title">{p.title}</div>
-
-                    <div className="pillar-tags">
-                      {meta.tags.slice(0, 3).map((t) => (
-                        <span key={t} className="tag">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="pillar-bottom">
-                      <div className="pillar-score">
-                        <div className="score-number">{meta.score}/100</div>
-                        <div className="score-bar">
-                          <span className="score-fill" style={{ width: `${meta.score}%` }} />
-                        </div>
-                      </div>
-
-                      <span className="pillar-cta">Learn more</span>
-                    </div>
-                  </button>
-                );
-              })}
+            <div className="pillars-grid pillars-grid--three">
+              {topThree.map(renderPillarCard)}
             </div>
+
+            {bottomTwo.length ? (
+              <div className="pillars-row pillars-row--center">
+                {bottomTwo.map(renderPillarCard)}
+              </div>
+            ) : null}
           </section>
         );
       })}
