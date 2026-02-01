@@ -1,448 +1,463 @@
-/* Optional: Netflix-style condensed headline feel */
-@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+/* src/pages/Skills.css */
 
 :root {
-  --sp-bg: #0b0f1a;
-  --sp-bg2: #070a12;
-  --sp-card: rgba(18, 22, 32, 0.72);
-  --sp-card2: rgba(12, 14, 22, 0.78);
-  --sp-border: rgba(120, 140, 255, 0.22);
-  --sp-border2: rgba(120, 140, 255, 0.35);
-  --sp-text: rgba(255, 255, 255, 0.92);
-  --sp-muted: rgba(255, 255, 255, 0.66);
-  --sp-blue: #6f8cff;
-  --sp-blue2: rgba(111, 140, 255, 0.35);
-  --sp-shadow: 0 26px 80px rgba(0, 0, 0, 0.55);
-  --sp-radius: 18px;
-  --sp-radius2: 22px;
+  --bg: #070a10;
+  --panel: rgba(10, 13, 20, 0.78);
+  --panel-2: rgba(10, 13, 20, 0.88);
+  --stroke: rgba(255, 255, 255, 0.10);
+  --stroke-2: rgba(255, 255, 255, 0.14);
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.65);
+  --muted2: rgba(255, 255, 255, 0.50);
+  --blue: #4c79ff;
+  --blue2: rgba(76, 121, 255, 0.45);
+  --shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  --radius: 18px;
 }
 
-/* Page */
-.sp-page {
+.skillsPage {
   min-height: 100vh;
-  background:
-    radial-gradient(900px 520px at 50% 160px, rgba(111, 140, 255, 0.22), transparent 60%),
-    radial-gradient(900px 520px at 18% 220px, rgba(111, 140, 255, 0.12), transparent 60%),
-    radial-gradient(900px 520px at 82% 220px, rgba(111, 140, 255, 0.12), transparent 60%),
-    linear-gradient(180deg, var(--sp-bg), var(--sp-bg2));
-  color: var(--sp-text);
+  background: radial-gradient(1200px 700px at 50% 0%, rgba(76, 121, 255, 0.12), transparent 60%),
+    radial-gradient(900px 600px at 20% 10%, rgba(76, 121, 255, 0.08), transparent 55%),
+    radial-gradient(900px 600px at 80% 20%, rgba(76, 121, 255, 0.06), transparent 60%),
+    linear-gradient(180deg, #05070c 0%, #05070c 30%, #04060a 100%);
+  color: var(--text);
 }
 
-.sp-wrap {
-  width: min(1200px, 92vw);
-  margin: 0 auto;
-  padding: 92px 0 72px; /* gives space under the navbar */
-}
-
-.sp-hero {
-  text-align: center;
-  margin: 8px 0 26px;
-}
-
-.sp-title {
-  margin: 0;
-  font-family: "Bebas Neue", Impact, "Arial Narrow", system-ui, sans-serif;
-  font-size: clamp(44px, 5.6vw, 76px);
-  letter-spacing: 0.8px;
-  color: var(--sp-blue);
-  text-shadow: 0 14px 70px rgba(111, 140, 255, 0.25);
-}
-
-.sp-subtitle {
-  margin: 6px 0 0;
-  font-size: 15px;
-  color: var(--sp-muted);
-}
-
-/* Sections spacing */
-.sp-sections {
-  margin-top: 18px;
-}
-
-.sp-section {
-  margin-top: 44px; /* stronger break between the 3 groups */
-}
-
-.sp-sectionHeader {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 14px;
-  margin: 0 auto 18px;
-  width: min(980px, 92vw);
-}
-
-.sp-sectionTitle {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.sp-line {
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(111, 140, 255, 0.55), transparent);
-  box-shadow: 0 0 0 1px rgba(111, 140, 255, 0.08);
-}
-
-/* Grid that centers the last row (2 cards) */
-.sp-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
-  justify-content: center;
-  gap: 18px;
-}
-
-/* Card */
-.sp-card {
-  position: relative;
-  border-radius: var(--sp-radius2);
-  padding: 18px 18px 16px;
-  background: linear-gradient(180deg, var(--sp-card), var(--sp-card2));
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: 0 14px 60px rgba(0, 0, 0, 0.42);
+/* stop background scroll when modal is open */
+.skills-modal-open {
   overflow: hidden;
-  min-height: 212px; /* keeps all cards same feel */
 }
 
-.sp-card:hover {
-  border-color: var(--sp-border2);
-  box-shadow: 0 18px 74px rgba(0, 0, 0, 0.52);
-  transform: translateY(-1px);
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+.skillsHero {
+  width: 100%;
+  padding: 90px 16px 18px; /* brings title down + gives breathing room under navbar */
+  text-align: center;
 }
 
-.sp-cardTop {
+.skillsTitle {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--blue);
+  font-size: clamp(44px, 5vw, 66px);
+
+  /* “Netflix-ish” feel (uses what’s available, no external dependency required) */
+  font-family: "Bebas Neue", "Netflix Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-transform: none;
+}
+
+.skillsSub {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.skillsWrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 80px;
+}
+
+/* SECTION HEADER with bracket lines */
+.skillsSection {
+  margin-top: 44px; /* clean cushion between sections */
+}
+
+.sectionHeading {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 18px;
 }
 
-/* Rotating aura (subtle) */
-.sp-cardAura {
+.sectionHeading::before,
+.sectionHeading::after {
+  content: "";
+  height: 2px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgba(76, 121, 255, 0.45), transparent);
+  opacity: 0.9;
+}
+
+.sectionHeading h2 {
+  margin: 0;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.90);
+  letter-spacing: 0.2px;
+}
+
+/* GRID */
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+  justify-items: center; /* centers short rows (like 2 cards) */
+  align-items: stretch;
+}
+
+/* CARD */
+.pillarCard {
+  width: 100%;
+  max-width: 360px;
+  background: radial-gradient(900px 380px at 20% 0%, rgba(76, 121, 255, 0.14), transparent 55%),
+    linear-gradient(180deg, rgba(12, 16, 25, 0.78) 0%, rgba(10, 12, 18, 0.86) 100%);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillarCard::before {
+  content: "";
   position: absolute;
-  inset: -140px -120px auto -120px;
-  height: 340px;
-  background:
-    conic-gradient(
-      from 0deg,
-      rgba(111, 140, 255, 0.0),
-      rgba(111, 140, 255, 0.18),
-      rgba(111, 140, 255, 0.0),
-      rgba(111, 140, 255, 0.12),
-      rgba(111, 140, 255, 0.0)
-    );
-  filter: blur(22px);
-  opacity: 0.75;
-  animation: sp-spin 9s linear infinite;
+  inset: -2px;
+  border-radius: var(--radius);
+  background: radial-gradient(700px 240px at 30% 0%, rgba(76, 121, 255, 0.16), transparent 60%);
   pointer-events: none;
+  opacity: 0.75;
 }
 
-@keyframes sp-spin {
-  to {
-    transform: rotate(360deg);
-  }
+.pillarCard:hover {
+  border-color: rgba(76, 121, 255, 0.35);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sp-cardAura,
-  .sp-modalAura {
-    animation: none;
-  }
+.cardTop {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.sp-plus {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  border-radius: 9px;
-  border: 1px solid rgba(111, 140, 255, 0.20);
-  background: rgba(18, 22, 32, 0.55);
-  color: rgba(255, 255, 255, 0.85);
-  cursor: pointer;
-}
-
-.sp-plus:hover {
-  border-color: rgba(111, 140, 255, 0.40);
-  background: rgba(18, 22, 32, 0.72);
-}
-
-.sp-icons {
+.cardIcons {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.sp-icon {
-  display: inline-flex;
-  width: 22px;
-  height: 22px;
-  color: rgba(111, 140, 255, 0.92);
-  opacity: 0.95;
+.iconBubble {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  border: 1px solid rgba(76, 121, 255, 0.35);
+  background: rgba(76, 121, 255, 0.10);
+  color: rgba(120, 165, 255, 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.30);
 }
 
-.sp-cardTitle {
-  margin: 10px 0 10px;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  line-height: 1.22;
+.iconBubble svg {
+  width: 18px;
+  height: 18px;
+}
 
-  /* This prevents the "..." problem */
+.iconBubble.large {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+}
+.iconBubble.large svg {
+  width: 22px;
+  height: 22px;
+}
+
+.miniPlus {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid rgba(76, 121, 255, 0.25);
+  background: rgba(76, 121, 255, 0.10);
+  color: rgba(180, 205, 255, 0.92);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.miniPlus:hover {
+  background: rgba(76, 121, 255, 0.16);
+  border-color: rgba(76, 121, 255, 0.35);
+}
+
+.pillarTitle {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+
+  /* IMPORTANT: no ellipsis, allow wrap */
   white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
+  word-break: break-word;
+  min-height: 48px; /* keeps titles aligned across cards */
 }
 
 /* Tags */
-.sp-tags {
+.tagRow {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 2px;
-}
-
-.sp-tagsTight {
+  gap: 10px;
   margin-top: 10px;
 }
 
-.sp-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(10, 12, 18, 0.35);
-  color: rgba(255, 255, 255, 0.78);
+.tagChip {
   font-size: 12px;
-  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.78);
 }
 
-/* Score + bar */
-.sp-scoreRow {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 12px;
+.tagChip.modal {
+  border-color: rgba(76, 121, 255, 0.22);
+  background: rgba(76, 121, 255, 0.08);
 }
 
-.sp-scoreText {
+/* Score + progress */
+.scoreRow {
+  position: relative;
+  z-index: 2;
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.scoreText {
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.88);
 }
 
-.sp-bar {
+.progressTrack {
+  position: relative;
+  z-index: 2;
   height: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.10);
+  margin-top: 8px;
   overflow: hidden;
 }
 
-.sp-barFill {
+.progressFill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(111, 140, 255, 0.80), rgba(111, 140, 255, 0.30));
+  background: linear-gradient(90deg, rgba(76, 121, 255, 0.55), rgba(76, 121, 255, 0.95));
 }
 
-/* Learn more button */
-.sp-actions {
+/* Actions */
+.cardActions {
+  position: relative;
+  z-index: 2;
+  margin-top: 14px;
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
 }
 
-.sp-learn {
-  padding: 8px 14px;
+.learnMoreBtn {
+  padding: 10px 18px;
   border-radius: 12px;
-  border: 1px solid rgba(111, 140, 255, 0.22);
-  background: rgba(12, 14, 22, 0.45);
-  color: rgba(255, 255, 255, 0.86);
-  font-weight: 700;
+  border: 1px solid rgba(76, 121, 255, 0.28);
+  background: rgba(12, 16, 25, 0.45);
+  color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
+  font-weight: 700;
 }
 
-.sp-learn:hover {
-  border-color: rgba(111, 140, 255, 0.40);
-  background: rgba(12, 14, 22, 0.62);
+.learnMoreBtn:hover {
+  border-color: rgba(76, 121, 255, 0.45);
+  background: rgba(76, 121, 255, 0.10);
 }
 
-/* Modal */
-.sp-modalOverlay {
+/* MODAL */
+.skillsBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+}
+
+.skillsModalShell {
   position: fixed;
   inset: 0;
   z-index: 60;
   display: grid;
   place-items: center;
-}
-
-.sp-modalBackdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(6px);
-}
-
-.sp-modal {
-  position: relative;
-  width: min(1100px, 94vw);
-  border-radius: 26px;
-  border: 1px solid rgba(111, 140, 255, 0.25);
-  background:
-    radial-gradient(900px 520px at 50% -120px, rgba(111, 140, 255, 0.22), transparent 60%),
-    linear-gradient(180deg, rgba(16, 18, 26, 0.90), rgba(10, 11, 17, 0.92));
-  box-shadow: var(--sp-shadow);
-  overflow: hidden;
-}
-
-/* Modal aura (brighter than cards, still subtle) */
-.sp-modalAura {
-  position: absolute;
-  inset: -200px -180px auto -180px;
-  height: 460px;
-  background:
-    conic-gradient(
-      from 0deg,
-      rgba(111, 140, 255, 0.0),
-      rgba(111, 140, 255, 0.22),
-      rgba(111, 140, 255, 0.0),
-      rgba(111, 140, 255, 0.14),
-      rgba(111, 140, 255, 0.0)
-    );
-  filter: blur(26px);
-  opacity: 0.9;
-  animation: sp-spin 10s linear infinite;
-  pointer-events: none;
-}
-
-.sp-modalHeader {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 14px;
-  align-items: start;
-  padding: 18px 18px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-}
-
-.sp-modalIcons {
-  display: flex;
-  gap: 10px;
-  padding-top: 6px;
-}
-
-.sp-modalTitleWrap {
-  min-width: 0;
-}
-
-.sp-modalTitle {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: 0.2px;
-}
-
-.sp-modalMicro {
-  margin: 4px 0 0;
-  color: rgba(255, 255, 255, 0.66);
-  font-size: 14px;
-}
-
-.sp-modalMeta {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.sp-modalScore {
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.sp-close {
-  padding: 8px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(10, 12, 18, 0.35);
-  color: rgba(255, 255, 255, 0.90);
-  cursor: pointer;
-}
-
-.sp-close:hover {
-  border-color: rgba(111, 140, 255, 0.35);
-}
-
-.sp-modalBody {
-  position: relative;
-  z-index: 1;
   padding: 18px;
 }
 
-/* Detail cards (premium feel, not excel rows) */
-.sp-detailGrid {
+.skillsModal {
+  width: min(1080px, 96vw);
+  border-radius: 22px;
+  border: 1px solid rgba(76, 121, 255, 0.30);
+  background: radial-gradient(1000px 520px at 25% 0%, rgba(76, 121, 255, 0.18), transparent 60%),
+    linear-gradient(180deg, rgba(12, 16, 25, 0.88), rgba(10, 12, 18, 0.94));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.72);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Rotating aura behind the modal content (subtle premium glow) */
+.auraRotate::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  left: -140px;
+  top: -210px;
+  background: radial-gradient(circle at 30% 30%, rgba(76, 121, 255, 0.40), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(76, 121, 255, 0.22), transparent 55%);
+  filter: blur(10px);
+  opacity: 0.75;
+  animation: auraSpin 12s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes auraSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.modalHeader {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  padding: 18px 18px 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.modalIcons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.modalTitleBlock {
+  min-width: 0;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.modalSub {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.modalRight {
+  display: flex;
+  align-items: start;
+  justify-content: flex-end;
+}
+
+.closeBtn {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.closeBtn:hover {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.modalMetaRow {
+  position: relative;
+  z-index: 2;
+  padding: 0 18px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modalScore {
+  margin-left: 6px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.modalDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.10);
+  position: relative;
+  z-index: 2;
+}
+
+/* Premium “skill cards” inside modal (NOT excel rows) */
+.itemsGrid {
+  position: relative;
+  z-index: 2;
+  padding: 16px 18px 20px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
-.sp-detailCard {
+.itemCard {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 14px 14px;
   display: grid;
-  grid-template-columns: 14px 1fr;
+  grid-template-columns: 10px 1fr;
   gap: 12px;
   align-items: start;
-  padding: 14px 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(10, 12, 18, 0.35);
 }
 
-.sp-dot {
+.itemDot {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  margin-top: 6px;
-  background: rgba(111, 140, 255, 0.95);
-  box-shadow: 0 0 0 6px rgba(111, 140, 255, 0.12);
+  margin-top: 5px;
+  background: rgba(76, 121, 255, 0.85);
+  box-shadow: 0 0 0 4px rgba(76, 121, 255, 0.10);
 }
 
-.sp-detailSkill {
-  font-weight: 900;
-  letter-spacing: 0.2px;
+.itemSkill {
+  font-size: 16px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
 }
 
-.sp-detailExp {
+.itemExp {
   margin-top: 6px;
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.35;
 }
 
-/* Mobile */
-@media (max-width: 860px) {
-  .sp-wrap {
+/* Responsive */
+@media (max-width: 780px) {
+  .skillsHero {
     padding-top: 86px;
   }
 
-  .sp-grid {
-    grid-template-columns: repeat(auto-fit, minmax(290px, 290px));
-  }
-
-  .sp-detailGrid {
+  .itemsGrid {
     grid-template-columns: 1fr;
   }
 
-  .sp-modalHeader {
-    grid-template-columns: 1fr;
-  }
-
-  .sp-close {
-    justify-self: start;
+  .pillarCard {
+    max-width: 520px;
   }
 }
-
-
