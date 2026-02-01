@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaHome,
-  FaIdCard,
   FaTools,
-  FaEnvelope,
   FaFileAlt,
+  FaEnvelope,
 } from "react-icons/fa";
 import "./Navbar.css";
 
@@ -22,91 +21,101 @@ const Navbar: React.FC = () => {
   const profileImage = location.state?.profileImage || blueImage;
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 80);
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const toggleSidebar = () => setIsSidebarOpen((v) => !v);
   const closeSidebar = () => setIsSidebarOpen(false);
-
-  // Only routes that exist right now
-  const navLinks = [
-    { label: "Home", path: "/browse", icon: <FaHome /> },
-    { label: "One Pager", path: "/one-pager", icon: <FaFileAlt /> },
-    { label: "Skills", path: "/skills", icon: <FaTools /> },
-    { label: "Contact", path: "/contact", icon: <FaEnvelope /> },
-  ];
 
   return (
     <>
-      <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+      <header className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+        {/* Left side: Logo + Main Nav */}
         <div className="navbar-left">
           <Link to="/browse" className="navbar-logo" onClick={closeSidebar}>
             <img src={netflixLogo} alt="Jermaine Peguese" />
           </Link>
 
-          <ul className="navbar-links">
-            {navLinks.map((l) => (
-              <li key={l.path}>
-                <Link to={l.path}>{l.label}</Link>
+          <nav className="navbar-main" aria-label="Primary">
+            <ul className="navbar-links">
+              <li>
+                <Link to="/browse">Home</Link>
               </li>
-            ))}
-          </ul>
+              <li>
+                <Link to="/skills">Superpowers</Link>
+              </li>
+              <li>
+                <Link to="/one-pager">One-Pager</Link>
+              </li>
+              <li>
+                <Link to="/contact">Hire Me</Link>
+              </li>
+            </ul>
+          </nav>
         </div>
 
+        {/* Right side: Actions + Profile + Hamburger */}
         <div className="navbar-right">
-          {/* Hamburger menu for mobile */}
           <button
             type="button"
-            className="hamburger"
-            onClick={toggleSidebar}
+            className="icon-btn hamburger"
             aria-label="Open menu"
             aria-expanded={isSidebarOpen}
+            onClick={toggleSidebar}
           >
             <span />
             <span />
             <span />
           </button>
 
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="profile-icon"
+          <button
+            type="button"
+            className="profile-btn"
+            aria-label="Go to Home"
             onClick={() => navigate("/browse")}
-          />
+          >
+            <img src={profileImage} alt="Profile" className="profile-icon" />
+          </button>
         </div>
-      </nav>
+      </header>
 
-      {/* Sidebar Overlay */}
+      {/* Overlay */}
       <div
         className={`sidebar-overlay ${isSidebarOpen ? "open" : ""}`}
         onClick={closeSidebar}
       />
 
       {/* Sidebar (mobile) */}
-      <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+      <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`} aria-label="Mobile menu">
         <div className="sidebar-logo">
           <img src={netflixLogo} alt="Jermaine Peguese" />
         </div>
 
-        <ul>
-          {navLinks.map((l) => (
-            <li key={l.path}>
-              <Link to={l.path} onClick={closeSidebar}>
-                {l.icon} {l.label}
-              </Link>
-            </li>
-          ))}
-
-          {/* Optional: quick jump back to profile tiles */}
+        <ul className="sidebar-links">
           <li>
             <Link to="/browse" onClick={closeSidebar}>
-              <FaIdCard /> Profiles
+              <FaHome /> Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/skills" onClick={closeSidebar}>
+              <FaTools /> Superpowers
+            </Link>
+          </li>
+          <li>
+            <Link to="/one-pager" onClick={closeSidebar}>
+              <FaFileAlt /> One-Pager
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" onClick={closeSidebar}>
+              <FaEnvelope /> Hire Me
             </Link>
           </li>
         </ul>
-      </div>
+      </aside>
     </>
   );
 };
