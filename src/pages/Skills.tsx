@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./Skills.css";
 import { skillsPillars } from "../data/skillsPillars";
 
-// Icons (same set you already use)
+// Icons (same iconKey setup you already use)
 import { FiShield, FiZap, FiUsers, FiCheckSquare, FiCompass, FiFileText } from "react-icons/fi";
 import { BsGear, BsHeart, BsPerson } from "react-icons/bs";
 import { AiOutlineCloud, AiOutlineTool } from "react-icons/ai";
@@ -11,21 +11,96 @@ import { FaBullhorn, FaHardHat, FaStore } from "react-icons/fa";
 import { MdOutlineArchitecture, MdOutlineMenuBook, MdOutlinePlayCircle, MdOutlineAutoGraph } from "react-icons/md";
 
 const iconMap: Record<string, JSX.Element> = {
-  megaphone_shield: <span className="icon-pair"><HiOutlineSpeakerphone /><FiShield /></span>,
-  blueprint_gear: <span className="icon-pair"><MdOutlineArchitecture /><BsGear /></span>,
-  head_spark: <span className="icon-pair"><BsPerson /><MdOutlineAutoGraph /></span>,
-  brain_cloud: <span className="icon-pair"><AiOutlineTool /><AiOutlineCloud /></span>,
-  shield_lightning: <span className="icon-pair"><FiShield /><FiZap /></span>,
-  book_blocks: <span className="icon-pair"><MdOutlineMenuBook /><FiCheckSquare /></span>,
-  community_scale: <span className="icon-pair"><FiUsers /><AiOutlineTool /></span>,
-  checklist_rocket: <span className="icon-pair"><FiCheckSquare /><MdOutlineAutoGraph /></span>,
-  silhouette_halo: <span className="icon-pair"><BsPerson /><FiShield /></span>,
-  compass_document: <span className="icon-pair"><FiCompass /><FiFileText /></span>,
-  bullhorn_signal: <span className="icon-pair"><FaBullhorn /><MdOutlineAutoGraph /></span>,
-  hardhat_clipboard: <span className="icon-pair"><FaHardHat /><FiFileText /></span>,
-  storefront_uparrow: <span className="icon-pair"><FaStore /><MdOutlineAutoGraph /></span>,
-  heart_blueprint: <span className="icon-pair"><BsHeart /><MdOutlineArchitecture /></span>,
-  pentool_play: <span className="icon-pair"><AiOutlineTool /><MdOutlinePlayCircle /></span>,
+  megaphone_shield: (
+    <span className="icon-pair">
+      <HiOutlineSpeakerphone />
+      <FiShield />
+    </span>
+  ),
+  blueprint_gear: (
+    <span className="icon-pair">
+      <MdOutlineArchitecture />
+      <BsGear />
+    </span>
+  ),
+  head_spark: (
+    <span className="icon-pair">
+      <BsPerson />
+      <MdOutlineAutoGraph />
+    </span>
+  ),
+  brain_cloud: (
+    <span className="icon-pair">
+      <AiOutlineTool />
+      <AiOutlineCloud />
+    </span>
+  ),
+  shield_lightning: (
+    <span className="icon-pair">
+      <FiShield />
+      <FiZap />
+    </span>
+  ),
+  book_blocks: (
+    <span className="icon-pair">
+      <MdOutlineMenuBook />
+      <FiCheckSquare />
+    </span>
+  ),
+  community_scale: (
+    <span className="icon-pair">
+      <FiUsers />
+      <AiOutlineTool />
+    </span>
+  ),
+  checklist_rocket: (
+    <span className="icon-pair">
+      <FiCheckSquare />
+      <MdOutlineAutoGraph />
+    </span>
+  ),
+  silhouette_halo: (
+    <span className="icon-pair">
+      <BsPerson />
+      <FiShield />
+    </span>
+  ),
+  compass_document: (
+    <span className="icon-pair">
+      <FiCompass />
+      <FiFileText />
+    </span>
+  ),
+  bullhorn_signal: (
+    <span className="icon-pair">
+      <FaBullhorn />
+      <MdOutlineAutoGraph />
+    </span>
+  ),
+  hardhat_clipboard: (
+    <span className="icon-pair">
+      <FaHardHat />
+      <FiFileText />
+    </span>
+  ),
+  storefront_uparrow: (
+    <span className="icon-pair">
+      <FaStore />
+      <MdOutlineAutoGraph />
+    </span>
+  ),
+  heart_blueprint: (
+    <span className="icon-pair">
+      <BsHeart />
+      <MdOutlineArchitecture />
+    </span>
+  ),
+  pentool_play: (
+    <span className="icon-pair">
+      <AiOutlineTool />
+      <MdOutlinePlayCircle />
+    </span>
+  ),
 };
 
 type Group = {
@@ -75,49 +150,39 @@ const Skills: React.FC = () => {
     return map;
   }, []);
 
-  const toggle = (id: string) => setOpenId((prev) => (prev === id ? null : id));
+  const openPillar = openId ? pillarById.get(openId) : null;
 
-  const renderExpanded = (id: string) => {
-    const p = pillarById.get(id);
-    if (!p) return null;
+  const close = () => setOpenId(null);
 
-    return (
-      <div className="pillar-expanded pillar-expanded--full">
-        <div className="expanded-top">
-          <div className="expanded-left">{iconMap[p.iconKey]}</div>
+  useEffect(() => {
+    if (!openId) return;
 
-          <div className="expanded-center">
-            <div className="expanded-title">{p.title}</div>
-            {p.microHeadline ? <div className="expanded-micro">{p.microHeadline}</div> : null}
-          </div>
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
 
-          <button className="expanded-close" type="button" onClick={() => setOpenId(null)}>
-            Close
-          </button>
-        </div>
+    document.addEventListener("keydown", onKeyDown);
 
-        <div className="expanded-body">
-          {p.items.map((line, idx) => (
-            <div className="expanded-row" key={`${p.id}-${idx}`}>
-              <div className="expanded-skill">{line.skill}</div>
-              <div className="expanded-exp">{line.experience}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+    // lock scroll behind modal
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [openId]);
 
   return (
     <div className="skills-page">
-      <div className="skills-header">
+      <header className="skills-header">
         <h1 className="skills-title">Skills</h1>
-        <p className="skills-helper">Click a pillar to expand.</p>
-      </div>
+      </header>
 
       {groups.map((g) => {
-        const groupPillars = g.ids.map((id) => pillarById.get(id)).filter(Boolean) as typeof skillsPillars;
-        const openInGroup = openId && g.ids.includes(openId);
+        const groupPillars = g.ids
+          .map((id) => pillarById.get(id))
+          .filter(Boolean) as typeof skillsPillars;
 
         return (
           <section className="skills-section" key={g.title}>
@@ -125,15 +190,17 @@ const Skills: React.FC = () => {
 
             <div className="pillars-grid">
               {groupPillars.map((p) => {
-                const isOpen = openId === p.id;
+                const isActive = openId === p.id;
 
                 return (
                   <button
                     key={p.id}
-                    className={`pillar-card ${isOpen ? "pillar-card--active" : ""}`}
+                    className={`pillar-card ${isActive ? "pillar-card--active" : ""}`}
                     type="button"
-                    onClick={() => toggle(p.id)}
-                    aria-expanded={isOpen}
+                    onClick={() => setOpenId(p.id)}
+                    aria-haspopup="dialog"
+                    aria-expanded={isActive}
+                    aria-controls="skills-dialog"
                   >
                     <div className="pillar-card-inner">
                       <div className="pillar-card-icon">{iconMap[p.iconKey]}</div>
@@ -142,13 +209,60 @@ const Skills: React.FC = () => {
                   </button>
                 );
               })}
-
-              {/* Expanded panel spans full width of the grid */}
-              {openInGroup ? renderExpanded(openId as string) : null}
             </div>
           </section>
         );
       })}
+
+      {/* Spotlight modal / bottom sheet */}
+      {openPillar ? (
+        <div
+          className="skills-modal-overlay"
+          role="presentation"
+          onClick={close}
+        >
+          <div
+            id="skills-dialog"
+            className="skills-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${openPillar.title} details`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="skills-panel">
+              <div className="panel-top">
+                <div className="panel-icon">{iconMap[openPillar.iconKey]}</div>
+
+                <div className="panel-head">
+                  <div className="panel-title">{openPillar.title}</div>
+                  {openPillar.microHeadline ? (
+                    <div className="panel-micro">{openPillar.microHeadline}</div>
+                  ) : null}
+                </div>
+
+                <button className="panel-close" type="button" onClick={close}>
+                  Close
+                </button>
+              </div>
+
+              <div className="panel-rows" role="list">
+                {openPillar.items.map((line, idx) => (
+                  <div className="panel-row" role="listitem" key={`${openPillar.id}-${idx}`}>
+                    <div className="panel-skill">{line.skill}</div>
+                    <div className="panel-exp">{line.experience}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="panel-bottom">
+                <button className="panel-close panel-close--full" type="button" onClick={close}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
