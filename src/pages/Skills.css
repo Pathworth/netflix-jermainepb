@@ -9,6 +9,7 @@
   --jp-muted: rgba(255,255,255,0.86);
   --jp-dim: rgba(255,255,255,0.62);
 
+  /* keep your site brand blue */
   --jp-accent: #007BFF;
 
   --jp-border: rgba(255, 255, 255, 0.10);
@@ -28,16 +29,17 @@
   color: var(--jp-text);
   min-height: 100vh;
 
-  /* pulls title down and gives breathing room under navbar */
-  padding: 64px 18px 90px;
+  /* breathing room under navbar */
+  padding: 72px 18px 110px;
 }
 
 .skills-header {
   text-align: center;
   max-width: 1100px;
-  margin: 0 auto 18px;
+  margin: 0 auto 22px;
 }
 
+/* Netflix-ish title treatment (no external font dependency) */
 .skills-title {
   margin: 0;
   font-size: 2.2rem;
@@ -46,10 +48,28 @@
   opacity: 0.92;
 }
 
+.skills-title--netflix {
+  color: var(--jp-accent);
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  font-weight: 1000;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-family: "Bebas Neue", "Oswald", "Impact", "Arial Narrow", sans-serif;
+  text-shadow:
+    0 0 22px rgba(0, 123, 255, 0.22),
+    0 0 44px rgba(0, 123, 255, 0.12);
+}
+
+.skills-subtitle {
+  margin-top: 8px;
+  color: var(--jp-dim);
+  font-size: 0.98rem;
+}
+
 /* Sections */
 .skills-section {
   max-width: 1100px;
-  margin: 0 auto 34px;
+  margin: 0 auto 64px; /* more spacing between categories */
 }
 
 /* Bracket lines + title centered */
@@ -64,7 +84,7 @@
 
   font-size: 1.25rem;
   font-weight: 900;
-  margin: 24px 0 16px;
+  margin: 26px 0 18px;
   color: var(--jp-text);
   letter-spacing: 0.2px;
 }
@@ -80,7 +100,14 @@
   border-radius: 999px;
 }
 
-/* Grid: 3 columns on desktop so 5 becomes 3 + 2 (looks intentional) */
+.skills-section-title--accent {
+  color: var(--jp-accent);
+  font-size: 1.45rem;
+  font-weight: 950;
+  text-shadow: 0 0 18px rgba(0,123,255,0.14);
+}
+
+/* Grid base */
 .pillars-grid {
   max-width: 1100px;
   margin: 0 auto;
@@ -89,27 +116,19 @@
   gap: 18px;
 }
 
-.pillars-grid--three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+/*
+  Desktop: 12-column grid.
+  Each card spans 4 columns (12/3).
+  For 5 cards: first row is 3 cards; second row is 2 cards centered.
+*/
+.pillars-grid--twelve {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
-@media (max-width: 1050px) {
-  .pillars-grid--three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .skills-page {
-    padding: 56px 14px 80px;
-  }
-  .pillars-grid--three {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Pillar card (job-card style) */
+/* each card uses 4 columns on desktop */
 .pillar-card {
+  grid-column: span 4;
+
   background: linear-gradient(180deg, var(--jp-card), #0f0f0f);
   border: 1px solid var(--jp-border);
   border-radius: var(--radius);
@@ -127,6 +146,40 @@
   transform: translateY(-2px);
   box-shadow: 0 18px 40px var(--jp-glow);
   border-color: var(--jp-border-strong);
+}
+
+/* Center the last two cards for a 5-card section */
+.pillars-grid--five .pillar-card:nth-child(4) {
+  grid-column: 3 / span 4; /* centered left */
+}
+.pillars-grid--five .pillar-card:nth-child(5) {
+  grid-column: 7 / span 4; /* centered right */
+}
+
+/* Breakpoints */
+@media (max-width: 1050px) {
+  .pillars-grid--twelve {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pillar-card {
+    grid-column: auto;
+  }
+  .pillars-grid--five .pillar-card:nth-child(4),
+  .pillars-grid--five .pillar-card:nth-child(5) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .skills-page {
+    padding: 64px 14px 90px;
+  }
+  .skills-section {
+    margin-bottom: 56px;
+  }
+  .pillars-grid--twelve {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* top row: icon + plus */
@@ -240,7 +293,7 @@
   border-radius: 999px;
 }
 
-/* Netflix-like CTA */
+/* CTA */
 .pillar-cta {
   display: inline-flex;
   align-items: center;
@@ -383,7 +436,7 @@
   transform: translateY(-1px);
 }
 
-/* Skill cards inside spotlight (replaces spreadsheet feel) */
+/* Skill cards inside spotlight */
 .panel-cards {
   padding: 16px 18px 18px;
   display: grid;
@@ -495,3 +548,4 @@
     to { transform: translateY(0px); opacity: 1.0; }
   }
 }
+
