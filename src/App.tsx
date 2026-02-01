@@ -1,21 +1,19 @@
 // src/App.tsx
 import React, { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Outlet, useLocation, Navigate } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
+import Navbar from "./components/NavBar";
+
 import AIstrategist from "./pages/AIstrategist";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
-// Extra / Pages
 import Contact from "./pages/Contact";
 import OnePager from "./pages/OnePager";
 import Skills from "./pages/Skills";
-
-
-
 
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
@@ -29,7 +27,6 @@ import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
-// Tiles for the “Where should we start?” screen
 const tiles = [
   {
     label: "AI Strategist",
@@ -82,9 +79,7 @@ function Home() {
       </ul>
 
       <div className="home-footer">
-        <p className="profile-hint">
-          Click any pillar to explore Jermaine’s expertise.
-        </p>
+        <p className="profile-hint">Click any pillar to explore Jermaine’s expertise.</p>
 
         <button
           type="button"
@@ -96,19 +91,35 @@ function Home() {
 
         <p className="manage-profiles-help">
           Tap to{" "}
-          {showHeroArt
-            ? "switch to the classic mag covers."
-            : "show the hero profile art."}
+          {showHeroArt ? "switch to the classic mag covers." : "show the hero profile art."}
         </p>
       </div>
     </section>
   );
 }
 
+/**
+ * Layout wraps all normal pages with the Navbar.
+ * We hide Navbar only on the splash title card at "/".
+ */
+function Layout() {
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/";
+
+  return (
+    <>
+      {!hideNavbar && <Navbar />}
+      <main className="main">
+        <Outlet />
+      </main>
+    </>
+  );
+}
+
 export default function App() {
   return (
-    <main className="main">
-      <Routes>
+    <Routes>
+      <Route element={<Layout />}>
         {/* Splash title card */}
         <Route path="/" element={<NetflixTitle />} />
 
@@ -122,10 +133,16 @@ export default function App() {
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
 
         {/* Extra pages */}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/one-pager" element={<OnePager />} />
         <Route path="/skills" element={<Skills />} />
-      </Routes>
-    </main>
+        <Route path="/one-pager" element={<OnePager />} />
+        <Route path="/contact" element={<Contact />} />
+
+        {/* Optional alias routes to prevent old links from 404 */}
+        <Route path="/contact-me" element={<Contact />} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/browse" replace />} />
+      </Route>
+    </Routes>
   );
 }
