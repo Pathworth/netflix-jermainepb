@@ -27,7 +27,6 @@ const Navbar: React.FC = () => {
   return (
     <>
       <header className={`navbar ${isScrolled ? "scrolled" : ""}`}>
-        {/* Left side: Logo + Main Nav */}
         <div className="navbar-left">
           <Link to="/browse" className="navbar-logo" onClick={closeSidebar}>
             <img src={netflixLogo} alt="Jermaine Peguese" />
@@ -54,7 +53,6 @@ const Navbar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Right side: Actions + Profile + Hamburger */}
         <div className="navbar-right">
           <button
             type="button"
@@ -82,14 +80,11 @@ const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Overlay */}
       <div
         className={`sidebar-overlay ${isSidebarOpen ? "open" : ""}`}
         onClick={closeSidebar}
-        aria-hidden={!isSidebarOpen}
       />
 
-      {/* Sidebar (mobile) */}
       <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`} aria-label="Mobile menu">
         <div className="sidebar-logo">
           <img src={netflixLogo} alt="Jermaine Peguese" />
@@ -118,4 +113,13 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <Link to="/contact" onClick={closeSidebar}>
-              <
+              <FaEnvelope /> Hire Me
+            </Link>
+          </li>
+        </ul>
+      </aside>
+    </>
+  );
+};
+
+export default Navbar;
