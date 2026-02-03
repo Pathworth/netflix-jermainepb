@@ -454,20 +454,35 @@
 }
 
 .bio-linkbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.86);
   padding: 10px 12px;
   border-radius: 12px;
   text-decoration: none;
-  color: rgba(255,255,255,0.86);
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.10);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
 }
 
 .bio-linkbtn:hover {
   border-color: rgba(0, 123, 255, 0.40);
   background: rgba(0, 123, 255, 0.10);
+}
+
+.bio-linkbtn:disabled,
+.bio-linkbtn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.bio-linkbtn:disabled:hover {
+  border-color: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
 }
 
 .bio-contact-note {
