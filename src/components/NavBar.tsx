@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  FaHome,
-  FaTools,
-  FaFileAlt,
-  FaEnvelope,
-} from "react-icons/fa";
+import { FaHome, FaTools, FaFileAlt, FaEnvelope, FaIdBadge } from "react-icons/fa";
 import "./Navbar.css";
 
 import netflixLogo from "../images/JP Netflix Blue Logo_sz3125.png";
@@ -18,7 +13,7 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const profileImage = location.state?.profileImage || blueImage;
+  const profileImage = (location.state as any)?.profileImage || blueImage;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -41,16 +36,19 @@ const Navbar: React.FC = () => {
           <nav className="navbar-main" aria-label="Primary">
             <ul className="navbar-links">
               <li>
-                <Link to="/browse">Home</Link>
+                <Link to="/browse" onClick={closeSidebar}>Home</Link>
               </li>
               <li>
-                <Link to="/skills">Superpowers</Link>
+                <Link to="/skills" onClick={closeSidebar}>Superpowers</Link>
               </li>
               <li>
-                <Link to="/one-pager">One-Pager</Link>
+                <Link to="/bio" onClick={closeSidebar}>Bio</Link>
               </li>
               <li>
-                <Link to="/contact">Hire Me</Link>
+                <Link to="/one-pager" onClick={closeSidebar}>One-Pager</Link>
+              </li>
+              <li>
+                <Link to="/contact" onClick={closeSidebar}>Hire Me</Link>
               </li>
             </ul>
           </nav>
@@ -74,7 +72,10 @@ const Navbar: React.FC = () => {
             type="button"
             className="profile-btn"
             aria-label="Go to Home"
-            onClick={() => navigate("/browse")}
+            onClick={() => {
+              closeSidebar();
+              navigate("/browse");
+            }}
           >
             <img src={profileImage} alt="Profile" className="profile-icon" />
           </button>
@@ -85,6 +86,7 @@ const Navbar: React.FC = () => {
       <div
         className={`sidebar-overlay ${isSidebarOpen ? "open" : ""}`}
         onClick={closeSidebar}
+        aria-hidden={!isSidebarOpen}
       />
 
       {/* Sidebar (mobile) */}
@@ -105,19 +107,15 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
           <li>
+            <Link to="/bio" onClick={closeSidebar}>
+              <FaIdBadge /> Bio
+            </Link>
+          </li>
+          <li>
             <Link to="/one-pager" onClick={closeSidebar}>
               <FaFileAlt /> One-Pager
             </Link>
           </li>
           <li>
             <Link to="/contact" onClick={closeSidebar}>
-              <FaEnvelope /> Hire Me
-            </Link>
-          </li>
-        </ul>
-      </aside>
-    </>
-  );
-};
-
-export default Navbar;
+              <
