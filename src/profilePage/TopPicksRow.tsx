@@ -10,6 +10,7 @@ import {
   FaBook,
   FaFileAlt,
   FaWrench,
+  FaIdBadge,
 } from "react-icons/fa";
 
 type ProfileType =
@@ -162,10 +163,10 @@ const topPicksConfig: Record<ProfileType, Pick[]> = {
 
   "meet-jermaine": [
     {
-      title: "My Story",
-      imgSrc: "https://picsum.photos/seed/story/250/200",
-      icon: <FaBook />,
-      route: "/browse",
+      title: "Bio",
+      imgSrc: "https://picsum.photos/seed/bio/250/200",
+      icon: <FaIdBadge />,
+      route: "/bio?bp=masterBio",
     },
     {
       title: "Work",
@@ -218,6 +219,7 @@ const TopPicksRow: React.FC<TopPicksRowProps> = ({ profile }) => {
             style={{ animationDelay: `${index * 0.2}s` }}
             role="button"
             tabIndex={0}
+            aria-label={`Open ${pick.title}`}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") navigate(pick.route);
             }}
