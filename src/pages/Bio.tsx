@@ -400,13 +400,27 @@ export default function Bio() {
                   <CopyRow label="Email" value={BIO_CONTACT.email} />
 
                   <div className="bio-contact-links">
-                    <a className="bio-linkbtn" href="#" onClick={(e) => e.preventDefault()} data-id="bio-contact-linkedin">
+                    <button
+                      type="button"
+                      className="bio-linkbtn"
+                      disabled
+                      aria-disabled="true"
+                      data-id="bio-contact-linkedin"
+                    >
                       {BIO_CONTACT.linkedinLabel}
-                    </a>
-                    <a className="bio-linkbtn" href="#" onClick={(e) => e.preventDefault()} data-id="bio-contact-booking">
+                    </button>
+                  
+                    <button
+                      type="button"
+                      className="bio-linkbtn"
+                      disabled
+                      aria-disabled="true"
+                      data-id="bio-contact-booking"
+                    >
                       {BIO_CONTACT.bookingLabel}
-                    </a>
+                    </button>
                   </div>
+
 
                   <div className="bio-contact-note">Optional: we can add a short form later.</div>
                 </div>
