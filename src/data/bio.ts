@@ -12,17 +12,21 @@ export type AssetItem = {
   id: string;
   title: string;
   description: string;
-  metaLeft?: string;   // e.g., "3–5 min read"
-  metaRight?: string;  // e.g., "Updated 2026"
+  metaLeft?: string;
+  metaRight?: string;
   type: AssetType;
-  available?: boolean; // if false => disabled
+  available?: boolean;
 };
 
 export type BlueprintDef = {
   key: BlueprintKey;
-  label: string;       // left rail label
-  sublabel?: string;   // small hint
-  assets: AssetItem[]; // “episodes” for this blueprint
+  label: string;
+  sublabel?: string;
+  assets: AssetItem[];
+};
+
+export const CONTACT_VALUES = {
+  email: "hello@jermainepeguese.com",
 };
 
 export const BIO_BLUEPRINTS: BlueprintDef[] = [
@@ -222,13 +226,17 @@ export const BIO_BLUEPRINTS: BlueprintDef[] = [
   },
 ];
 
-// Featured copy blocks for TEXT assets
 export const BIO_COPY: Record<string, { heading: string; body: string[] }> = {
   "master-bio": {
     heading: "Master Bio",
     body: [
-      "This is the placeholder master bio area. When you paste the final bio, it will live here as the main featured content.",
-      "It should read clean, scan clean, and feel premium. We can format it into short sections once the final bio is approved.",
+      "Jermaine Peguese enters rooms with intentional purpose. He listens long enough to understand the mission, the people, and what nobody is saying out loud. Then he moves with intention.",
+      "Jermaine leads with dignity, empathy, and a high standard for himself. He is loyal, resilient, and protective by nature. He pushes the envelope in good faith, and he does it without disrespect. He is a creative thinker with sound judgment, the kind that keeps the goal in view and the people intact. He sees patterns early and offers a perspective that makes things click for everybody else.",
+      "Fifteen years after he first started college, he finished his B.S. in Construction Management (Engineering Technology) at Wayne State University for one simple reason. He keeps promises to himself. That same discipline shows up everywhere he leads. He does not chase attention. He builds the kind of structure that lets other people win.",
+      "Jermaine is the Founder and CEO of Pathworth Consulting & Solutions, built from a personal question that still guides his path: What is my path worth? Through Pathworth, he helps entrepreneurs, nonprofits, and civic leaders solve complex problems and turn vision into execution through consulting, training, and hands-on support. He is also an AI educator and practitioner who teaches people how to expand their imagination, solve real problems, and train tools to match their voice and values so the output sounds like them, not a template.",
+      "In Detroit, Jermaine serves as Special Projects Manager for the NAACP Detroit Branch. He supports branch leadership as staff liaison to the Economic Development, Health, and Membership committees. He maintains the membership and volunteer operations that keep the organization moving year-round. He designed and has led BRIDGES in partnership with Grow Detroit’s Young Talent, supporting 100+ participants and helping 75+ into employment while building confidence, work habits, and direction that lasts beyond the program. He also leads the Back to School Stay in School Rally, serving more than 5,000 students over six years, and serves as Lead Project Manager for the Annual Fight for Freedom Fund Dinner, where execution has nowhere to hide.",
+      "As Founding Chapter President of the Recession Proof Extreme Incorporated Michigan chapter, he had the honor of cultivating a community built on financial literacy, personal development, and real relationships among entrepreneurs. Under his leadership, the chapter grew from 19 members to 125+ and earned Chapter of the Year and Model Chapter of the Year in 2022.",
+      "At the center of all of it is a consistent pattern. Jermaine protects the mission, protects the people, and leaves behind something others can carry forward. If it matters to you and Jermaine says, “I got you,” it gets done.",
     ],
   },
 
@@ -253,12 +261,8 @@ export const BIO_COPY: Record<string, { heading: string; body: string[] }> = {
   },
 };
 
-export const CONTACT_VALUES = {
-  email: "hello@jermainepeguese.com",
-};
-
 // Back-compat export: older components may still import BIO_KIT_ASSETS.
-// Keeps the build from failing while we migrate everything to BIO_BLUEPRINTS.
 export const BIO_KIT_ASSETS = (
   BIO_BLUEPRINTS.find((b) => b.key === "bio-kit")?.assets ?? []
 );
+
