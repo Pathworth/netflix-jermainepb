@@ -1,376 +1,267 @@
-import React, { useEffect, useMemo, useState } from "react";
-import "./Bio.css";
+export type BlueprintKey =
+  | "master-bio"
+  | "value-proposition"
+  | "ai-origin-story"
+  | "bio-kit"
+  | "media"
+  | "contact";
 
-import {
-  BIO_BLUEPRINTS,
-  BIO_COPY,
-  CONTACT_VALUES,
-  type BlueprintKey,
-  type AssetItem,
-} from "../data/bio";
+export type AssetType = "TEXT" | "PDF" | "ZIP" | "LINK";
 
-function getBpFromUrl(defaultBp: BlueprintKey): BlueprintKey {
-  try {
-    const url = new URL(window.location.href);
-    const bp = url.searchParams.get("bp") as BlueprintKey | null;
-    const valid = BIO_BLUEPRINTS.some((b) => b.key === bp);
-    return valid && bp ? bp : defaultBp;
-  } catch {
-    return defaultBp;
-  }
-}
+export type AssetItem = {
+  id: string;
+  title: string;
+  description: string;
+  metaLeft?: string;
+  metaRight?: string;
+  type: AssetType;
+  available?: boolean;
+};
 
-function setBpInUrl(bp: BlueprintKey) {
-  try {
-    const url = new URL(window.location.href);
-    url.searchParams.set("bp", bp);
-    window.history.replaceState({}, "", url.toString());
-  } catch {
-    // ignore
-  }
-}
+export type BlueprintDef = {
+  key: BlueprintKey;
+  label: string;
+  sublabel?: string;
+  assets: AssetItem[];
+};
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
+export const CONTACT_VALUES = {
+  email: "hello@jermainepeguese.com",
+};
 
-export default function Bio() {
-  const defaultBp: BlueprintKey = "master-bio";
+export const BIO_BLUEPRINTS: BlueprintDef[] = [
+  {
+    key: "master-bio",
+    label: "Blueprint: Master Bio",
+    sublabel: "Official bio",
+    assets: [
+      {
+        id: "master-bio",
+        title: "Master Bio",
+        description:
+          "The official narrative bio used for press, events, and partner packets.",
+        metaLeft: "3–5 min read",
+        metaRight: "Updated 2026",
+        type: "TEXT",
+        available: true,
+      },
+      {
+        id: "short-bio",
+        title: "Short Bio",
+        description: "A clean, short version for programs, intros, and quick bios.",
+        metaLeft: "45–60 sec",
+        metaRight: "Coming soon",
+        type: "PDF",
+        available: false,
+      },
+      {
+        id: "one-line-intro",
+        title: "One-Line Intro",
+        description: "A single line you can paste into intros and captions.",
+        metaLeft: "10 sec",
+        metaRight: "Coming soon",
+        type: "TEXT",
+        available: false,
+      },
+    ],
+  },
 
-  const [activeBp, setActiveBp] = useState<BlueprintKey>(() => getBpFromUrl(defaultBp));
-  const [focusedAssetId, setFocusedAssetId] = useState<string | null>(null);
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  {
+    key: "value-proposition",
+    label: "Blueprint: Value Proposition",
+    sublabel: "Why bring Jermaine in",
+    assets: [
+      {
+        id: "value-prop",
+        title: "Value Proposition",
+        description:
+          "The positioning statement that explains the outcomes Jermaine is brought in to deliver.",
+        metaLeft: "45–75 sec",
+        metaRight: "Updated 2026",
+        type: "TEXT",
+        available: true,
+      },
+      {
+        id: "value-prop-short",
+        title: "Value Proposition (Short)",
+        description: "A tighter version for decks, captions, and intros.",
+        metaLeft: "20–30 sec",
+        metaRight: "Coming soon",
+        type: "TEXT",
+        available: false,
+      },
+    ],
+  },
 
-  useEffect(() => {
-    function onPop() {
-      setActiveBp(getBpFromUrl(defaultBp));
-    }
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, []);
+  {
+    key: "ai-origin-story",
+    label: "Blueprint: AI Origin Story",
+    sublabel: "How the AI work started",
+    assets: [
+      {
+        id: "ai-origin",
+        title: "AI Origin Story",
+        description:
+          "How Jermaine started with AI, hit the wall, and mastered personalization without losing voice.",
+        metaLeft: "60–90 sec",
+        metaRight: "Updated 2026",
+        type: "TEXT",
+        available: true,
+      },
+      {
+        id: "ai-origin-short",
+        title: "AI Origin Story (Short)",
+        description: "A short version for stage intros and short-form content.",
+        metaLeft: "20–30 sec",
+        metaRight: "Coming soon",
+        type: "TEXT",
+        available: false,
+      },
+    ],
+  },
 
-  useEffect(() => {
-    setBpInUrl(activeBp);
-  }, [activeBp]);
+  {
+    key: "bio-kit",
+    label: "Blueprint: Bio Kit",
+    sublabel: "Downloads & brand assets",
+    assets: [
+      {
+        id: "long-bio-pdf",
+        title: "Long Bio (PDF)",
+        description: "Press-ready long bio PDF.",
+        metaLeft: "PDF",
+        metaRight: "Coming soon",
+        type: "PDF",
+        available: false,
+      },
+      {
+        id: "short-bio-pdf",
+        title: "Short Bio (PDF)",
+        description: "Short bio PDF for programs and packets.",
+        metaLeft: "PDF",
+        metaRight: "Coming soon",
+        type: "PDF",
+        available: false,
+      },
+      {
+        id: "headshots-zip",
+        title: "Headshots (ZIP)",
+        description: "Official headshots for flyers, press, and booking.",
+        metaLeft: "ZIP",
+        metaRight: "Coming soon",
+        type: "ZIP",
+        available: false,
+      },
+      {
+        id: "logos-zip",
+        title: "Logos (ZIP)",
+        description: "Brand logos and marks for approved use.",
+        metaLeft: "ZIP",
+        metaRight: "Coming soon",
+        type: "ZIP",
+        available: false,
+      },
+    ],
+  },
 
-  const blueprint = useMemo(
-    () => BIO_BLUEPRINTS.find((b) => b.key === activeBp) ?? BIO_BLUEPRINTS[0],
-    [activeBp]
-  );
+  {
+    key: "media",
+    label: "Blueprint: Media",
+    sublabel: "Press, clips, features",
+    assets: [
+      {
+        id: "media-1",
+        title: "Media Feature (Placeholder)",
+        description: "Replace this with your first real media link.",
+        metaLeft: "2 min read",
+        metaRight: "Coming soon",
+        type: "LINK",
+        available: false,
+      },
+      {
+        id: "media-2",
+        title: "Podcast / Clip (Placeholder)",
+        description: "Replace this with your first clip or podcast.",
+        metaLeft: "3–5 min",
+        metaRight: "Coming soon",
+        type: "LINK",
+        available: false,
+      },
+    ],
+  },
 
-  useEffect(() => {
-    const first = blueprint.assets[0]?.id ?? null;
-    setFocusedAssetId(first);
-    setSelectedAssetId(first);
-  }, [blueprint.key, blueprint.assets]);
+  {
+    key: "contact",
+    label: "Blueprint: Contact",
+    sublabel: "Reach out & connect",
+    assets: [
+      {
+        id: "email",
+        title: "Email",
+        description: "Copy the email address and reach out directly.",
+        metaLeft: "Copy",
+        metaRight: "Live",
+        type: "TEXT",
+        available: true,
+      },
+      {
+        id: "linkedin",
+        title: "LinkedIn",
+        description: "Open the LinkedIn profile (add link later).",
+        metaLeft: "Open",
+        metaRight: "Coming soon",
+        type: "LINK",
+        available: false,
+      },
+      {
+        id: "instagram",
+        title: "Instagram",
+        description: "Open Instagram (add link later).",
+        metaLeft: "Open",
+        metaRight: "Coming soon",
+        type: "LINK",
+        available: false,
+      },
+    ],
+  },
+];
 
-  const focusedAsset: AssetItem | null = useMemo(() => {
-    const id = focusedAssetId ?? selectedAssetId;
-    if (!id) return null;
-    return blueprint.assets.find((a) => a.id === id) ?? null;
-  }, [blueprint.assets, focusedAssetId, selectedAssetId]);
+export const BIO_COPY: Record<string, { heading: string; body: string[] }> = {
+  "master-bio": {
+    heading: "Master Bio",
+    body: [
+      "Jermaine Peguese enters rooms with intentional purpose. He listens long enough to understand the mission, the people, and what nobody is saying out loud. Then he moves with intention.",
+      "Jermaine leads with dignity, empathy, and a high standard for himself. He is loyal, resilient, and protective by nature. He pushes the envelope in good faith, and he does it without disrespect. He is a creative thinker with sound judgment, the kind that keeps the goal in view and the people intact. He sees patterns early and offers a perspective that makes things click for everybody else.",
+      "Fifteen years after he first started college, he finished his B.S. in Construction Management (Engineering Technology) at Wayne State University for one simple reason. He keeps promises to himself. That same discipline shows up everywhere he leads. He does not chase attention. He builds the kind of structure that lets other people win.",
+      "Jermaine is the Founder and CEO of Pathworth Consulting & Solutions, built from a personal question that still guides his path: What is my path worth? Through Pathworth, he helps entrepreneurs, nonprofits, and civic leaders solve complex problems and turn vision into execution through consulting, training, and hands-on support. He is also an AI educator and practitioner who teaches people how to expand their imagination, solve real problems, and train tools to match their voice and values so the output sounds like them, not a template.",
+      "In Detroit, Jermaine serves as Special Projects Manager for the NAACP Detroit Branch. He supports branch leadership as staff liaison to the Economic Development, Health, and Membership committees. He maintains the membership and volunteer operations that keep the organization moving year-round. He designed and has led BRIDGES in partnership with Grow Detroit’s Young Talent, supporting 100+ participants and helping 75+ into employment while building confidence, work habits, and direction that lasts beyond the program. He also leads the Back to School Stay in School Rally, serving more than 5,000 students over six years, and serves as Lead Project Manager for the Annual Fight for Freedom Fund Dinner, where execution has nowhere to hide.",
+      "As Founding Chapter President of the Recession Proof Extreme Incorporated Michigan chapter, he had the honor of cultivating a community built on financial literacy, personal development, and real relationships among entrepreneurs. Under his leadership, the chapter grew from 19 members to 125+ and earned Chapter of the Year and Model Chapter of the Year in 2022.",
+      "At the center of all of it is a consistent pattern. Jermaine protects the mission, protects the people, and leaves behind something others can carry forward. If it matters to you and Jermaine says, “I got you,” it gets done.",
+    ],
+  },
 
-  const featuredKey = focusedAsset?.id ?? "";
-  const featuredCopy = BIO_COPY[featuredKey];
+  "value-prop": {
+    heading: "Value Proposition",
+    body: [
+      "Jermaine Peguese helps people move from intention to outcome. He pays attention before he speaks, earns trust quickly, and brings clarity people can act on.",
+      "Across community initiatives, entrepreneurship, training, and technology, he designs experiences that land with audiences, builds structure that holds up, and strengthens the people doing the work.",
+      "He’s known for high standards paired with real care, and for saying what needs to be said without making anyone small.",
+      "If you want progress you can point to, bring Jermaine in for the outcome, not the conversation.",
+    ],
+  },
 
-  function onBlueprintChange(next: BlueprintKey) {
-    setActiveBp(next);
-  }
+  "ai-origin": {
+    heading: "AI Origin Story",
+    body: [
+      "Jermaine’s relationship with AI started in late 2022 when he saw ChatGPT being talked about online. Curiosity first, he tried it the same day and immediately recognized the advantage.",
+      "Then he hit the wall. The output was fast, but it didn’t sound like him, and he wasn’t willing to let a tool rewrite his voice or blend him into everybody else.",
+      "So he treated it like a skill to master. He studied how to coach the tool, shape inputs, and refine outputs until it reflected his standards.",
+      "Over time, that work became expertise and a clear passion: helping people personalize AI, expand what they believe is possible, and solve real problems without losing who they are.",
+    ],
+  },
+};
 
-  function onAssetFocus(assetId: string) {
-    setFocusedAssetId(assetId);
-  }
-
-  function onAssetSelect(assetId: string) {
-    setSelectedAssetId(assetId);
-    setFocusedAssetId(assetId);
-  }
-
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      const tag = (document.activeElement?.tagName || "").toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") return;
-
-      const bpIndex = BIO_BLUEPRINTS.findIndex((b) => b.key === activeBp);
-      const assets = blueprint.assets;
-      const currentAssetId = focusedAssetId ?? selectedAssetId;
-      const aIndex = assets.findIndex((a) => a.id === currentAssetId);
-
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-
-        if (aIndex >= 0) {
-          const next = clamp(aIndex - 1, 0, assets.length - 1);
-          onAssetFocus(assets[next].id);
-          return;
-        }
-
-        const nextBp = clamp(bpIndex - 1, 0, BIO_BLUEPRINTS.length - 1);
-        onBlueprintChange(BIO_BLUEPRINTS[nextBp].key);
-        return;
-      }
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-
-        if (aIndex >= 0) {
-          const next = clamp(aIndex + 1, 0, assets.length - 1);
-          onAssetFocus(assets[next].id);
-          return;
-        }
-
-        const nextBp = clamp(bpIndex + 1, 0, BIO_BLUEPRINTS.length - 1);
-        onBlueprintChange(BIO_BLUEPRINTS[nextBp].key);
-        return;
-      }
-
-      if (e.key === "Enter") {
-        if (focusedAssetId) {
-          e.preventDefault();
-          onAssetSelect(focusedAssetId);
-        }
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeBp, blueprint.assets, focusedAssetId, selectedAssetId]);
-
-  async function handlePrimaryAction(asset: AssetItem | null) {
-    if (!asset) return;
-
-    if (activeBp === "contact" && asset.id === "email") {
-      try {
-        await navigator.clipboard.writeText(CONTACT_VALUES.email);
-      } catch {
-        // ignore
-      }
-    }
-  }
-
-  const rightMeta =
-    focusedAsset?.metaLeft || focusedAsset?.metaRight
-      ? `${focusedAsset?.metaLeft ?? ""}${
-          focusedAsset?.metaLeft && focusedAsset?.metaRight ? " • " : ""
-        }${focusedAsset?.metaRight ?? ""}`
-      : "";
-
-  return (
-    <main className="bioN-page">
-      <header className="bioN-hero">
-        <div className="bioN-hero-inner">
-          <div className="bioN-hero-left">
-            <h1 className="bioN-title">Blueprint: Bio</h1>
-            <p className="bioN-sub">
-              Browse the Blueprint rail. Preview assets instantly. Click to commit.
-            </p>
-
-            <div className="bioN-hero-ctas">
-              <button
-                type="button"
-                className="bioN-btn bioN-btn-primary"
-                disabled
-                aria-disabled="true"
-              >
-                Download Master Bio
-              </button>
-              <button
-                type="button"
-                className="bioN-btn bioN-btn-secondary"
-                disabled
-                aria-disabled="true"
-              >
-                Download Bio Kit
-              </button>
-            </div>
-          </div>
-
-          <div className="bioN-hero-right">
-            <div className="bioN-pill">Updated: 2026</div>
-          </div>
-        </div>
-      </header>
-
-      {/* Netflix-style: 3 columns */}
-      <section className="bioN-ntx" aria-label="Blueprint and assets">
-        {/* LEFT: Blueprint list (with counts column aligned per row) */}
-        <aside className="bioN-rail" aria-label="Blueprint rail">
-          <div className="bioN-rail-head">
-            <div className="bioN-rail-title">BLUEPRINTS</div>
-          </div>
-
-          <div className="bioN-rail-list" role="list">
-            {BIO_BLUEPRINTS.map((b) => {
-              const isActive = b.key === activeBp;
-              const countLabel = `${b.assets.length} ${b.assets.length === 1 ? "asset" : "assets"}`;
-
-              return (
-                <button
-                  key={b.key}
-                  type="button"
-                  className={[
-                    "bioN-rail-item",
-                    isActive ? "bioN-rail-item-active" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  onClick={() => onBlueprintChange(b.key)}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  <span className="bioN-rail-left">
-                    <span className="bioN-rail-dot" aria-hidden="true" />
-                    <span className="bioN-rail-text">
-                      <span className="bioN-rail-label">{b.label}</span>
-                      {b.sublabel ? (
-                        <span className="bioN-rail-sublabel">{b.sublabel}</span>
-                      ) : null}
-                    </span>
-                  </span>
-
-                  <span className="bioN-rail-count" aria-label={countLabel}>
-                    {countLabel}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-
-        {/* RIGHT: Viewer */}
-        <section className="bioN-lane" aria-label="Assets lane">
-          <div className="bioN-laneScroll">
-            {/* FEATURED */}
-            <div className="bioN-feature" aria-label="Featured asset">
-              <div className="bioN-feature-thumb" aria-hidden="true">
-                <div className="bioN-feature-thumb-inner">16:9</div>
-              </div>
-
-              <div className="bioN-feature-body">
-                <div className="bioN-feature-kicker">FEATURED</div>
-                <div className="bioN-feature-title">{focusedAsset?.title ?? "—"}</div>
-                <div className="bioN-feature-desc">{focusedAsset?.description ?? ""}</div>
-
-                {rightMeta ? <div className="bioN-feature-meta">{rightMeta}</div> : null}
-
-                <div className="bioN-feature-actions">
-                  <button
-                    type="button"
-                    className="bioN-btn bioN-btn-primary"
-                    onClick={() => handlePrimaryAction(focusedAsset)}
-                    disabled={!focusedAsset?.available}
-                    aria-disabled={!focusedAsset?.available}
-                  >
-                    {activeBp === "contact" && focusedAsset?.id === "email"
-                      ? "Copy Email"
-                      : "Open"}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="bioN-btn bioN-btn-secondary"
-                    disabled
-                    aria-disabled="true"
-                  >
-                    Coming soon
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* COPY */}
-            <div className="bioN-copy" aria-label="Featured copy">
-              {activeBp === "contact" && focusedAsset?.id === "email" ? (
-                <>
-                  <h2 className="bioN-copy-h">Email</h2>
-                  <p className="bioN-copy-p">{CONTACT_VALUES.email}</p>
-                  <p className="bioN-copy-p bioN-muted">
-                    Click “Copy Email” above. Social links will go live when added.
-                  </p>
-                </>
-              ) : featuredCopy ? (
-                <>
-                  <h2 className="bioN-copy-h">{featuredCopy.heading}</h2>
-                  {featuredCopy.body.map((p, idx) => (
-                    <p key={idx} className="bioN-copy-p">
-                      {p}
-                    </p>
-                  ))}
-                </>
-              ) : (
-                <>
-                  <h2 className="bioN-copy-h">Preview</h2>
-                  <p className="bioN-copy-p bioN-muted">
-                    This blueprint’s featured preview will appear here when the asset copy is added.
-                  </p>
-                </>
-              )}
-            </div>
-
-            {/* ASSETS LIST */}
-            <div className="bioN-listWrap" aria-label="Assets list">
-              <div className="bioN-listHead">
-                <div className="bioN-listTitle">ASSETS</div>
-                <div className="bioN-listCount">{blueprint.assets.length}</div>
-              </div>
-
-              <div className="bioN-list" role="list">
-                {blueprint.assets.map((a, idx) => {
-                  const current = focusedAssetId ?? selectedAssetId;
-                  const isFocused = a.id === current;
-                  const isSelected = a.id === selectedAssetId;
-
-                  return (
-                    <button
-                      key={a.id}
-                      type="button"
-                      className={[
-                        "bioN-row",
-                        isFocused ? "bioN-row-focused" : "",
-                        isSelected ? "bioN-row-selected" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      onMouseEnter={() => onAssetFocus(a.id)}
-                      onFocus={() => onAssetFocus(a.id)}
-                      onClick={() => onAssetSelect(a.id)}
-                      aria-label={`Preview ${a.title}`}
-                      style={{ animationDelay: `${idx * 0.04}s` }}
-                    >
-                      <span className="bioN-row-bar" aria-hidden="true" />
-                      <span className="bioN-row-thumb" aria-hidden="true">
-                        <span className="bioN-row-thumb-inner">16:9</span>
-                      </span>
-
-                      <span className="bioN-row-main">
-                        <span className="bioN-row-title">{a.title}</span>
-                        <span className="bioN-row-desc">{a.description}</span>
-                        <span className="bioN-row-meta">
-                          {(a.metaLeft || a.metaRight)
-                            ? `${a.metaLeft ?? ""}${
-                                a.metaLeft && a.metaRight ? " • " : ""
-                              }${a.metaRight ?? ""}`
-                            : ""}
-                        </span>
-                      </span>
-
-                      <span className="bioN-row-cta">
-                        <span
-                          className={[
-                            "bioN-tag",
-                            a.available ? "bioN-tag-live" : "bioN-tag-soon",
-                          ].join(" ")}
-                        >
-                          {a.available ? "Preview" : "Soon"}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </main>
-  );
-}
+// Back-compat export: older components may still import BIO_KIT_ASSETS.
+export const BIO_KIT_ASSETS = (
+  BIO_BLUEPRINTS.find((b) => b.key === "bio-kit")?.assets ?? []
+);
