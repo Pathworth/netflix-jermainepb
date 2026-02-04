@@ -58,7 +58,6 @@ export default function Bio() {
     [activeBp]
   );
 
-  // Reset focus/selection when blueprint changes
   useEffect(() => {
     const first = blueprint.assets[0]?.id ?? null;
     setFocusedAssetId(first);
@@ -87,7 +86,6 @@ export default function Bio() {
     setFocusedAssetId(assetId);
   }
 
-  // Keyboard support
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       const tag = (document.activeElement?.tagName || "").toLowerCase();
@@ -193,8 +191,9 @@ export default function Bio() {
         </div>
       </header>
 
-      <section className="bioN-shell" aria-label="Blueprint and assets">
-        {/* LEFT RAIL */}
+      {/* Netflix-style: 3 columns */}
+      <section className="bioN-ntx" aria-label="Blueprint and assets">
+        {/* LEFT: Blueprint list (with counts column aligned per row) */}
         <aside className="bioN-rail" aria-label="Blueprint rail">
           <div className="bioN-rail-head">
             <div className="bioN-rail-title">BLUEPRINTS</div>
@@ -203,6 +202,7 @@ export default function Bio() {
           <div className="bioN-rail-list" role="list">
             {BIO_BLUEPRINTS.map((b) => {
               const isActive = b.key === activeBp;
+              const countLabel = `${b.assets.length} ${b.assets.length === 1 ? "asset" : "assets"}`;
 
               return (
                 <button
@@ -217,12 +217,18 @@ export default function Bio() {
                   onClick={() => onBlueprintChange(b.key)}
                   aria-current={isActive ? "page" : undefined}
                 >
-                  <span className="bioN-rail-dot" aria-hidden="true" />
-                  <span className="bioN-rail-text">
-                    <span className="bioN-rail-label">{b.label}</span>
-                    {b.sublabel ? (
-                      <span className="bioN-rail-sublabel">{b.sublabel}</span>
-                    ) : null}
+                  <span className="bioN-rail-left">
+                    <span className="bioN-rail-dot" aria-hidden="true" />
+                    <span className="bioN-rail-text">
+                      <span className="bioN-rail-label">{b.label}</span>
+                      {b.sublabel ? (
+                        <span className="bioN-rail-sublabel">{b.sublabel}</span>
+                      ) : null}
+                    </span>
+                  </span>
+
+                  <span className="bioN-rail-count" aria-label={countLabel}>
+                    {countLabel}
                   </span>
                 </button>
               );
@@ -230,7 +236,7 @@ export default function Bio() {
           </div>
         </aside>
 
-        {/* RIGHT LANE */}
+        {/* RIGHT: Viewer */}
         <section className="bioN-lane" aria-label="Assets lane">
           <div className="bioN-laneScroll">
             {/* FEATURED */}
@@ -271,7 +277,7 @@ export default function Bio() {
               </div>
             </div>
 
-            {/* FEATURED COPY PANEL */}
+            {/* COPY */}
             <div className="bioN-copy" aria-label="Featured copy">
               {activeBp === "contact" && focusedAsset?.id === "email" ? (
                 <>
