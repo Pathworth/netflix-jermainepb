@@ -15,14 +15,14 @@ export type AssetItem = {
   metaLeft?: string;   // e.g., "3–5 min read"
   metaRight?: string;  // e.g., "Updated 2026"
   type: AssetType;
-  available?: boolean; // if false => button disabled
+  available?: boolean; // if false => disabled
 };
 
 export type BlueprintDef = {
   key: BlueprintKey;
-  label: string;       // shown in left rail
-  sublabel?: string;   // optional small hint
-  assets: AssetItem[]; // “episodes” list for the blueprint
+  label: string;       // left rail label
+  sublabel?: string;   // small hint
+  assets: AssetItem[]; // “episodes” for this blueprint
 };
 
 export const BIO_BLUEPRINTS: BlueprintDef[] = [
@@ -98,7 +98,7 @@ export const BIO_BLUEPRINTS: BlueprintDef[] = [
         id: "ai-origin",
         title: "AI Origin Story",
         description:
-          "The story of how Jermaine started with AI, hit the wall, and mastered personalization without losing voice.",
+          "How Jermaine started with AI, hit the wall, and mastered personalization without losing voice.",
         metaLeft: "60–90 sec",
         metaRight: "Updated 2026",
         type: "TEXT",
@@ -222,7 +222,7 @@ export const BIO_BLUEPRINTS: BlueprintDef[] = [
   },
 ];
 
-// Default copy blocks (the “featured detail” body content)
+// Featured copy blocks for TEXT assets
 export const BIO_COPY: Record<string, { heading: string; body: string[] }> = {
   "master-bio": {
     heading: "Master Bio",
@@ -254,8 +254,9 @@ export const BIO_COPY: Record<string, { heading: string; body: string[] }> = {
 };
 
 export const CONTACT_VALUES = {
-  email: "hello@jermainepeguese.com", // update if needed
+  email: "hello@jermainepeguese.com",
 };
+
 // Back-compat export: older components may still import BIO_KIT_ASSETS.
 // Keeps the build from failing while we migrate everything to BIO_BLUEPRINTS.
 export const BIO_KIT_ASSETS = (
