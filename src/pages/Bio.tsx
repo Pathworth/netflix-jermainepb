@@ -39,10 +39,10 @@ export default function Bio() {
 
   const [activeBp, setActiveBp] = useState<BlueprintKey>(() => getBpFromUrl(defaultBp));
 
-  // Which asset is currently previewed (Netflix “focus”)
+  // Netflix “focus” preview (hover/focus changes this)
   const [focusedAssetId, setFocusedAssetId] = useState<string | null>(null);
 
-  // Which asset is “selected/committed”
+  // “Committed” selection (click/enter sets this)
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
 
   // Sync state if URL changes (back/forward)
@@ -54,7 +54,7 @@ export default function Bio() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  // Write bp into URL
+  // Write bp into URL when it changes
   useEffect(() => {
     setBpInUrl(activeBp);
   }, [activeBp]);
@@ -64,12 +64,18 @@ export default function Bio() {
     [activeBp]
   );
 
-  // When blueprint changes, default focus/selection to first asset
+  // Stable dependency that represents the current asset set
+  const assetIdsKey = useMemo(
+    () => blueprint.assets.map((a) => a.id).join("|"),
+    [blueprint.assets]
+  );
+
+  // When blueprint (or its asset set) changes, default focus/selection to first asset
   useEffect(() => {
     const first = blueprint.assets[0]?.id ?? null;
     setFocusedAssetId(first);
     setSelectedAssetId(first);
-  }, [blueprint.key]); // intentional: reset when switching rail item
+  }, [blueprint.key, assetIdsKey]);
 
   const focusedAsset: AssetItem | null = useMemo(() => {
     const id = focusedAssetId ?? selectedAssetId;
@@ -96,25 +102,23 @@ export default function Bio() {
   // Keyboard support (basic Netflix remote feel)
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      // Ignore if user is typing in an input/select
       const tag = (document.activeElement?.tagName || "").toLowerCase();
       if (tag === "input" || tag === "textarea" || tag === "select") return;
 
       const bpIndex = BIO_BLUEPRINTS.findIndex((b) => b.key === activeBp);
       const assets = blueprint.assets;
-      const aIndex = assets.findIndex((a) => a.id === (focusedAssetId ?? selectedAssetId));
+      const currentAssetId = focusedAssetId ?? selectedAssetId;
+      const aIndex = assets.findIndex((a) => a.id === currentAssetId);
 
       if (e.key === "ArrowUp") {
         e.preventDefault();
 
-        // If we’re currently focused on assets, move within assets
         if (aIndex >= 0) {
           const next = clamp(aIndex - 1, 0, assets.length - 1);
           onAssetFocus(assets[next].id);
           return;
         }
 
-        // Otherwise move blueprint rail
         const nextBp = clamp(bpIndex - 1, 0, BIO_BLUEPRINTS.length - 1);
         onBlueprintChange(BIO_BLUEPRINTS[nextBp].key);
         return;
@@ -135,7 +139,6 @@ export default function Bio() {
       }
 
       if (e.key === "Enter") {
-        // “Commit” focused asset
         if (focusedAssetId) {
           e.preventDefault();
           onAssetSelect(focusedAssetId);
@@ -147,28 +150,28 @@ export default function Bio() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [activeBp, blueprint.assets, focusedAssetId, selectedAssetId]);
 
-  // CTA behavior (safe now, real actions later)
   async function handlePrimaryAction(asset: AssetItem | null) {
     if (!asset) return;
 
+    // Contact: email copy
     if (activeBp === "contact" && asset.id === "email") {
       try {
         await navigator.clipboard.writeText(CONTACT_VALUES.email);
       } catch {
         // ignore
       }
-      return;
     }
   }
 
-  const showRightMeta =
+  const rightMeta =
     focusedAsset?.metaLeft || focusedAsset?.metaRight
-      ? `${focusedAsset?.metaLeft ?? ""}${focusedAsset?.metaLeft && focusedAsset?.metaRight ? " • " : ""}${focusedAsset?.metaRight ?? ""}`
+      ? `${focusedAsset?.metaLeft ?? ""}${
+          focusedAsset?.metaLeft && focusedAsset?.metaRight ? " • " : ""
+        }${focusedAsset?.metaRight ?? ""}`
       : "";
 
   return (
     <main className="bioN-page">
-      {/* HERO */}
       <header className="bioN-hero">
         <div className="bioN-hero-inner">
           <div className="bioN-hero-left">
@@ -193,7 +196,6 @@ export default function Bio() {
         </div>
       </header>
 
-      {/* MAIN NETFLIX LAYOUT */}
       <section className="bioN-shell" aria-label="Blueprint and assets">
         {/* LEFT RAIL */}
         <aside className="bioN-rail" aria-label="Blueprint rail">
@@ -216,12 +218,13 @@ export default function Bio() {
                   onClick={() => onBlueprintChange(b.key)}
                   onMouseEnter={() => onBlueprintChange(b.key)}
                   aria-current={isActive ? "page" : undefined}
-                  data-id={`bio-rail-${b.key}`}
                 >
                   <span className="bioN-rail-dot" aria-hidden="true" />
                   <span className="bioN-rail-text">
                     <span className="bioN-rail-label">{b.label}</span>
-                    {b.sublabel ? <span className="bioN-rail-sublabel">{b.sublabel}</span> : null}
+                    {b.sublabel ? (
+                      <span className="bioN-rail-sublabel">{b.sublabel}</span>
+                    ) : null}
                   </span>
                 </button>
               );
@@ -250,7 +253,7 @@ export default function Bio() {
               <div className="bioN-feature-title">{focusedAsset?.title ?? "—"}</div>
               <div className="bioN-feature-desc">{focusedAsset?.description ?? ""}</div>
 
-              {showRightMeta ? <div className="bioN-feature-meta">{showRightMeta}</div> : null}
+              {rightMeta ? <div className="bioN-feature-meta">{rightMeta}</div> : null}
 
               <div className="bioN-feature-actions">
                 <button
@@ -260,7 +263,9 @@ export default function Bio() {
                   disabled={!focusedAsset?.available}
                   aria-disabled={!focusedAsset?.available}
                 >
-                  {activeBp === "contact" && focusedAsset?.id === "email" ? "Copy Email" : "Open"}
+                  {activeBp === "contact" && focusedAsset?.id === "email"
+                    ? "Copy Email"
+                    : "Open"}
                 </button>
 
                 <button
@@ -277,7 +282,7 @@ export default function Bio() {
 
           {/* FEATURED COPY PANEL */}
           <div className="bioN-copy" aria-label="Featured copy">
-            {activeBp === "contact" && (focusedAsset?.id === "email") ? (
+            {activeBp === "contact" && focusedAsset?.id === "email" ? (
               <>
                 <h2 className="bioN-copy-h">Email</h2>
                 <p className="bioN-copy-p">{CONTACT_VALUES.email}</p>
@@ -289,7 +294,9 @@ export default function Bio() {
               <>
                 <h2 className="bioN-copy-h">{featuredCopy.heading}</h2>
                 {featuredCopy.body.map((p, idx) => (
-                  <p key={idx} className="bioN-copy-p">{p}</p>
+                  <p key={idx} className="bioN-copy-p">
+                    {p}
+                  </p>
                 ))}
               </>
             ) : (
@@ -311,7 +318,8 @@ export default function Bio() {
 
             <div className="bioN-list" role="list">
               {blueprint.assets.map((a, idx) => {
-                const isFocused = a.id === (focusedAssetId ?? selectedAssetId);
+                const current = focusedAssetId ?? selectedAssetId;
+                const isFocused = a.id === current;
                 const isSelected = a.id === selectedAssetId;
 
                 return (
@@ -326,7 +334,6 @@ export default function Bio() {
                     onMouseEnter={() => onAssetFocus(a.id)}
                     onFocus={() => onAssetFocus(a.id)}
                     onClick={() => onAssetSelect(a.id)}
-                    data-id={`bio-asset-${a.id}`}
                     aria-label={`Preview ${a.title}`}
                     style={{ animationDelay: `${idx * 0.04}s` }}
                   >
