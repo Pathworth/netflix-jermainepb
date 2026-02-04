@@ -64,18 +64,12 @@ export default function Bio() {
     [activeBp]
   );
 
-  // Stable dependency that represents the current asset set
-  const assetIdsKey = useMemo(
-    () => blueprint.assets.map((a) => a.id).join("|"),
-    [blueprint.assets]
-  );
-
-  // When blueprint (or its asset set) changes, default focus/selection to first asset
+  // ✅ ESLint-safe: include blueprint.assets because we read it in the effect
   useEffect(() => {
     const first = blueprint.assets[0]?.id ?? null;
     setFocusedAssetId(first);
     setSelectedAssetId(first);
-  }, [blueprint.key, assetIdsKey]);
+  }, [blueprint.key, blueprint.assets]);
 
   const focusedAsset: AssetItem | null = useMemo(() => {
     const id = focusedAssetId ?? selectedAssetId;
@@ -181,10 +175,20 @@ export default function Bio() {
             </p>
 
             <div className="bioN-hero-ctas">
-              <button type="button" className="bioN-btn bioN-btn-primary" disabled aria-disabled="true">
+              <button
+                type="button"
+                className="bioN-btn bioN-btn-primary"
+                disabled
+                aria-disabled="true"
+              >
                 Download Master Bio
               </button>
-              <button type="button" className="bioN-btn bioN-btn-secondary" disabled aria-disabled="true">
+              <button
+                type="button"
+                className="bioN-btn bioN-btn-secondary"
+                disabled
+                aria-disabled="true"
+              >
                 Download Bio Kit
               </button>
             </div>
@@ -214,7 +218,9 @@ export default function Bio() {
                   className={[
                     "bioN-rail-item",
                     isActive ? "bioN-rail-item-active" : "",
-                  ].filter(Boolean).join(" ")}
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   onClick={() => onBlueprintChange(b.key)}
                   onMouseEnter={() => onBlueprintChange(b.key)}
                   aria-current={isActive ? "page" : undefined}
@@ -330,7 +336,9 @@ export default function Bio() {
                       "bioN-row",
                       isFocused ? "bioN-row-focused" : "",
                       isSelected ? "bioN-row-selected" : "",
-                    ].filter(Boolean).join(" ")}
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
                     onMouseEnter={() => onAssetFocus(a.id)}
                     onFocus={() => onAssetFocus(a.id)}
                     onClick={() => onAssetSelect(a.id)}
@@ -347,13 +355,20 @@ export default function Bio() {
                       <span className="bioN-row-desc">{a.description}</span>
                       <span className="bioN-row-meta">
                         {(a.metaLeft || a.metaRight)
-                          ? `${a.metaLeft ?? ""}${a.metaLeft && a.metaRight ? " • " : ""}${a.metaRight ?? ""}`
+                          ? `${a.metaLeft ?? ""}${
+                              a.metaLeft && a.metaRight ? " • " : ""
+                            }${a.metaRight ?? ""}`
                           : ""}
                       </span>
                     </span>
 
                     <span className="bioN-row-cta">
-                      <span className={["bioN-tag", a.available ? "bioN-tag-live" : "bioN-tag-soon"].join(" ")}>
+                      <span
+                        className={[
+                          "bioN-tag",
+                          a.available ? "bioN-tag-live" : "bioN-tag-soon",
+                        ].join(" ")}
+                      >
                         {a.available ? "Preview" : "Soon"}
                       </span>
                     </span>
