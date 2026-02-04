@@ -256,3 +256,8 @@ export const BIO_COPY: Record<string, { heading: string; body: string[] }> = {
 export const CONTACT_VALUES = {
   email: "hello@jermainepeguese.com", // update if needed
 };
+// Back-compat export: older components may still import BIO_KIT_ASSETS.
+// Keeps the build from failing while we migrate everything to BIO_BLUEPRINTS.
+export const BIO_KIT_ASSETS = (
+  BIO_BLUEPRINTS.find((b) => b.key === "bio-kit")?.assets ?? []
+);
