@@ -38,14 +38,9 @@ export default function Bio() {
   const defaultBp: BlueprintKey = "master-bio";
 
   const [activeBp, setActiveBp] = useState<BlueprintKey>(() => getBpFromUrl(defaultBp));
-
-  // Netflix “focus” preview (hover/focus changes this)
   const [focusedAssetId, setFocusedAssetId] = useState<string | null>(null);
-
-  // “Committed” selection (click/enter sets this)
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
 
-  // Sync state if URL changes (back/forward)
   useEffect(() => {
     function onPop() {
       setActiveBp(getBpFromUrl(defaultBp));
@@ -54,7 +49,6 @@ export default function Bio() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  // Write bp into URL when it changes
   useEffect(() => {
     setBpInUrl(activeBp);
   }, [activeBp]);
@@ -64,7 +58,7 @@ export default function Bio() {
     [activeBp]
   );
 
-  // ✅ ESLint-safe: include blueprint.assets because we read it in the effect
+  // Reset focus/selection when blueprint changes
   useEffect(() => {
     const first = blueprint.assets[0]?.id ?? null;
     setFocusedAssetId(first);
@@ -93,7 +87,7 @@ export default function Bio() {
     setFocusedAssetId(assetId);
   }
 
-  // Keyboard support (basic Netflix remote feel)
+  // Keyboard support
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       const tag = (document.activeElement?.tagName || "").toLowerCase();
@@ -147,7 +141,6 @@ export default function Bio() {
   async function handlePrimaryAction(asset: AssetItem | null) {
     if (!asset) return;
 
-    // Contact: email copy
     if (activeBp === "contact" && asset.id === "email") {
       try {
         await navigator.clipboard.writeText(CONTACT_VALUES.email);
@@ -222,7 +215,6 @@ export default function Bio() {
                     .filter(Boolean)
                     .join(" ")}
                   onClick={() => onBlueprintChange(b.key)}
-                  onMouseEnter={() => onBlueprintChange(b.key)}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <span className="bioN-rail-dot" aria-hidden="true" />
@@ -236,145 +228,139 @@ export default function Bio() {
               );
             })}
           </div>
-
-          <div className="bioN-rail-foot">
-            <div className="bioN-rail-meta">
-              <span className="bioN-rail-meta-label">ASSETS</span>
-              <span className="bioN-rail-meta-value">{blueprint.assets.length}</span>
-            </div>
-            <div className="bioN-rail-meta-hint">Updates by Blueprint.</div>
-          </div>
         </aside>
 
         {/* RIGHT LANE */}
         <section className="bioN-lane" aria-label="Assets lane">
-          {/* FEATURED */}
-          <div className="bioN-feature" aria-label="Featured asset">
-            <div className="bioN-feature-thumb" aria-hidden="true">
-              <div className="bioN-feature-thumb-inner">16:9</div>
-            </div>
+          <div className="bioN-laneScroll">
+            {/* FEATURED */}
+            <div className="bioN-feature" aria-label="Featured asset">
+              <div className="bioN-feature-thumb" aria-hidden="true">
+                <div className="bioN-feature-thumb-inner">16:9</div>
+              </div>
 
-            <div className="bioN-feature-body">
-              <div className="bioN-feature-kicker">FEATURED</div>
-              <div className="bioN-feature-title">{focusedAsset?.title ?? "—"}</div>
-              <div className="bioN-feature-desc">{focusedAsset?.description ?? ""}</div>
+              <div className="bioN-feature-body">
+                <div className="bioN-feature-kicker">FEATURED</div>
+                <div className="bioN-feature-title">{focusedAsset?.title ?? "—"}</div>
+                <div className="bioN-feature-desc">{focusedAsset?.description ?? ""}</div>
 
-              {rightMeta ? <div className="bioN-feature-meta">{rightMeta}</div> : null}
+                {rightMeta ? <div className="bioN-feature-meta">{rightMeta}</div> : null}
 
-              <div className="bioN-feature-actions">
-                <button
-                  type="button"
-                  className="bioN-btn bioN-btn-primary"
-                  onClick={() => handlePrimaryAction(focusedAsset)}
-                  disabled={!focusedAsset?.available}
-                  aria-disabled={!focusedAsset?.available}
-                >
-                  {activeBp === "contact" && focusedAsset?.id === "email"
-                    ? "Copy Email"
-                    : "Open"}
-                </button>
+                <div className="bioN-feature-actions">
+                  <button
+                    type="button"
+                    className="bioN-btn bioN-btn-primary"
+                    onClick={() => handlePrimaryAction(focusedAsset)}
+                    disabled={!focusedAsset?.available}
+                    aria-disabled={!focusedAsset?.available}
+                  >
+                    {activeBp === "contact" && focusedAsset?.id === "email"
+                      ? "Copy Email"
+                      : "Open"}
+                  </button>
 
-                <button
-                  type="button"
-                  className="bioN-btn bioN-btn-secondary"
-                  disabled
-                  aria-disabled="true"
-                >
-                  Coming soon
-                </button>
+                  <button
+                    type="button"
+                    className="bioN-btn bioN-btn-secondary"
+                    disabled
+                    aria-disabled="true"
+                  >
+                    Coming soon
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* FEATURED COPY PANEL */}
-          <div className="bioN-copy" aria-label="Featured copy">
-            {activeBp === "contact" && focusedAsset?.id === "email" ? (
-              <>
-                <h2 className="bioN-copy-h">Email</h2>
-                <p className="bioN-copy-p">{CONTACT_VALUES.email}</p>
-                <p className="bioN-copy-p bioN-muted">
-                  Click “Copy Email” above. Social links will go live when added.
-                </p>
-              </>
-            ) : featuredCopy ? (
-              <>
-                <h2 className="bioN-copy-h">{featuredCopy.heading}</h2>
-                {featuredCopy.body.map((p, idx) => (
-                  <p key={idx} className="bioN-copy-p">
-                    {p}
+            {/* FEATURED COPY PANEL */}
+            <div className="bioN-copy" aria-label="Featured copy">
+              {activeBp === "contact" && focusedAsset?.id === "email" ? (
+                <>
+                  <h2 className="bioN-copy-h">Email</h2>
+                  <p className="bioN-copy-p">{CONTACT_VALUES.email}</p>
+                  <p className="bioN-copy-p bioN-muted">
+                    Click “Copy Email” above. Social links will go live when added.
                   </p>
-                ))}
-              </>
-            ) : (
-              <>
-                <h2 className="bioN-copy-h">Preview</h2>
-                <p className="bioN-copy-p bioN-muted">
-                  This blueprint’s featured preview will appear here when the asset copy is added.
-                </p>
-              </>
-            )}
-          </div>
-
-          {/* ASSETS LIST */}
-          <div className="bioN-listWrap" aria-label="Assets list">
-            <div className="bioN-listHead">
-              <div className="bioN-listTitle">ASSETS</div>
-              <div className="bioN-listCount">{blueprint.assets.length}</div>
+                </>
+              ) : featuredCopy ? (
+                <>
+                  <h2 className="bioN-copy-h">{featuredCopy.heading}</h2>
+                  {featuredCopy.body.map((p, idx) => (
+                    <p key={idx} className="bioN-copy-p">
+                      {p}
+                    </p>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <h2 className="bioN-copy-h">Preview</h2>
+                  <p className="bioN-copy-p bioN-muted">
+                    This blueprint’s featured preview will appear here when the asset copy is added.
+                  </p>
+                </>
+              )}
             </div>
 
-            <div className="bioN-list" role="list">
-              {blueprint.assets.map((a, idx) => {
-                const current = focusedAssetId ?? selectedAssetId;
-                const isFocused = a.id === current;
-                const isSelected = a.id === selectedAssetId;
+            {/* ASSETS LIST */}
+            <div className="bioN-listWrap" aria-label="Assets list">
+              <div className="bioN-listHead">
+                <div className="bioN-listTitle">ASSETS</div>
+                <div className="bioN-listCount">{blueprint.assets.length}</div>
+              </div>
 
-                return (
-                  <button
-                    key={a.id}
-                    type="button"
-                    className={[
-                      "bioN-row",
-                      isFocused ? "bioN-row-focused" : "",
-                      isSelected ? "bioN-row-selected" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                    onMouseEnter={() => onAssetFocus(a.id)}
-                    onFocus={() => onAssetFocus(a.id)}
-                    onClick={() => onAssetSelect(a.id)}
-                    aria-label={`Preview ${a.title}`}
-                    style={{ animationDelay: `${idx * 0.04}s` }}
-                  >
-                    <span className="bioN-row-bar" aria-hidden="true" />
-                    <span className="bioN-row-thumb" aria-hidden="true">
-                      <span className="bioN-row-thumb-inner">16:9</span>
-                    </span>
+              <div className="bioN-list" role="list">
+                {blueprint.assets.map((a, idx) => {
+                  const current = focusedAssetId ?? selectedAssetId;
+                  const isFocused = a.id === current;
+                  const isSelected = a.id === selectedAssetId;
 
-                    <span className="bioN-row-main">
-                      <span className="bioN-row-title">{a.title}</span>
-                      <span className="bioN-row-desc">{a.description}</span>
-                      <span className="bioN-row-meta">
-                        {(a.metaLeft || a.metaRight)
-                          ? `${a.metaLeft ?? ""}${
-                              a.metaLeft && a.metaRight ? " • " : ""
-                            }${a.metaRight ?? ""}`
-                          : ""}
+                  return (
+                    <button
+                      key={a.id}
+                      type="button"
+                      className={[
+                        "bioN-row",
+                        isFocused ? "bioN-row-focused" : "",
+                        isSelected ? "bioN-row-selected" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      onMouseEnter={() => onAssetFocus(a.id)}
+                      onFocus={() => onAssetFocus(a.id)}
+                      onClick={() => onAssetSelect(a.id)}
+                      aria-label={`Preview ${a.title}`}
+                      style={{ animationDelay: `${idx * 0.04}s` }}
+                    >
+                      <span className="bioN-row-bar" aria-hidden="true" />
+                      <span className="bioN-row-thumb" aria-hidden="true">
+                        <span className="bioN-row-thumb-inner">16:9</span>
                       </span>
-                    </span>
 
-                    <span className="bioN-row-cta">
-                      <span
-                        className={[
-                          "bioN-tag",
-                          a.available ? "bioN-tag-live" : "bioN-tag-soon",
-                        ].join(" ")}
-                      >
-                        {a.available ? "Preview" : "Soon"}
+                      <span className="bioN-row-main">
+                        <span className="bioN-row-title">{a.title}</span>
+                        <span className="bioN-row-desc">{a.description}</span>
+                        <span className="bioN-row-meta">
+                          {(a.metaLeft || a.metaRight)
+                            ? `${a.metaLeft ?? ""}${
+                                a.metaLeft && a.metaRight ? " • " : ""
+                              }${a.metaRight ?? ""}`
+                            : ""}
+                        </span>
                       </span>
-                    </span>
-                  </button>
-                );
-              })}
+
+                      <span className="bioN-row-cta">
+                        <span
+                          className={[
+                            "bioN-tag",
+                            a.available ? "bioN-tag-live" : "bioN-tag-soon",
+                          ].join(" ")}
+                        >
+                          {a.available ? "Preview" : "Soon"}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
@@ -382,3 +368,4 @@ export default function Bio() {
     </main>
   );
 }
+
