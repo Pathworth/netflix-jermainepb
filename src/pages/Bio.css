@@ -2,13 +2,18 @@
   --jp-blue: #007bff;
 
   --bg: #07090d;
-  --surface: rgba(255,255,255,0.04);
-  --surface2: rgba(255,255,255,0.06);
-  --border: rgba(255,255,255,0.10);
 
-  --text: rgba(255,255,255,0.92);
-  --muted: rgba(255,255,255,0.66);
-  --muted2: rgba(255,255,255,0.52);
+  /* Brighter Netflix-style text */
+  --text: rgba(255,255,255,0.98);
+  --muted: rgba(255,255,255,0.78);
+  --muted2: rgba(255,255,255,0.62);
+
+  --shell: rgba(255,255,255,0.035);
+  --panel: rgba(255,255,255,0.030);
+  --panel2: rgba(255,255,255,0.040);
+
+  --border: rgba(255,255,255,0.10);
+  --borderSoft: rgba(255,255,255,0.06);
 
   --r: 14px;
   --shadow: 0 12px 30px rgba(0,0,0,0.50);
@@ -22,7 +27,7 @@
 
 /* HERO */
 .bioN-hero{
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--borderSoft);
   background:
     radial-gradient(1100px 500px at 22% 10%, rgba(0,123,255,0.16), transparent 60%),
     radial-gradient(900px 450px at 70% 15%, rgba(0,123,255,0.10), transparent 60%),
@@ -44,6 +49,7 @@
   line-height: 1.05;
   margin: 0 0 10px;
   letter-spacing: 0.2px;
+  color: var(--text);
 }
 
 .bioN-sub{
@@ -69,11 +75,11 @@
   box-shadow: 0 0 0 1px rgba(0,123,255,0.12);
 }
 
-/* SHARED BUTTON */
+/* BUTTON */
 .bioN-btn{
   border: 1px solid rgba(255,255,255,0.14);
   background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.90);
+  color: rgba(255,255,255,0.92);
   padding: 10px 14px;
   border-radius: 12px;
   cursor: pointer;
@@ -103,33 +109,33 @@
   border-color: rgba(255,255,255,0.14);
 }
 
-/* NETFLIX SHELL */
+/* SHELL (make it feel like one connected UI) */
 .bioN-shell{
   max-width: 1200px;
   margin: 0 auto;
   padding: 18px 24px 54px;
 
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 18px;
   align-items: start;
+
+  background: var(--shell);
+  border: 1px solid var(--borderSoft);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
 /* LEFT RAIL */
 .bioN-rail{
-  border-radius: var(--r);
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  position: sticky;
-  top: 86px;
+  background: transparent;
+  border-right: 1px solid var(--borderSoft);
+  padding: 10px;
 }
 
 .bioN-rail-head{
   padding: 14px 14px 10px;
-  background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .bioN-rail-title{
@@ -151,7 +157,7 @@
   border-radius: 12px;
   border: 1px solid transparent;
   background: rgba(255,255,255,0.02);
-  color: rgba(255,255,255,0.86);
+  color: rgba(255,255,255,0.94);
   cursor: pointer;
   display:flex;
   gap: 10px;
@@ -190,6 +196,7 @@
 .bioN-rail-label{
   font-size: 14px;
   line-height: 1.1;
+  color: var(--text);
 }
 
 .bioN-rail-sublabel{
@@ -197,51 +204,28 @@
   color: var(--muted2);
 }
 
-.bioN-rail-foot{
-  padding: 12px 14px 14px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  background: rgba(0,0,0,0.18);
-}
-
-.bioN-rail-meta{
-  display:flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.bioN-rail-meta-label{
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  color: var(--muted2);
-}
-
-.bioN-rail-meta-value{
-  font-size: 20px;
-  color: rgba(255,255,255,0.92);
-}
-
-.bioN-rail-meta-hint{
-  font-size: 12px;
-  color: var(--muted2);
-}
-
 /* RIGHT LANE */
 .bioN-lane{
-  border-radius: var(--r);
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+  background: transparent;
+  padding: 10px;
 }
 
+.bioN-laneScroll{
+  background: var(--panel);
+  border: 1px solid var(--borderSoft);
+  border-radius: var(--r);
+  overflow: auto;
+  max-height: calc(100vh - 210px);
+}
+
+/* FEATURED */
 .bioN-feature{
   padding: 14px;
   display:grid;
   grid-template-columns: 300px 1fr;
   gap: 14px;
   background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--borderSoft);
 }
 
 .bioN-feature-thumb{
@@ -255,7 +239,7 @@
 
 .bioN-feature-thumb-inner{
   font-size: 12px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.70);
 }
 
 .bioN-feature-body{
@@ -271,9 +255,10 @@
 }
 
 .bioN-feature-title{
-  font-size: 26px;
+  font-size: 28px;
   line-height: 1.1;
   margin-top: 2px;
+  color: var(--text);
 }
 
 .bioN-feature-desc{
@@ -297,19 +282,20 @@
 /* COPY PANEL */
 .bioN-copy{
   padding: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--borderSoft);
   background: rgba(0,0,0,0.10);
 }
 
 .bioN-copy-h{
   margin: 0 0 10px;
   font-size: 18px;
+  color: var(--text);
 }
 
 .bioN-copy-p{
   margin: 0 0 10px;
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .bioN-muted{
@@ -336,7 +322,7 @@
 
 .bioN-listCount{
   font-size: 12px;
-  color: rgba(255,255,255,0.80);
+  color: rgba(255,255,255,0.90);
   padding: 6px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.12);
@@ -346,12 +332,10 @@
 .bioN-list{
   display:grid;
   gap: 10px;
-  max-height: 420px;
-  overflow: auto;
-  padding-right: 2px;
+  padding-bottom: 14px;
 }
 
-/* ASSET ROW (EPISODE STYLE) */
+/* ASSET ROW */
 .bioN-row{
   width: 100%;
   text-align: left;
@@ -369,7 +353,7 @@
   animation: bioNIn 260ms ease forwards;
   opacity: 0;
 
-  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
 }
 
 @keyframes bioNIn{
@@ -401,7 +385,7 @@
 
 .bioN-row-thumb-inner{
   font-size: 12px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.70);
 }
 
 .bioN-row-main{
@@ -411,18 +395,18 @@
 
 .bioN-row-title{
   font-size: 15px;
-  color: rgba(255,255,255,0.92);
+  color: rgba(255,255,255,0.96);
 }
 
 .bioN-row-desc{
   font-size: 13px;
-  color: var(--muted2);
+  color: rgba(255,255,255,0.70);
   line-height: 1.4;
 }
 
 .bioN-row-meta{
   font-size: 12px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.62);
 }
 
 .bioN-row-cta{
@@ -436,7 +420,7 @@
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.14);
   background: rgba(0,0,0,0.25);
-  color: rgba(255,255,255,0.84);
+  color: rgba(255,255,255,0.90);
   white-space: nowrap;
 }
 
@@ -449,11 +433,12 @@
   opacity: 0.75;
 }
 
-/* FOCUS + SELECTED (Netflix feel) */
+/* Focus stronger (more Netflix) */
 .bioN-row-focused{
-  border-color: rgba(0,123,255,0.55);
-  background: rgba(0,123,255,0.10);
-  box-shadow: 0 0 0 1px rgba(0,123,255,0.12), 0 0 18px rgba(0,123,255,0.10);
+  transform: translateY(-1px);
+  border-color: rgba(0,123,255,0.80);
+  background: rgba(0,123,255,0.12);
+  box-shadow: 0 0 0 1px rgba(0,123,255,0.16), 0 0 28px rgba(0,123,255,0.18);
 }
 
 .bioN-row-focused .bioN-row-bar{
@@ -461,7 +446,7 @@
 }
 
 .bioN-row-selected{
-  border-color: rgba(0,123,255,0.75);
+  border-color: rgba(0,123,255,0.70);
 }
 
 .bioN-row:focus{
@@ -473,29 +458,27 @@
   outline-offset: 2px;
 }
 
-/* RESPONSIVE */
+/* Responsive */
 @media (max-width: 980px){
   .bioN-shell{
     grid-template-columns: 1fr;
   }
 
   .bioN-rail{
-    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--borderSoft);
+  }
+
+  .bioN-laneScroll{
+    max-height: none;
   }
 
   .bioN-feature{
     grid-template-columns: 1fr;
   }
 
-  .bioN-list{
-    max-height: none;
-  }
-
   .bioN-row{
     grid-template-columns: 6px 1fr;
-    grid-template-areas:
-      "bar main"
-      "bar cta";
   }
 
   .bioN-row-thumb{
