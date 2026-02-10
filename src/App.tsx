@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route, Link, Outlet, useLocation } from "react-router-dom";
 import "./App.css";
@@ -16,8 +15,6 @@ import Contact from "./pages/Contact";
 import OnePager from "./pages/OnePager";
 import Skills from "./pages/Skills";
 import Bio from "./pages/Bio";
-
-// Work Experience
 import WorkExperience from "./pages/WorkExperience";
 
 // Hero / superhero art
@@ -34,10 +31,30 @@ import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
 // Tiles for the “Where should we start?” screen
 const tiles = [
-  { label: "AI Strategist", path: "/ai-strategist", heroImg: neoHero, magImg: strategistCover },
-  { label: "Community Builder", path: "/community-builder", heroImg: pantherHero, magImg: builderCover },
-  { label: "Speaking & Workshops", path: "/speaking-workshops", heroImg: ironHero, magImg: teacherCover },
-  { label: "Meet Jermaine", path: "/meet-jermaine", heroImg: batmanHero, magImg: adventurousCover },
+  {
+    label: "AI Strategist",
+    path: "/ai-strategist",
+    heroImg: neoHero,
+    magImg: strategistCover,
+  },
+  {
+    label: "Community Builder",
+    path: "/community-builder",
+    heroImg: pantherHero,
+    magImg: builderCover,
+  },
+  {
+    label: "Speaking & Workshops",
+    path: "/speaking-workshops",
+    heroImg: ironHero,
+    magImg: teacherCover,
+  },
+  {
+    label: "Meet Jermaine",
+    path: "/meet-jermaine",
+    heroImg: batmanHero,
+    magImg: adventurousCover,
+  },
 ];
 
 function Home() {
@@ -65,7 +82,9 @@ function Home() {
       </ul>
 
       <div className="home-footer">
-        <p className="profile-hint">Click any pillar to explore Jermaine’s expertise.</p>
+        <p className="profile-hint">
+          Click any pillar to explore Jermaine’s expertise.
+        </p>
 
         <button
           type="button"
@@ -76,7 +95,10 @@ function Home() {
         </button>
 
         <p className="manage-profiles-help">
-          Tap to {showHeroArt ? "switch to the classic mag covers." : "show the hero profile art."}
+          Tap to{" "}
+          {showHeroArt
+            ? "switch to the classic mag covers."
+            : "show the hero profile art."}
         </p>
       </div>
     </section>
@@ -121,8 +143,6 @@ export default function App() {
         <Route path="/one-pager" element={<OnePager />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/bio" element={<Bio />} />
-
-        {/* Work Experience */}
         <Route path="/work-experience" element={<WorkExperience />} />
       </Route>
     </Routes>
