@@ -1,30 +1,28 @@
 export type WorkSeason = {
   id: string;
-  order: number; // explicit ordering, never derived
-  role: string; // context label
-  organization: string; // canonical when applicable
+  order: number; // display number (1,2,3...) — no zero padding
+  role: string; // context label (ROLE)
+  organization: string; // canonical where required
   dateRange: string;
-
-  logline: string; // exact excerpt
-  storyPreview: string; // exact excerpt (no duplication with logline)
-  storyFull: string; // exact text
-  whatItBuilt: string; // exact text (without the "What it built in him:" label)
-
+  location?: string;
+  logline: string; // exact excerpt (no rewrite)
+  storyPreview: string; // exact excerpt (no rewrite)
+  storyFull: string; // exact full text (no rewrite)
+  whatItBuilt: string; // exact (no rewrite)
   tags?: string[];
-  posterImage?: string | null; // optional future real posters
+  posterImage?: string | null;
   heroMedia?: string | null;
 };
 
-export const FEATURED_SEASON_ID = "we-pathworth";
+export const FEATURED_SEASON_ID = "pathworth-ceo";
 
 export const workSeasons: WorkSeason[] = [
   {
-    id: "we-pathworth",
+    id: "pathworth-ceo",
     order: 1,
     role: "President and CEO",
     organization: "Pathworth Consulting & Solutions",
     dateRange: "Sep 2016 to Now",
-
     logline: "Pathworth started with one question that still guides him.",
     storyPreview: "What is my path worth?",
     storyFull:
@@ -34,20 +32,18 @@ export const workSeasons: WorkSeason[] = [
       "Pathworth is also personal. It is the work that kept him aligned when other things were uncertain, and it carries the discipline earned in every season before it.",
     whatItBuilt:
       "Vision with discipline, clear problem solving, the ability to teach complex tools in relatable concepts, and systems that hold up under pressure.",
-
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-naacp-fffd",
+    id: "naacp-fffd-senior-pm",
     order: 2,
     role: "Senior Project Manager",
     organization: "NAACP Detroit Branch",
     dateRange: "Dec 2023 to Now",
-
-    logline: "Move-in day starts with two empty halls and a deadline that does not blink.",
+    logline:
+      "Move-in day starts with two empty halls and a deadline that does not blink.",
     storyPreview:
       "Crews stack in. Vendors need answers. Volunteers need direction. Ten thousand people will judge the night by how smooth it feels.",
     storyFull:
@@ -57,21 +53,20 @@ export const workSeasons: WorkSeason[] = [
       "His standard is simple. If people feel like it was effortless, the work was done right.",
     whatItBuilt:
       "Large-scale operations, calm leadership under pressure, clear communication across many moving parts, and the discipline to refine the process every year.",
-
     tags: ["Annual Fight for Freedom Fund Dinner"],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-naacp-special-projects",
+    id: "naacp-special-projects-manager",
     order: 3,
     role: "Special Projects Manager",
     organization: "NAACP Detroit Branch",
     dateRange: "Sep 2021 to Now",
-
-    logline: "Special projects is the work nobody can neatly label, but it still has to be done right.",
-    storyPreview: "It comes with a tight deadline and a direct consequence if it is missed.",
+    logline:
+      "Special projects is the work nobody can neatly label, but it still has to be done right.",
+    storyPreview:
+      "It comes with a tight deadline and a direct consequence if it is missed.",
     storyFull:
       "Special projects is the work nobody can neatly label, but it still has to be done right. It comes with a tight deadline and a direct consequence if it is missed.\n\n" +
       "Jermaine steps in when something has no clear owner, when the stakes are public, or when the timeline is tight and the work cannot be delayed. He develops programs end to end. Recruitment. Scheduling. Training. Partner coordination. Youth summer employment payroll coordination and tracking. Outcomes.\n\n" +
@@ -80,43 +75,20 @@ export const workSeasons: WorkSeason[] = [
       "His pattern is consistent. Protect the mission. Protect the people. Keep the work simple enough that someone else can carry it forward.",
     whatItBuilt:
       "Full-cycle program control, sound judgment, partner management, and the ability to keep work moving without burning trust.",
-
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-naacp-ea",
+    id: "rpe-mi-founding-president",
     order: 4,
-    role: "Executive Assistant",
-    organization: "NAACP Detroit Branch",
-    dateRange: "Apr 2019 to Sep 2021",
-
-    logline: "Jermaine treated this role as operational protection.",
-    storyPreview: "Leadership should walk into a room prepared. Period.",
-    storyFull:
-      "Jermaine treated this role as operational protection. Leadership should walk into a room prepared. Period.\n\n" +
-      "He moved quietly and paid attention. He listened more than he spoke, learned how the organization truly moved, and handled issues before they became problems.\n\n" +
-      "This season trained timing and priorities in rooms where pressure is intense, and reputations are on the line.\n\n" +
-      "This is where his instincts sharpened. He spots the gap, closes the gap, and keeps the work moving.",
-    whatItBuilt:
-      "Discretion, readiness, strong priorities, room-reading, and the ability to stabilize chaos without making it about him.",
-
-    tags: [],
-    posterImage: null,
-    heroMedia: null,
-  },
-
-  {
-    id: "we-rpex",
-    order: 5,
     role: "Founding Chapter President",
     organization: "Recession Proof Extreme Inc. Michigan Chapter",
     dateRange: "Sep 2021 to Now",
-
-    logline: "This season taught Jermaine what it takes to build community the right way.",
-    storyPreview: "Recruitment. Programs. Fundraising. Consistency. Care.",
+    logline:
+      "This season taught Jermaine what it takes to build community the right way.",
+    storyPreview:
+      "Recruitment. Programs. Fundraising. Consistency. Care.",
     storyFull:
       "This season taught Jermaine what it takes to build community the right way. Recruitment. Programs. Fundraising. Consistency. Care.\n\n" +
       "He learned people do not stay for a title. They stay for how you make them feel and what you help them become. So, he listened closely, remembered what mattered to each member, and built experiences that met practical needs.\n\n" +
@@ -124,19 +96,16 @@ export const workSeasons: WorkSeason[] = [
       "He held standards without being funny acting. That balance is rare.",
     whatItBuilt:
       "Community-building that scales, leadership without ego, strong relationship memory, and the ability to hold a high bar while still making people feel seen.",
-
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-nlc",
-    order: 6,
+    id: "nlc-recruitment-chair",
+    order: 5,
     role: "Recruitment Chair",
     organization: "New Leaders Council Detroit",
     dateRange: "Jul 2020 to Sep 2022",
-
     logline: "Recruitment is judgment.",
     storyPreview: "You are choosing who belongs in the room and why.",
     storyFull:
@@ -146,21 +115,38 @@ export const workSeasons: WorkSeason[] = [
       "This season also stretched him into public communication. When the work needs a voice, you do not hide from the camera.",
     whatItBuilt:
       "Talent spotting, confident public communication, strong judgment about fit, and the ability to build a leadership bench with intention.",
-
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-temp",
+    id: "naacp-executive-assistant",
+    order: 6,
+    role: "Executive Assistant",
+    organization: "NAACP Detroit Branch",
+    dateRange: "Apr 2019 to Sep 2021",
+    logline: "Jermaine treated this role as operational protection.",
+    storyPreview: "Leadership should walk into a room prepared. Period.",
+    storyFull:
+      "Jermaine treated this role as operational protection. Leadership should walk into a room prepared. Period.\n\n" +
+      "He moved quietly and paid attention. He listened more than he spoke, learned how the organization truly moved, and handled issues before they became problems.\n\n" +
+      "This season trained timing and priorities in rooms where pressure is intense, and reputations are on the line.\n\n" +
+      "This is where his instincts sharpened. He spots the gap, closes the gap, and keeps the work moving.",
+    whatItBuilt:
+      "Discretion, readiness, strong priorities, room-reading, and the ability to stabilize chaos without making it about him.",
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+  {
+    id: "resource-temp-work",
     order: 7,
     role: "Production and Temp Work",
     organization: "ResourceMFG and Forge Industrial Staffing",
     dateRange: "2018 to 2019",
-
     logline: "This was a reset season.",
-    storyPreview: "Plans shifted. Pride had to be humble and quiet. Work still had to be excellent.",
+    storyPreview:
+      "Plans shifted. Pride had to be humble and quiet. Work still had to be excellent.",
     storyFull:
       "This was a reset season. Plans shifted. Pride had to be humble and quiet. Work still had to be excellent.\n\n" +
       "Jermaine treated temp work like a bridge with standards. He showed up with a money goal, delivered clean output, and earned trust fast. Staying late, learning what supervisors needed, and being consistent turned into respect quickly.\n\n" +
@@ -168,20 +154,18 @@ export const workSeasons: WorkSeason[] = [
       "It taught him how rebuilding looks in real life. Clock in. Do the work. Stack the next step.",
     whatItBuilt:
       "Endurance, consistency, quality under pressure, management awareness, and the habit of rebuilding without shame.",
-
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-mastec",
+    id: "att-field-tech-mastec",
     order: 8,
     role: "AT&T Digital Life Field Technician",
     organization: "MasTec Advanced Technologies",
     dateRange: "Nov 2014 to Jun 2017",
-
-    logline: "Jermaine walked into homes where emotions were already high.",
+    logline:
+      "Jermaine walked into homes where emotions were already high.",
     storyPreview:
       "Some people were excited. Some were nervous. Some were frustrated because the last tech left a mess.",
     storyFull:
@@ -189,43 +173,42 @@ export const workSeasons: WorkSeason[] = [
       "He learned to enter calm, listen first, diagnose fast, and explain simply. Then deliver the fix in a way that restore trust.\n\n" +
       "The work ran on strict metrics and accountability. He managed his own truck, inventory, routes, and customer expectations across markets. He worked across Michigan and on the road in Maryland, Virginia, D.C., Milwaukee, and Chicago.\n\n" +
       "The method stayed steady. Listen. Diagnose. Explain. Fix. Leave the home better than he found it.",
-    whatItBuilt: "Trust-fast communication, rapid diagnosis, calm under pressure, and accountability that looks like ownership.",
-
+    whatItBuilt:
+      "Trust-fast communication, rapid diagnosis, calm under pressure, and accountability that looks like ownership.",
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-dbc",
+    id: "detroit-business-consulting",
     order: 9,
     role: "Account Representative",
     organization: "Detroit Business Consulting",
     dateRange: "Sep 2014 to Nov 2014",
-
-    logline: "Door-to-door taught Jermaine resilience in the most honest way.",
-    storyPreview: "You step into unknown spaces, read energy fast, and keep the message clear.",
+    logline:
+      "Door-to-door taught Jermaine resilience in the most honest way.",
+    storyPreview:
+      "You step into unknown spaces, read energy fast, and keep the message clear.",
     storyFull:
       "Door-to-door taught Jermaine resilience in the most honest way. You step into unknown spaces, read energy fast, and keep the message clear.\n\n" +
       "He learned how to handle objections without taking them personally and how to keep going when the day is long and the answer is often no.\n\n" +
       "Trust had to be earned in minutes. Focus had to last for hours.\n\n" +
       "This season sharpened quick connection and clean communication under repetition.",
-    whatItBuilt: "Mental toughness, persuasion with integrity, situational awareness, and the ability to connect fast without forcing it.",
-
+    whatItBuilt:
+      "Mental toughness, persuasion with integrity, situational awareness, and the ability to connect fast without forcing it.",
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-el-apm",
+    id: "el-mechanical-apm",
     order: 10,
     role: "Assistant Project Manager",
     organization: "E.L. Mechanical Inc.",
     dateRange: "Jan 2012 to Apr 2014",
-
-    logline: "Construction taught Jermaine fast: if you miss details, you pay for it twice.",
-    storyPreview: "He lived in the full cycle. Budgets and labor reports. RFIs. Schedule pressure.",
+    logline:
+      "Construction taught Jermaine fast: if you miss details, you pay for it twice.",
+    storyPreview: "He lived in the full cycle.",
     storyFull:
       "Construction taught Jermaine fast: if you miss details, you pay for it twice.\n\n" +
       "He lived in the full cycle. Budgets and labor reports. RFIs. Schedule pressure. Submittals and closeouts. Purchase orders, material logs, and change orders where every decision had a cost and a paper trail.\n\n" +
@@ -233,77 +216,74 @@ export const workSeasons: WorkSeason[] = [
       "Execution was the scoreboard.",
     whatItBuilt:
       "Disciplined project control, documentation habits that prevent problems, sharper risk awareness, and follow-through that stays consistent when the pressure rises.",
-
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-el-ops",
+    id: "el-mechanical-ops-foundation",
     order: 11,
     role: "Estimating, Warehouse, and Administrative Work",
     organization: "E.L. Mechanical",
     dateRange: "Jan 2009 to May 2011",
-
     logline: "This was the operations foundation.",
-    storyPreview: "Inventory. Equipment. Vendor access. Estimates. Reporting. Training. Calendars.",
+    storyPreview:
+      "Inventory. Equipment. Vendor access. Estimates. Reporting. Training. Calendars.",
     storyFull:
       "This was the operations foundation. Inventory. Equipment. Vendor access. Estimates. Reporting. Training. Calendars.\n\n" +
       "It is the work nobody praises, but everybody depends on. Jermaine learned how chaos starts, and how structure stops it.\n\n" +
       "Small gaps become big problems later. Tracking and routines were not optional.\n\n" +
       "This season built a respect for systems and a commitment to clarity when things get messy.",
-    whatItBuilt: "Operational reliability, organization at speed, strong tracking habits, and the instinct to create clarity when things get messy.",
-
+    whatItBuilt:
+      "Operational reliability, organization at speed, strong tracking habits, and the instinct to create clarity when things get messy.",
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-fruit",
+    id: "fruit-etcetera",
     order: 12,
-    role: "Fruit Etcetera On The Go",
-    organization: "",
+    role: "",
+    organization: "Fruit Etcetera On The Go",
     dateRange: "Mid 2000s",
-
     logline: "This was early proof that presence matters.",
-    storyPreview: "Jermaine took responsibility seriously, kept the space clean, and stayed consistent.",
+    storyPreview:
+      "Jermaine took responsibility seriously, kept the space clean, and stayed consistent.",
     storyFull:
       "This was early proof that presence matters. Jermaine took responsibility seriously, kept the space clean, and stayed consistent.\n\n" +
       "He learned that small details are not small when they repeat every day.\n\n" +
       "Standards show up in basics. Basics shape what people remember.",
-    whatItBuilt: "Consistency, service standards, and respect for small improvements that add up.",
-
+    whatItBuilt:
+      "Consistency, service standards, and respect for small improvements that add up.",
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-
   {
-    id: "we-entrepreneurship",
+    id: "early-entrepreneurship",
     order: 13,
     role: "Early Entrepreneurship, Age 10 Through Young Adulthood",
-    organization: "Detroit",
+    organization: "",
+    location: "Detroit",
     dateRange: "1998 to 2009",
-
-    logline: "Jermaine was building businesses before the word entrepreneur had shine.",
+    logline:
+      "Jermaine was building businesses before the word entrepreneur had shine.",
     storyPreview:
-      "A neighborhood candy store. Selling class notes. Fireworks. Hair extensions on college campuses before the online wave. Cars. Sporting and Entertainment Tickets. If it had value, he learned how to move it.",
+      "A neighborhood candy store. Selling class notes. Fireworks. Hair extensions on college campuses before the online wave. Cars. Sporting and Entertainment Tickets.",
     storyFull:
       "Jermaine was building businesses before the word entrepreneur had shine. A neighborhood candy store. Selling class notes. Fireworks. Hair extensions on college campuses before the online wave. Cars. Sporting and Entertainment Tickets. If it had value, he learned how to move it.\n\n" +
       "That season trained timing, demand, and confidence talking to anybody. He learned how to deliver, collect, and do it again.\n\n" +
       "High school graduation came in 2006, but the training started long before that.\n\n" +
       "It was hands-on education in people, value, and follow-through.",
-    whatItBuilt: "Pattern recognition, persuasion with integrity, fast adaptation, and confidence built from earned reps.",
-
+    whatItBuilt:
+      "Pattern recognition, persuasion with integrity, fast adaptation, and confidence built from earned reps.",
     tags: [],
     posterImage: null,
     heroMedia: null,
   },
-].sort((a, b) => a.order - b.order);
+];
 
-export const getSeasonById = (id: string): WorkSeason =>
-  workSeasons.find((s) => s.id === id) ?? workSeasons[0];
-
-export const getFeaturedSeason = (): WorkSeason => getSeasonById(FEATURED_SEASON_ID);
+export function getSeasonById(id: string): WorkSeason {
+  const found = workSeasons.find((s) => s.id === id);
+  return found ?? workSeasons[0];
+}
