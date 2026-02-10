@@ -11,11 +11,13 @@ import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
 
+// Extra / Pages
 import Contact from "./pages/Contact";
 import OnePager from "./pages/OnePager";
 import Skills from "./pages/Skills";
 import Bio from "./pages/Bio";
 
+// Work Experience
 import WorkExperience from "./pages/WorkExperience";
 
 // Hero / superhero art
@@ -30,6 +32,7 @@ import teacherCover from "./images/Teacher-Mag-cover-trans.png";
 import builderCover from "./images/Builder-Mag-cover-trans.png";
 import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 
+// Tiles for the “Where should we start?” screen
 const tiles = [
   { label: "AI Strategist", path: "/ai-strategist", heroImg: neoHero, magImg: strategistCover },
   { label: "Community Builder", path: "/community-builder", heroImg: pantherHero, magImg: builderCover },
@@ -80,6 +83,9 @@ function Home() {
   );
 }
 
+/**
+ * Global layout that shows Navbar on every page except "/"
+ */
 function Layout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/";
@@ -98,19 +104,25 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
+        {/* Splash title card */}
         <Route path="/" element={<NetflixTitle />} />
+
+        {/* “Where should we start?” page */}
         <Route path="/browse" element={<Home />} />
 
+        {/* Pillars */}
         <Route path="/ai-strategist" element={<AIstrategist />} />
         <Route path="/community-builder" element={<CommunityBuilder />} />
         <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
 
+        {/* Extra pages */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/one-pager" element={<OnePager />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/bio" element={<Bio />} />
 
+        {/* Work Experience */}
         <Route path="/work-experience" element={<WorkExperience />} />
       </Route>
     </Routes>
