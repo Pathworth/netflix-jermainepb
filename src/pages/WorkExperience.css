@@ -1,15 +1,16 @@
 :root {
   --weBlue: #0a4cff;
+
   --weMax: 1180px;
 
   --weText: rgba(255, 255, 255, 0.92);
   --weMuted: rgba(255, 255, 255, 0.78);
   --weDim: rgba(255, 255, 255, 0.62);
 
-  /* tighter, more Netflix-like */
-  --weRadius: 16px;
+  --weRadius: 18px;
 }
 
+/* PAGE BASE */
 .wePage {
   min-height: 100vh;
   color: var(--weText);
@@ -230,14 +231,15 @@
 /* TILE */
 .weTile {
   display: block;
-  width: 520px;
-  max-width: 92vw;
+  width: 320px; /* smaller row footprint */
+  max-width: 90vw;
   border: 0;
   background: transparent;
   padding: 0;
   text-align: left;
   cursor: pointer;
   transition: transform 180ms ease, filter 180ms ease;
+  overflow: visible;
 }
 
 .weTile--grid {
@@ -259,87 +261,70 @@
     drop-shadow(0 0 34px rgba(10, 76, 255, 0.22));
 }
 
-/* ✅ Netflix Top-10 geometry: big number behind, poster in front, locked 2:3 */
-.weTileVisual {
+/* ✅ Netflix Top-10 layering:
+   - Number visible on row background
+   - Poster sits ON TOP of number (number peeks from left)
+   - Text sits at bottom of poster (keeps row compact)
+*/
+.weTileFrame {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  /* room for number behind */
-  padding: 8px 6px 8px 132px;
-
-  /* stable visual height */
-  height: 330px;
-
-  /* let the big number breathe */
+  height: 320px;
+  width: 100%;
   overflow: visible;
-}
-
-.weTile--grid .weTileVisual {
-  height: auto;
-  padding: 6px;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
 }
 
 .weNumber {
   position: absolute;
-  left: 8px;
+  left: 2px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 0;
+  z-index: 1;
 
-  /* ✅ more visible */
-  font-size: 290px;
+  font-size: 270px;
   line-height: 0.86;
   font-weight: 950;
   letter-spacing: -0.06em;
 
-  color: rgba(255, 255, 255, 0.30);
-  text-shadow: 0 28px 70px rgba(0, 0, 0, 0.82);
+  color: rgba(10, 76, 255, 0.62); /* ✅ BLUE numbers */
+  -webkit-text-stroke: 2px rgba(0, 0, 0, 0.45);
+  text-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.82),
+    0 0 26px rgba(10, 76, 255, 0.18);
+
   user-select: none;
   pointer-events: none;
-}
-
-.weTile--grid .weNumber {
-  left: -10px;
-  top: -18px;
-  transform: none;
-  font-size: 170px;
-  color: rgba(255, 255, 255, 0.22);
+  mix-blend-mode: normal;
 }
 
 .wePoster {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  left: 92px; /* poster covers number, leaving a peek */
+  top: 0;
+  z-index: 3;
 
-  /* ✅ locked poster dimension (2:3) */
-  width: 220px;
-  height: 330px;
-
+  width: 210px;
+  height: 315px; /* locked 2:3 feel */
   border-radius: var(--weRadius);
   overflow: hidden;
+
+  /* ✅ opaque backing so number never bleeds through transparent placeholder PNGs */
+  background: rgba(10, 10, 12, 1);
+
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.46);
-  transform: translateX(-86px) translateZ(0); /* ✅ overlap the number */
-  flex: 0 0 auto;
+  transform: translateZ(0);
 }
 
-.weTile--grid .wePoster {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 2 / 3;
-  transform: none;
-}
-
-.weTile.isSelected .wePoster {
-  box-shadow:
-    0 24px 56px rgba(0, 0, 0, 0.56),
-    0 0 38px rgba(10, 76, 255, 0.22);
+.wePoster::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 12, 1);
+  z-index: 0;
 }
 
 .wePosterImg {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -349,7 +334,13 @@
 .wePosterSheen {
   position: absolute;
   inset: -35% -60%;
-  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.12), rgba(255,255,255,0));
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0)
+  );
   transform: rotate(12deg);
   animation: weShimmer 2.7s ease-in-out infinite;
   opacity: 0.55;
@@ -365,43 +356,51 @@
 .wePosterVignette {
   position: absolute;
   inset: 0;
+  z-index: 3;
   background:
     radial-gradient(800px 240px at 20% 15%, rgba(10, 76, 255, 0.12), rgba(0,0,0,0) 60%),
-    linear-gradient(180deg, rgba(0,0,0,0.10), rgba(0,0,0,0.62));
+    linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.72));
   pointer-events: none;
 }
 
-.weTileMeta {
-  position: relative;
-  z-index: 3;
+/* ✅ titles + meta at bottom of the poster */
+.wePosterMeta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
 
+  padding: 12px 12px 12px;
   display: grid;
-  gap: 8px;
+  gap: 6px;
 
-  /* ✅ pull text back toward the poster (since poster visually slides left) */
-  margin-left: -42px;
-  padding-top: 2px;
-  max-width: 360px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.56) 32%,
+    rgba(0, 0, 0, 0.86) 100%
+  );
 }
 
-.weTileRole {
-  font-size: 22px;
+.wePosterMetaRole {
+  font-size: 16px;
   font-weight: 950;
   color: rgba(255, 255, 255, 0.96);
 }
 
-.weTileOrg {
-  font-size: 16px;
-  font-weight: 800;
+.wePosterMetaOrg {
+  font-size: 13px;
+  font-weight: 850;
   color: rgba(255, 255, 255, 0.92);
 }
 
-.weTileDates {
+.wePosterMetaDates {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
-  font-weight: 750;
+  font-size: 12px;
+  font-weight: 800;
   color: rgba(255, 255, 255, 0.86);
 }
 
@@ -413,8 +412,41 @@
   box-shadow: 0 0 18px rgba(10, 76, 255, 0.55);
 }
 
-.weTile.isSelected .weTileRole {
+.weTile.isSelected .wePosterMetaRole {
   color: rgba(10, 76, 255, 0.92);
+}
+
+.weTile.isSelected .wePoster {
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.56),
+    0 0 38px rgba(10, 76, 255, 0.22);
+}
+
+/* GRID VARIANT: keep poster full-width; number peeks from left without shrinking poster */
+.weGridItem {
+  overflow: visible;
+}
+
+.weTile--grid .weTileFrame {
+  height: auto;
+  padding-top: 0;
+}
+
+.weTile--grid .weNumber {
+  top: 18px;
+  left: -12px;
+  transform: none;
+  font-size: 170px;
+  color: rgba(10, 76, 255, 0.52);
+}
+
+.weTile--grid .wePoster {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
 }
 
 /* DOCK */
@@ -424,7 +456,7 @@
 
 .weDock {
   position: relative;
-  margin-top: 12px;
+  margin-top: 14px;
   padding: 22px 18px 18px;
   border-radius: 28px;
 
@@ -633,20 +665,6 @@
   max-height: calc(86vh - 56px);
 }
 
-.weModalBody::-webkit-scrollbar {
-  width: 10px;
-}
-
-.weModalBody::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 999px;
-}
-
-.weModalBody::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-}
-
 .weFullMeta {
   padding-top: 10px;
   display: grid;
@@ -709,27 +727,25 @@
   }
 
   .weTile {
-    width: 92vw;
-    max-width: 560px;
+    width: 300px;
   }
 
-  .weTileVisual {
-    padding-left: 116px;
-    height: 310px;
+  .weTileFrame {
+    height: 300px;
   }
 
   .weNumber {
-    font-size: 255px;
+    font-size: 245px;
   }
 
   .wePoster {
-    width: 206px;
-    height: 309px;
-    transform: translateX(-78px) translateZ(0);
+    left: 86px;
+    width: 198px;
+    height: 297px;
   }
 
-  .weTileMeta {
-    margin-left: -36px;
+  .weTile--grid .weNumber {
+    font-size: 150px;
   }
 }
 
@@ -743,40 +759,37 @@
   }
 
   .weTile {
-    width: 92vw;
-    max-width: unset;
+    width: 290px;
+    max-width: 86vw;
   }
 
-  .weTileVisual {
-    padding-left: 92px;
-    height: 270px;
+  .weTileFrame {
+    height: 280px;
   }
 
   .weNumber {
-    font-size: 205px;
-    left: 6px;
+    font-size: 215px;
   }
 
   .wePoster {
-    width: 176px;
-    height: 264px;
-    transform: translateX(-62px) translateZ(0);
+    left: 74px;
+    width: 188px;
+    height: 282px;
   }
 
-  .weTileMeta {
-    margin-left: -26px;
-    max-width: 52vw;
+  .wePosterMetaRole {
+    font-size: 15px;
   }
 
-  .weTileRole {
-    font-size: 18px;
+  .wePosterMetaOrg {
+    font-size: 12px;
   }
 
-  .weTileOrg {
-    font-size: 14px;
+  .wePosterMetaDates {
+    font-size: 12px;
   }
 
-  .weTileDates {
-    font-size: 13px;
+  .weTile--grid .weNumber {
+    font-size: 140px;
   }
 }
