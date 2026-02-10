@@ -2,14 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { getFeaturedSeason, getSeasonById, workSeasons, WorkSeason } from "../data/workExperience";
 import "./WorkExperience.css";
 
-type DockMode = "collapsed" | "expanded";
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function formatOrder(n: number) {
-  return n < 10 ? `0${n}` : `${n}`;
+function scrollToDock(el: HTMLElement | null) {
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const top = window.scrollY + rect.top - 92;
+  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
 }
 
 function splitParagraphs(text: string) {
@@ -17,13 +14,6 @@ function splitParagraphs(text: string) {
     .split("\n\n")
     .map((p) => p.trim())
     .filter(Boolean);
-}
-
-function scrollToEl(el: HTMLElement | null, offset = 88) {
-  if (!el) return;
-  const rect = el.getBoundingClientRect();
-  const top = window.scrollY + rect.top - offset;
-  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
 }
 
 function useBodyScrollLock(locked: boolean) {
@@ -37,70 +27,16 @@ function useBodyScrollLock(locked: boolean) {
   }, [locked]);
 }
 
-function PosterTile({
-  season,
-  isActive,
-  onClick,
-  variant = "shelf",
-}: {
-  season: WorkSeason;
-  isActive: boolean;
-  onClick: () => void;
-  variant?: "shelf" | "grid";
-}) {
-  const orderText = formatOrder(season.order);
-  const titleLine = season.role;
-  const subLine = season.org;
-
-  const bgUrl = season.posterImage?.trim() ? `url("${season.posterImage}")` : "";
-  const posterStyle: React.CSSProperties = bgUrl
-    ? {
-        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.78)), ${bgUrl}`,
-      }
-    : {
-        backgroundImage:
-          "linear-gradient(135deg, rgba(0,123,255,.35), rgba(0,0,0,.85) 60%, rgba(0,0,0,.95))",
-      };
-
-  return (
-    <button
-      type="button"
-      className={[
-        "we-tile",
-        `we-tile--${variant}`,
-        isActive ? "is-active" : "",
-      ].join(" ")}
-      onClick={onClick}
-      aria-label={`Open season ${season.order}: ${season.role} at ${season.org}`}
-    >
-      <div className="we-tileNumber" aria-hidden="true">
-        {orderText}
-      </div>
-
-      <div className="we-poster" style={posterStyle}>
-        <div className="we-posterOverlay">
-          <div className="we-posterTitle">{titleLine}</div>
-          <div className="we-posterSub">{subLine}</div>
-          <div className="we-posterMeta">
-            <span className="we-metaDot" aria-hidden="true" />
-            <span>{season.dateRange}</span>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
-}
-
 function Modal({
   open,
   title,
-  children,
   onClose,
+  children,
 }: {
   open: boolean;
   title: string;
-  children: React.ReactNode;
   onClose: () => void;
+  children: React.ReactNode;
 }) {
   useBodyScrollLock(open);
 
@@ -116,256 +52,281 @@ function Modal({
   if (!open) return null;
 
   return (
-    <div className="we-modalBackdrop" role="dialog" aria-modal="true" aria-label={title} onMouseDown={onClose}>
-      <div className="we-modal" onMouseDown={(e) => e.stopPropagation()}>
-        <div className="we-modalTop">
-          <div className="we-modalTitle">{title}</div>
-          <button type="button" className="we-modalClose" onClick={onClose} aria-label="Close full view">
+    <div className="weModalBackdrop" role="dialog" aria-modal="true" aria-label={title} onMouseDown={onClose}>
+      <div className="weModal" onMouseDown={(e) => e.stopPropagation()}>
+        <div className="weModalTop">
+          <div className="weModalTitle">{title}</div>
+          <button type="button" className="weModalClose" onClick={onClose} aria-label="Close">
             ✕
           </button>
         </div>
-        <div className="we-modalBody">{children}</div>
+        <div className="weModalBody">{children}</div>
       </div>
     </div>
+  );
+}
+
+function PosterTile({
+  season,
+  selected,
+  onSelect,
+  variant,
+}: {
+  season: WorkSeason;
+  selected: boolean;
+  onSelect: () => void;
+  variant: "shelf" | "grid";
+}) {
+  const hasImage = !!season.posterImage;
+
+  const posterStyle: React.CSSProperties = hasImage
+    ? {
+        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.80)), url("${season.posterImage}")`,
+      }
+    : {};
+
+  return (
+    <button
+      type="button"
+      className={["weTile", `weTile--${variant}`, selected ? "isSelected" : ""].join(" ")}
+      onClick={onSelect}
+      aria-label={`${season.order}. ${season.role}${season.organization ? `, ${season.organization}` : ""}`}
+    >
+      <div className="weNumber" aria-hidden="true">
+        {season.order}
+      </div>
+
+      <div className={["wePoster", hasImage ? "hasImage" : "isPlaceholder"].join(" ")} style={posterStyle}>
+        <div className="wePosterOverlay">
+          {season.role ? <div className="wePosterTitle">{season.role}</div> : null}
+          {season.organization ? <div className="wePosterOrg">{season.organization}</div> : null}
+          {season.dateRange ? (
+            <div className="wePosterMeta">
+              <span className="weDot" aria-hidden="true" />
+              <span>{season.dateRange}</span>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </button>
   );
 }
 
 export default function WorkExperience() {
   const featured = useMemo(() => getFeaturedSeason(), []);
   const [selectedId, setSelectedId] = useState<string>(featured.id);
-  const [dockMode, setDockMode] = useState<DockMode>("collapsed");
+  const [expanded, setExpanded] = useState(false);
   const [fullViewOpen, setFullViewOpen] = useState(false);
 
   const shelfRef = useRef<HTMLDivElement | null>(null);
-  const dockRef = useRef<HTMLDivElement | null>(null);
+  const dockAnchorRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
 
   const selected = useMemo(() => getSeasonById(selectedId), [selectedId]);
 
   useEffect(() => {
-    setDockMode("collapsed");
+    setExpanded(false);
   }, [selectedId]);
 
-  const heroBg = useMemo(() => {
-    const raw = selected?.heroMedia || featured.heroMedia || "";
-    if (!raw) return "";
-    return `url("${raw}")`;
-  }, [selected?.heroMedia, featured.heroMedia]);
-
-  const heroStyle: React.CSSProperties = heroBg
-    ? {
-        backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.72) 45%, rgba(0,0,0,.35) 70%, rgba(0,0,0,.20) 100%),
-                          linear-gradient(180deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.92) 100%),
-                          ${heroBg}`,
-      }
-    : {
-        backgroundImage:
-          "linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.72) 45%, rgba(0,0,0,.40) 70%, rgba(0,0,0,.20) 100%), linear-gradient(135deg, rgba(0,123,255,.35), rgba(0,0,0,.92) 60%, rgba(0,0,0,.98))",
-      };
-
-  const setAndRevealDock = (id: string) => {
+  const onSelect = (id: string) => {
     setSelectedId(id);
-    // Let React render the dock content, then scroll.
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollToEl(dockRef.current, 92);
-      });
+      requestAnimationFrame(() => scrollToDock(dockAnchorRef.current));
     });
   };
 
-  const onHeroReadStory = () => setAndRevealDock(featured.id);
+  const onHeroRead = () => onSelect(featured.id);
 
-  const onHeroBrowse = () => scrollToEl(shelfRef.current, 92);
+  const onHeroBrowse = () => {
+    if (!shelfRef.current) return;
+    const rect = shelfRef.current.getBoundingClientRect();
+    const top = window.scrollY + rect.top - 92;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  };
 
-  const onJumpGrid = () => scrollToEl(gridRef.current, 92);
+  const onJumpGrid = () => {
+    if (!gridRef.current) return;
+    const rect = gridRef.current.getBoundingClientRect();
+    const top = window.scrollY + rect.top - 92;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  };
 
-  const dockPreview = useMemo(() => {
-    const raw = selected.storyPreview.trim();
-    // Keep dock preview tight.
-    const max = 260;
-    if (raw.length <= max) return raw;
-    return raw.slice(0, max).trimEnd() + "…";
-  }, [selected.storyPreview]);
-
-  const dockStoryParagraphs = useMemo(() => splitParagraphs(selected.storyFull), [selected.storyFull]);
-
-  const dockStoryToShow = useMemo(() => {
-    if (dockMode === "expanded") return dockStoryParagraphs;
-    return dockStoryParagraphs.slice(0, clamp(dockStoryParagraphs.length, 1, 2));
-  }, [dockMode, dockStoryParagraphs]);
+  const dockParagraphs = useMemo(() => splitParagraphs(selected.storyFull || ""), [selected.storyFull]);
 
   return (
-    <div className="we-page">
-      {/* HERO */}
-      <section className="we-hero" style={heroStyle}>
-        <div className="we-heroInner">
-          <div className="we-heroKicker">Featured Season</div>
-          <h1 className="we-heroTitle">WORK EXPERIENCE</h1>
+    <div className="wePage">
+      <section className="weHero">
+        <div className="weHeroInner">
+          <h1 className="weHeadline">WORK EXPERIENCE</h1>
 
-          <div className="we-heroMeta">
-            <div className="we-heroRole">{featured.role}</div>
-            <div className="we-heroOrg">{featured.org}</div>
-            <div className="we-heroDates">{featured.dateRange}</div>
+          <div className="weHeroMeta">
+            {featured.role ? <div className="weHeroRole">{featured.role}</div> : null}
+            {featured.organization ? <div className="weHeroOrg">{featured.organization}</div> : null}
+            {featured.dateRange ? <div className="weHeroDates">{featured.dateRange}</div> : null}
           </div>
 
-          <p className="we-heroLogline">{featured.logline}</p>
+          {featured.logline ? <p className="weHeroLogline">{featured.logline}</p> : null}
 
-          <div className="we-heroButtons">
-            <button type="button" className="we-btn we-btnPrimary" onClick={onHeroReadStory} aria-label="Read the featured story">
+          <div className="weHeroButtons">
+            <button type="button" className="weBtn weBtnPrimary" onClick={onHeroRead} aria-label="Read Story">
               Read Story
             </button>
-            <button type="button" className="we-btn we-btnSecondary" onClick={onHeroBrowse} aria-label="Browse experience seasons">
+            <button type="button" className="weBtn weBtnSecondary" onClick={onHeroBrowse} aria-label="Browse Seasons">
               Browse Seasons
             </button>
           </div>
         </div>
+
+        <div className="weHeroFade" aria-hidden="true" />
       </section>
 
-      {/* EXPERIENCE SEASONS SHELF */}
-      <section className="we-section" ref={shelfRef}>
-        <div className="we-sectionTop">
-          <h2 className="we-sectionTitle">Experience Seasons</h2>
-
-          <div className="we-sectionActions">
-            <button type="button" className="we-inlineBtn" onClick={onJumpGrid} aria-label="Jump to All Seasons Library">
-              All Seasons Library
-            </button>
-          </div>
+      <section className="weSection" ref={shelfRef}>
+        <div className="weSectionTop">
+          <h2 className="weSectionTitle">Experience Seasons</h2>
+          <button type="button" className="weInlineBtn" onClick={onJumpGrid} aria-label="All Seasons Library">
+            All Seasons Library
+          </button>
         </div>
 
-        <div className="we-shelfWrap">
-          <div className="we-shelf" role="list" aria-label="Experience seasons shelf">
+        <div className="weShelfWrap">
+          <div className="weShelf" role="list" aria-label="Experience Seasons">
             {workSeasons.map((season) => (
-              <div className="we-shelfItem" key={season.id} role="listitem">
+              <div className="weShelfItem" role="listitem" key={season.id}>
                 <PosterTile
                   season={season}
+                  selected={season.id === selectedId}
+                  onSelect={() => onSelect(season.id)}
                   variant="shelf"
-                  isActive={season.id === selectedId}
-                  onClick={() => setAndRevealDock(season.id)}
                 />
               </div>
             ))}
           </div>
-          <div className="we-shelfFade we-shelfFade--left" aria-hidden="true" />
-          <div className="we-shelfFade we-shelfFade--right" aria-hidden="true" />
+          <div className="weShelfFade weShelfFade--left" aria-hidden="true" />
+          <div className="weShelfFade weShelfFade--right" aria-hidden="true" />
         </div>
 
-        {/* DETAIL DOCK */}
-        <div className="we-dockAnchor" ref={dockRef} />
+        <div ref={dockAnchorRef} className="weDockAnchor" />
 
-        <section className="we-dock" aria-label="Season details dock">
-          <div className="we-dockGlow" aria-hidden="true" />
+        <section className="weDock" aria-label="Detail Dock">
+          <div className="weDockWash" aria-hidden="true" />
 
-          <div className="we-dockHeader">
-            <div className="we-roleLabel">ROLE</div>
-            <div className="we-dockTopLine">
-              <div className="we-dockRole">{selected.role}</div>
-              <div className="we-dockOrg">{selected.org}</div>
+          <div className="weDockHeader">
+            <div className="weRoleLabel">ROLE</div>
+            <div className="weDockTopLine">
+              {selected.role ? <div className="weDockRole">{selected.role}</div> : null}
+              {selected.organization ? <div className="weDockOrg">{selected.organization}</div> : null}
             </div>
 
-            <div className="we-dockMetaRow">
-              <span className="we-dockMeta">{selected.dateRange}</span>
-              {selected.location ? <span className="we-dockMeta">• {selected.location}</span> : null}
-            </div>
+            {selected.dateRange ? <div className="weDockDates">{selected.dateRange}</div> : null}
+
+            {selected.tags && selected.tags.length ? (
+              <div className="weTags">
+                {selected.tags.map((t) => (
+                  <span key={t} className="weTag">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
 
-          <div className="we-dockBody">
-            <div className="we-dockLogline">{selected.logline}</div>
+          <div className="weDockBody">
+            {selected.logline ? <div className="weDockLogline">{selected.logline}</div> : null}
 
-            <div className="we-dockStory">
-              {dockMode === "collapsed" ? (
-                <p className="we-dockPreview">{dockPreview}</p>
+            <div className="weStory">
+              {!expanded ? (
+                selected.storyPreview ? <p className="weStoryText">{selected.storyPreview}</p> : null
+              ) : (
+                dockParagraphs.map((p, idx) => (
+                  <p className="weStoryText" key={`${selected.id}-p-${idx}`}>
+                    {p}
+                  </p>
+                ))
+              )}
+
+              {selected.storyFull ? (
+                <div className="weDockControls">
+                  <button
+                    type="button"
+                    className="weInlineBtn weInlineBtnSoft"
+                    onClick={() => setExpanded((v) => !v)}
+                    aria-label={expanded ? "Collapse" : "Read more"}
+                  >
+                    {expanded ? "Collapse" : "Read more"}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="weInlineBtn weInlineBtnStrong"
+                    onClick={() => setFullViewOpen(true)}
+                    aria-label="Open Full View"
+                  >
+                    Open Full View
+                  </button>
+                </div>
               ) : null}
+            </div>
 
-              {dockStoryToShow.map((p, idx) => (
-                <p className="we-dockParagraph" key={`${selected.id}-p-${idx}`}>
-                  {p}
-                </p>
-              ))}
-
-              <div className="we-dockControls">
-                <button
-                  type="button"
-                  className="we-inlineBtn"
-                  onClick={() => setDockMode((m) => (m === "collapsed" ? "expanded" : "collapsed"))}
-                  aria-label={dockMode === "collapsed" ? "Read more of the story" : "Collapse story"}
-                >
-                  {dockMode === "collapsed" ? "Read more" : "Collapse"}
-                </button>
-
-                <button
-                  type="button"
-                  className="we-inlineBtn we-inlineBtnStrong"
-                  onClick={() => setFullViewOpen(true)}
-                  aria-label="Open full view"
-                >
-                  Open Full View
-                </button>
+            {selected.whatItBuilt ? (
+              <div className="weBuilt">
+                <div className="weBuiltTitle">WHAT IT BUILT IN HIM</div>
+                <div className="weBuiltText">{selected.whatItBuilt}</div>
               </div>
-            </div>
-
-            <div className="we-built">
-              <div className="we-builtTitle">What it built in him</div>
-              <div className="we-builtText">{selected.whatItBuilt}</div>
-            </div>
+            ) : null}
           </div>
         </section>
       </section>
 
-      {/* ALL SEASONS LIBRARY */}
-      <section className="we-section" ref={gridRef}>
-        <div className="we-sectionTop">
-          <h2 className="we-sectionTitle">All Seasons Library</h2>
-          <div className="we-sectionHint">Current → oldest. Click any tile to update the dock.</div>
+      <section className="weSection" ref={gridRef}>
+        <div className="weSectionTop weSectionTop--grid">
+          <h2 className="weSectionTitle">All Seasons Library</h2>
         </div>
 
-        <div className="we-grid" role="list" aria-label="All seasons library grid">
+        <div className="weGrid" role="list" aria-label="All Seasons Library">
           {workSeasons.map((season) => (
-            <div key={season.id} className="we-gridItem" role="listitem">
+            <div className="weGridItem" role="listitem" key={`grid-${season.id}`}>
               <PosterTile
                 season={season}
+                selected={season.id === selectedId}
+                onSelect={() => onSelect(season.id)}
                 variant="grid"
-                isActive={season.id === selectedId}
-                onClick={() => setAndRevealDock(season.id)}
               />
             </div>
           ))}
         </div>
       </section>
 
-      {/* FULL VIEW MODAL */}
       <Modal
         open={fullViewOpen}
-        title={`${selected.role} | ${selected.org}`}
+        title={`${selected.role}${selected.organization ? ` | ${selected.organization}` : ""}`}
         onClose={() => setFullViewOpen(false)}
       >
-        <div className="we-fullMeta">
-          <div className="we-fullRoleLabel">ROLE</div>
-          <div className="we-fullRole">{selected.role}</div>
-          <div className="we-fullOrg">{selected.org}</div>
-          <div className="we-fullDates">
-            {selected.dateRange}
-            {selected.location ? ` • ${selected.location}` : ""}
-          </div>
+        <div className="weFullMeta">
+          <div className="weRoleLabel">ROLE</div>
+          {selected.role ? <div className="weFullRole">{selected.role}</div> : null}
+          {selected.organization ? <div className="weFullOrg">{selected.organization}</div> : null}
+          {selected.dateRange ? <div className="weFullDates">{selected.dateRange}</div> : null}
         </div>
 
-        <div className="we-fullLogline">{selected.logline}</div>
+        {selected.logline ? <div className="weFullLogline">{selected.logline}</div> : null}
 
-        <div className="we-fullStory">
-          {splitParagraphs(selected.storyFull).map((p, idx) => (
-            <p className="we-fullParagraph" key={`full-${selected.id}-${idx}`}>
+        <div className="weFullStory">
+          {splitParagraphs(selected.storyFull || "").map((p, idx) => (
+            <p className="weFullText" key={`full-${selected.id}-${idx}`}>
               {p}
             </p>
           ))}
         </div>
 
-        <div className="we-fullBuilt">
-          <div className="we-builtTitle">What it built in him</div>
-          <div className="we-builtText">{selected.whatItBuilt}</div>
-        </div>
+        {selected.whatItBuilt ? (
+          <div className="weFullBuilt">
+            <div className="weBuiltTitle">WHAT IT BUILT IN HIM</div>
+            <div className="weBuiltText">{selected.whatItBuilt}</div>
+          </div>
+        ) : null}
 
-        <div className="we-fullFooter">
-          <button type="button" className="we-btn we-btnPrimary" onClick={() => setFullViewOpen(false)} aria-label="Close full view">
+        <div className="weModalFooter">
+          <button type="button" className="weBtn weBtnPrimary" onClick={() => setFullViewOpen(false)} aria-label="Close">
             Close
           </button>
         </div>
