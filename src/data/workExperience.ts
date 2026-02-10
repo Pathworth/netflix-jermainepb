@@ -167,4 +167,143 @@ export const workSeasons: WorkSeason[] = [
       "He learned humility without shrinking. Discipline without excuses.\n\n" +
       "It taught him how rebuilding looks in real life. Clock in. Do the work. Stack the next step.",
     whatItBuilt:
-      "End
+      "Endurance, consistency, quality under pressure, management awareness, and the habit of rebuilding without shame.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+
+  {
+    id: "we-mastec",
+    order: 8,
+    role: "AT&T Digital Life Field Technician",
+    organization: "MasTec Advanced Technologies",
+    dateRange: "Nov 2014 to Jun 2017",
+
+    logline: "Jermaine walked into homes where emotions were already high.",
+    storyPreview:
+      "Some people were excited. Some were nervous. Some were frustrated because the last tech left a mess.",
+    storyFull:
+      "Jermaine walked into homes where emotions were already high. Some people were excited. Some were nervous. Some were frustrated because the last tech left a mess.\n\n" +
+      "He learned to enter calm, listen first, diagnose fast, and explain simply. Then deliver the fix in a way that restore trust.\n\n" +
+      "The work ran on strict metrics and accountability. He managed his own truck, inventory, routes, and customer expectations across markets. He worked across Michigan and on the road in Maryland, Virginia, D.C., Milwaukee, and Chicago.\n\n" +
+      "The method stayed steady. Listen. Diagnose. Explain. Fix. Leave the home better than he found it.",
+    whatItBuilt: "Trust-fast communication, rapid diagnosis, calm under pressure, and accountability that looks like ownership.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+
+  {
+    id: "we-dbc",
+    order: 9,
+    role: "Account Representative",
+    organization: "Detroit Business Consulting",
+    dateRange: "Sep 2014 to Nov 2014",
+
+    logline: "Door-to-door taught Jermaine resilience in the most honest way.",
+    storyPreview: "You step into unknown spaces, read energy fast, and keep the message clear.",
+    storyFull:
+      "Door-to-door taught Jermaine resilience in the most honest way. You step into unknown spaces, read energy fast, and keep the message clear.\n\n" +
+      "He learned how to handle objections without taking them personally and how to keep going when the day is long and the answer is often no.\n\n" +
+      "Trust had to be earned in minutes. Focus had to last for hours.\n\n" +
+      "This season sharpened quick connection and clean communication under repetition.",
+    whatItBuilt: "Mental toughness, persuasion with integrity, situational awareness, and the ability to connect fast without forcing it.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+
+  {
+    id: "we-el-apm",
+    order: 10,
+    role: "Assistant Project Manager",
+    organization: "E.L. Mechanical Inc.",
+    dateRange: "Jan 2012 to Apr 2014",
+
+    logline: "Construction taught Jermaine fast: if you miss details, you pay for it twice.",
+    storyPreview: "He lived in the full cycle. Budgets and labor reports. RFIs. Schedule pressure.",
+    storyFull:
+      "Construction taught Jermaine fast: if you miss details, you pay for it twice.\n\n" +
+      "He lived in the full cycle. Budgets and labor reports. RFIs. Schedule pressure. Submittals and closeouts. Purchase orders, material logs, and change orders where every decision had a cost and a paper trail.\n\n" +
+      "He kept crews, vendors, and timelines on the same page by speaking in facts, not assumptions. When something was about to go sideways, he caught it early, called it clearly, and moved the work forward.\n\n" +
+      "Execution was the scoreboard.",
+    whatItBuilt:
+      "Disciplined project control, documentation habits that prevent problems, sharper risk awareness, and follow-through that stays consistent when the pressure rises.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+
+  {
+    id: "we-el-ops",
+    order: 11,
+    role: "Estimating, Warehouse, and Administrative Work",
+    organization: "E.L. Mechanical",
+    dateRange: "Jan 2009 to May 2011",
+
+    logline: "This was the operations foundation.",
+    storyPreview: "Inventory. Equipment. Vendor access. Estimates. Reporting. Training. Calendars.",
+    storyFull:
+      "This was the operations foundation. Inventory. Equipment. Vendor access. Estimates. Reporting. Training. Calendars.\n\n" +
+      "It is the work nobody praises, but everybody depends on. Jermaine learned how chaos starts, and how structure stops it.\n\n" +
+      "Small gaps become big problems later. Tracking and routines were not optional.\n\n" +
+      "This season built a respect for systems and a commitment to clarity when things get messy.",
+    whatItBuilt: "Operational reliability, organization at speed, strong tracking habits, and the instinct to create clarity when things get messy.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+
+  {
+    id: "we-fruit",
+    order: 12,
+    role: "Fruit Etcetera On The Go",
+    organization: "",
+    dateRange: "Mid 2000s",
+
+    logline: "This was early proof that presence matters.",
+    storyPreview: "Jermaine took responsibility seriously, kept the space clean, and stayed consistent.",
+    storyFull:
+      "This was early proof that presence matters. Jermaine took responsibility seriously, kept the space clean, and stayed consistent.\n\n" +
+      "He learned that small details are not small when they repeat every day.\n\n" +
+      "Standards show up in basics. Basics shape what people remember.",
+    whatItBuilt: "Consistency, service standards, and respect for small improvements that add up.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+
+  {
+    id: "we-entrepreneurship",
+    order: 13,
+    role: "Early Entrepreneurship, Age 10 Through Young Adulthood",
+    organization: "Detroit",
+    dateRange: "1998 to 2009",
+
+    logline: "Jermaine was building businesses before the word entrepreneur had shine.",
+    storyPreview:
+      "A neighborhood candy store. Selling class notes. Fireworks. Hair extensions on college campuses before the online wave. Cars. Sporting and Entertainment Tickets. If it had value, he learned how to move it.",
+    storyFull:
+      "Jermaine was building businesses before the word entrepreneur had shine. A neighborhood candy store. Selling class notes. Fireworks. Hair extensions on college campuses before the online wave. Cars. Sporting and Entertainment Tickets. If it had value, he learned how to move it.\n\n" +
+      "That season trained timing, demand, and confidence talking to anybody. He learned how to deliver, collect, and do it again.\n\n" +
+      "High school graduation came in 2006, but the training started long before that.\n\n" +
+      "It was hands-on education in people, value, and follow-through.",
+    whatItBuilt: "Pattern recognition, persuasion with integrity, fast adaptation, and confidence built from earned reps.",
+
+    tags: [],
+    posterImage: null,
+    heroMedia: null,
+  },
+].sort((a, b) => a.order - b.order);
+
+export const getSeasonById = (id: string): WorkSeason =>
+  workSeasons.find((s) => s.id === id) ?? workSeasons[0];
+
+export const getFeaturedSeason = (): WorkSeason => getSeasonById(FEATURED_SEASON_ID);
