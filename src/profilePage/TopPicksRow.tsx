@@ -169,10 +169,10 @@ const topPicksConfig: Record<ProfileType, Pick[]> = {
       route: "/bio?bp=masterBio",
     },
     {
-      title: "Work",
-      imgSrc: "https://picsum.photos/seed/work/250/200",
+      title: "Work Experience",
+      imgSrc: "https://picsum.photos/seed/work-experience/250/200",
       icon: <FaBriefcase />,
-      route: "/browse",
+      route: "/work-experience", // ✅ FIXED
     },
     {
       title: "Values",
