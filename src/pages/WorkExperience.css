@@ -463,3 +463,271 @@
 
 .weDockOrg {
   font-size: 14px;
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.weDockDates {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.weTags {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.weTag {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(10, 76, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.weDockBody {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.weDockLogline {
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.94);
+  max-width: 78ch;
+}
+
+.weStory {
+  max-width: 86ch;
+  display: grid;
+  gap: 12px;
+}
+
+.weStoryText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.66;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.weDockControls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* WHAT IT BUILT */
+.weBuilt {
+  max-width: 86ch;
+  padding-top: 10px;
+}
+
+.weBuiltTitle {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.74);
+  margin-bottom: 8px;
+}
+
+.weBuiltText {
+  font-size: 14px;
+  line-height: 1.66;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+/* GRID */
+.weGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 10px 0 34px;
+}
+
+.weGridItem .weTile {
+  width: 100%;
+  max-width: unset;
+}
+
+/* MODAL */
+.weModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.weModal {
+  width: min(980px, 96vw);
+  max-height: 86vh;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    radial-gradient(900px 420px at 18% 12%, rgba(10, 76, 255, 0.16), rgba(0, 0, 0, 0) 56%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.68);
+}
+
+.weModalTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.weModalTitle {
+  font-size: 14px;
+  font-weight: 950;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.weModalClose {
+  border: 0;
+  background: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.92);
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.weModalClose:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.weModalBody {
+  padding: 0 16px 16px;
+  overflow: auto;
+  max-height: calc(86vh - 56px);
+}
+
+.weModalBody::-webkit-scrollbar {
+  width: 10px;
+}
+
+.weModalBody::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.weModalBody::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.weFullMeta {
+  padding-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.weFullRole {
+  font-size: 22px;
+  font-weight: 950;
+  color: rgba(10, 76, 255, 0.92);
+}
+
+.weFullOrg {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.weFullDates {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.weFullLogline {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.94);
+  max-width: 92ch;
+}
+
+.weFullStory {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+  max-width: 92ch;
+}
+
+.weFullText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.70;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.weFullBuilt {
+  margin-top: 16px;
+  padding-top: 10px;
+}
+
+.weModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0 6px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 980px) {
+  .weGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weTile {
+    width: 390px;
+  }
+
+  .weNumber {
+    font-size: 165px;
+  }
+}
+
+@media (max-width: 640px) {
+  .weHeroInner {
+    padding: 54px 16px 26px;
+  }
+
+  .weGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .weTile {
+    width: 92vw;
+  }
+
+  .weTileVisual {
+    height: 240px;
+  }
+
+  .weNumber {
+    font-size: 145px;
+    left: -14px;
+    top: -14px;
+  }
+
+  .wePoster {
+    width: 156px;
+    height: 224px;
+  }
+
+  .weTileRole {
+    font-size: 15px;
+  }
+}
