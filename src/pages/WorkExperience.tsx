@@ -25,8 +25,8 @@ function scrollToDock(el: HTMLElement | null) {
 }
 
 /**
- * Rule: preview must not duplicate the first line (logline) shown in dock.
- * We keep logline separate and ensure preview doesn't repeat it.
+ * Rule: preview must not duplicate the logline shown above it.
+ * If preview starts with logline, remove it.
  */
 function cleanPreview(logline: string, preview: string) {
   const l = (logline || "").trim();
@@ -111,7 +111,8 @@ function PosterTile({
   onSelect: () => void;
   variant: "shelf" | "grid";
 }) {
-  const imgSrc = season.posterImage || (season.order % 2 === 0 ? nfPoster02 : nfPoster01);
+  const imgSrc =
+    season.posterImage || (season.order % 2 === 0 ? nfPoster02 : nfPoster01);
 
   return (
     <button
@@ -122,9 +123,9 @@ function PosterTile({
         selected ? "isSelected" : "",
       ].join(" ")}
       onClick={onSelect}
-      aria-label={`${season.order}. ${season.role}${season.organization ? `, ${season.organization}` : ""}`}
+      aria-label={`${season.order}. ${season.role || ""}${season.organization ? `, ${season.organization}` : ""}`}
     >
-      <div className="weTileVisual">
+      <div className="weTileFrame">
         <div className="weNumber" aria-hidden="true">
           {season.order}
         </div>
@@ -133,19 +134,21 @@ function PosterTile({
           <img className="wePosterImg" src={imgSrc} alt="" loading="lazy" />
           <div className="wePosterSheen" />
           <div className="wePosterVignette" />
-        </div>
 
-        <div className="weTileMeta">
-          {season.role ? <div className="weTileRole">{season.role}</div> : null}
-          {season.organization ? (
-            <div className="weTileOrg">{season.organization}</div>
-          ) : null}
-          {season.dateRange ? (
-            <div className="weTileDates">
-              <span className="weDot" aria-hidden="true" />
-              <span>{season.dateRange}</span>
-            </div>
-          ) : null}
+          <div className="wePosterMeta">
+            {season.role ? (
+              <div className="wePosterMetaRole">{season.role}</div>
+            ) : null}
+            {season.organization ? (
+              <div className="wePosterMetaOrg">{season.organization}</div>
+            ) : null}
+            {season.dateRange ? (
+              <div className="wePosterMetaDates">
+                <span className="weDot" aria-hidden="true" />
+                <span>{season.dateRange}</span>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </button>
@@ -217,7 +220,9 @@ export default function WorkExperience() {
             ) : null}
           </div>
 
-          {featured.logline ? <p className="weHeroLogline">{featured.logline}</p> : null}
+          {featured.logline ? (
+            <p className="weHeroLogline">{featured.logline}</p>
+          ) : null}
 
           <div className="weHeroButtons">
             <button
@@ -287,9 +292,14 @@ export default function WorkExperience() {
               {selected.organization ? (
                 <div className="weDockOrg">{selected.organization}</div>
               ) : null}
+              {selected.location ? (
+                <div className="weDockOrg">{selected.location}</div>
+              ) : null}
             </div>
 
-            {selected.dateRange ? <div className="weDockDates">{selected.dateRange}</div> : null}
+            {selected.dateRange ? (
+              <div className="weDockDates">{selected.dateRange}</div>
+            ) : null}
 
             {selected.tags && selected.tags.length ? (
               <div className="weTags">
@@ -303,7 +313,9 @@ export default function WorkExperience() {
           </div>
 
           <div className="weDockBody">
-            {selected.logline ? <div className="weDockLogline">{selected.logline}</div> : null}
+            {selected.logline ? (
+              <div className="weDockLogline">{selected.logline}</div>
+            ) : null}
 
             <div className="weStory">
               {!expanded ? (
@@ -376,8 +388,13 @@ export default function WorkExperience() {
         <div className="weFullMeta">
           <div className="weRoleLabel">ROLE</div>
           {selected.role ? <div className="weFullRole">{selected.role}</div> : null}
-          {selected.organization ? <div className="weFullOrg">{selected.organization}</div> : null}
-          {selected.dateRange ? <div className="weFullDates">{selected.dateRange}</div> : null}
+          {selected.organization ? (
+            <div className="weFullOrg">{selected.organization}</div>
+          ) : null}
+          {selected.location ? <div className="weFullOrg">{selected.location}</div> : null}
+          {selected.dateRange ? (
+            <div className="weFullDates">{selected.dateRange}</div>
+          ) : null}
         </div>
 
         {selected.logline ? <div className="weFullLogline">{selected.logline}</div> : null}
