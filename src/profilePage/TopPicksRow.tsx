@@ -39,165 +39,40 @@ const rowTitleByProfile: Record<ProfileType, string> = {
 
 const topPicksConfig: Record<ProfileType, Pick[]> = {
   "ai-strategist": [
-    {
-      title: "Start Here",
-      imgSrc: "https://picsum.photos/seed/start-here/250/200",
-      icon: <FaBook />,
-      route: "/browse",
-    },
-    {
-      title: "Ops Tune-Up",
-      imgSrc: "https://picsum.photos/seed/ops-tuneup/250/200",
-      icon: <FaWrench />,
-      route: "/browse",
-    },
-    {
-      title: "AI Systems",
-      imgSrc: "https://picsum.photos/seed/ai-systems/250/200",
-      icon: <FaCode />,
-      route: "/browse",
-    },
-    {
-      title: "Automation",
-      imgSrc: "https://picsum.photos/seed/automation/250/200",
-      icon: <FaProjectDiagram />,
-      route: "/browse",
-    },
-    {
-      title: "Proof Stories",
-      imgSrc: "https://picsum.photos/seed/proof-stories/250/200",
-      icon: <FaBriefcase />,
-      route: "/browse",
-    },
-    {
-      title: "Working Session",
-      imgSrc: "https://picsum.photos/seed/working-session/250/200",
-      icon: <FaEnvelope />,
-      route: "/contact?intent=working-session",
-    },
-    {
-      title: "One-Pager",
-      imgSrc: "https://picsum.photos/seed/one-pager/250/200",
-      icon: <FaFileAlt />,
-      route: "/one-pager",
-    },
+    { title: "Start Here", imgSrc: "https://picsum.photos/seed/start-here/250/200", icon: <FaBook />, route: "/browse" },
+    { title: "Ops Tune-Up", imgSrc: "https://picsum.photos/seed/ops-tuneup/250/200", icon: <FaWrench />, route: "/browse" },
+    { title: "AI Systems", imgSrc: "https://picsum.photos/seed/ai-systems/250/200", icon: <FaCode />, route: "/browse" },
+    { title: "Automation", imgSrc: "https://picsum.photos/seed/automation/250/200", icon: <FaProjectDiagram />, route: "/browse" },
+    { title: "Proof Stories", imgSrc: "https://picsum.photos/seed/proof-stories/250/200", icon: <FaBriefcase />, route: "/browse" },
+    { title: "Working Session", imgSrc: "https://picsum.photos/seed/working-session/250/200", icon: <FaEnvelope />, route: "/contact?intent=working-session" },
+    { title: "One-Pager", imgSrc: "https://picsum.photos/seed/one-pager/250/200", icon: <FaFileAlt />, route: "/one-pager" },
   ],
 
   "community-builder": [
-    {
-      title: "Programs",
-      imgSrc: "https://picsum.photos/seed/programs/250/200",
-      icon: <FaProjectDiagram />,
-      route: "/browse",
-    },
-    {
-      title: "Partnerships",
-      imgSrc: "https://picsum.photos/seed/partnerships/250/200",
-      icon: <FaHandsHelping />,
-      route: "/browse",
-    },
-    {
-      title: "Events",
-      imgSrc: "https://picsum.photos/seed/events/250/200",
-      icon: <FaBriefcase />,
-      route: "/browse",
-    },
-    {
-      title: "Impact",
-      imgSrc: "https://picsum.photos/seed/impact/250/200",
-      icon: <FaBriefcase />,
-      route: "/browse",
-    },
-    {
-      title: "Connect",
-      imgSrc: "https://picsum.photos/seed/connect/250/200",
-      icon: <FaEnvelope />,
-      route: "/contact?intent=community",
-    },
-    {
-      title: "One-Pager",
-      imgSrc: "https://picsum.photos/seed/community-onepager/250/200",
-      icon: <FaFileAlt />,
-      route: "/one-pager",
-    },
+    { title: "Programs", imgSrc: "https://picsum.photos/seed/programs/250/200", icon: <FaProjectDiagram />, route: "/browse" },
+    { title: "Partnerships", imgSrc: "https://picsum.photos/seed/partnerships/250/200", icon: <FaHandsHelping />, route: "/browse" },
+    { title: "Events", imgSrc: "https://picsum.photos/seed/events/250/200", icon: <FaBriefcase />, route: "/browse" },
+    { title: "Impact", imgSrc: "https://picsum.photos/seed/impact/250/200", icon: <FaBriefcase />, route: "/browse" },
+    { title: "Connect", imgSrc: "https://picsum.photos/seed/connect/250/200", icon: <FaEnvelope />, route: "/contact?intent=community" },
+    { title: "One-Pager", imgSrc: "https://picsum.photos/seed/community-onepager/250/200", icon: <FaFileAlt />, route: "/one-pager" },
   ],
 
   "speaking-workshops": [
-    {
-      title: "Keynotes",
-      imgSrc: "https://picsum.photos/seed/keynotes/250/200",
-      icon: <FaBriefcase />,
-      route: "/browse",
-    },
-    {
-      title: "Workshops",
-      imgSrc: "https://picsum.photos/seed/workshops/250/200",
-      icon: <FaProjectDiagram />,
-      route: "/browse",
-    },
-    {
-      title: "Training",
-      imgSrc: "https://picsum.photos/seed/training/250/200",
-      icon: <FaCode />,
-      route: "/browse",
-    },
-    {
-      title: "Topics",
-      imgSrc: "https://picsum.photos/seed/topics/250/200",
-      icon: <FaBook />,
-      route: "/browse",
-    },
-    {
-      title: "Book a Talk",
-      imgSrc: "https://picsum.photos/seed/book-a-talk/250/200",
-      icon: <FaEnvelope />,
-      route: "/contact?intent=speaking",
-    },
-    {
-      title: "One-Pager",
-      imgSrc: "https://picsum.photos/seed/speaking-onepager/250/200",
-      icon: <FaFileAlt />,
-      route: "/one-pager",
-    },
+    { title: "Keynotes", imgSrc: "https://picsum.photos/seed/keynotes/250/200", icon: <FaBriefcase />, route: "/browse" },
+    { title: "Workshops", imgSrc: "https://picsum.photos/seed/workshops/250/200", icon: <FaProjectDiagram />, route: "/browse" },
+    { title: "Training", imgSrc: "https://picsum.photos/seed/training/250/200", icon: <FaCode />, route: "/browse" },
+    { title: "Topics", imgSrc: "https://picsum.photos/seed/topics/250/200", icon: <FaBook />, route: "/browse" },
+    { title: "Book a Talk", imgSrc: "https://picsum.photos/seed/book-a-talk/250/200", icon: <FaEnvelope />, route: "/contact?intent=speaking" },
+    { title: "One-Pager", imgSrc: "https://picsum.photos/seed/speaking-onepager/250/200", icon: <FaFileAlt />, route: "/one-pager" },
   ],
 
   "meet-jermaine": [
-    {
-      title: "Bio",
-      imgSrc: "https://picsum.photos/seed/bio/250/200",
-      icon: <FaIdBadge />,
-      route: "/bio?bp=masterBio",
-    },
-    {
-      title: "Work Experience",
-      imgSrc: "https://picsum.photos/seed/work-experience/250/200",
-      icon: <FaBriefcase />,
-      route: "/work-experience", // ✅ FIXED
-    },
-    {
-      title: "Values",
-      imgSrc: "https://picsum.photos/seed/values/250/200",
-      icon: <FaHandsHelping />,
-      route: "/browse",
-    },
-    {
-      title: "What I Do",
-      imgSrc: "https://picsum.photos/seed/what-i-do/250/200",
-      icon: <FaProjectDiagram />,
-      route: "/browse",
-    },
-    {
-      title: "Contact",
-      imgSrc: "https://picsum.photos/seed/contact/250/200",
-      icon: <FaEnvelope />,
-      route: "/contact?intent=general",
-    },
-    {
-      title: "One-Pager",
-      imgSrc: "https://picsum.photos/seed/meet-onepager/250/200",
-      icon: <FaFileAlt />,
-      route: "/one-pager",
-    },
+    { title: "Bio", imgSrc: "https://picsum.photos/seed/bio/250/200", icon: <FaIdBadge />, route: "/bio?bp=masterBio" },
+    { title: "Work Experience", imgSrc: "https://picsum.photos/seed/work-experience/250/200", icon: <FaBriefcase />, route: "/work-experience" },
+    { title: "Values", imgSrc: "https://picsum.photos/seed/values/250/200", icon: <FaHandsHelping />, route: "/browse" },
+    { title: "What I Do", imgSrc: "https://picsum.photos/seed/what-i-do/250/200", icon: <FaProjectDiagram />, route: "/browse" },
+    { title: "Contact", imgSrc: "https://picsum.photos/seed/contact/250/200", icon: <FaEnvelope />, route: "/contact?intent=general" },
+    { title: "One-Pager", imgSrc: "https://picsum.photos/seed/meet-onepager/250/200", icon: <FaFileAlt />, route: "/one-pager" },
   ],
 };
 
