@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { getFeaturedSeason, getSeasonById, workSeasons, WorkSeason } from "../data/workExperience";
+import {
+  FEATURED_SEASON_ID,
+  getSeasonById,
+  workSeasons,
+  type WorkSeason,
+} from "../data/workExperience";
 import "./WorkExperience.css";
 
 import nfPoster01 from "../images/NF Poster Holder 01.png";
@@ -19,10 +24,15 @@ function scrollToDock(el: HTMLElement | null) {
   window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
 }
 
+/**
+ * Rule: preview must not duplicate the first line (logline) shown in dock.
+ * We keep logline separate and ensure preview doesn't repeat it.
+ */
 function cleanPreview(logline: string, preview: string) {
   const l = (logline || "").trim();
   const p = (preview || "").trim();
-  if (!l || !p) return p;
+  if (!p) return "";
+  if (!l) return p;
   if (p === l) return "";
   if (p.startsWith(l)) return p.slice(l.length).trimStart();
   return p;
@@ -64,14 +74,26 @@ function Modal({
   if (!open) return null;
 
   return (
-    <div className="weModalBackdrop" role="dialog" aria-modal="true" aria-label={title} onMouseDown={onClose}>
+    <div
+      className="weModalBackdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      onMouseDown={() => onClose()}
+    >
       <div className="weModal" onMouseDown={(e) => e.stopPropagation()}>
         <div className="weModalTop">
           <div className="weModalTitle">{title}</div>
-          <button type="button" className="weModalClose" onClick={onClose} aria-label="Close">
+          <button
+            type="button"
+            className="weModalClose"
+            onClick={onClose}
+            aria-label="Close"
+          >
             ✕
           </button>
         </div>
+
         <div className="weModalBody">{children}</div>
       </div>
     </div>
@@ -94,7 +116,11 @@ function PosterTile({
   return (
     <button
       type="button"
-      className={["weTile", `weTile--${variant}`, selected ? "isSelected" : ""].join(" ")}
+      className={[
+        "weTile",
+        `weTile--${variant}`,
+        selected ? "isSelected" : "",
+      ].join(" ")}
       onClick={onSelect}
       aria-label={`${season.order}. ${season.role}${season.organization ? `, ${season.organization}` : ""}`}
     >
@@ -111,7 +137,9 @@ function PosterTile({
 
         <div className="weTileMeta">
           {season.role ? <div className="weTileRole">{season.role}</div> : null}
-          {season.organization ? <div className="weTileOrg">{season.organization}</div> : null}
+          {season.organization ? (
+            <div className="weTileOrg">{season.organization}</div>
+          ) : null}
           {season.dateRange ? (
             <div className="weTileDates">
               <span className="weDot" aria-hidden="true" />
@@ -125,7 +153,7 @@ function PosterTile({
 }
 
 export default function WorkExperience() {
-  const featured = useMemo(() => getFeaturedSeason(), []);
+  const featured = useMemo(() => getSeasonById(FEATURED_SEASON_ID), []);
   const [selectedId, setSelectedId] = useState<string>(featured.id);
   const [expanded, setExpanded] = useState(false);
   const [fullViewOpen, setFullViewOpen] = useState(false);
@@ -163,11 +191,14 @@ export default function WorkExperience() {
     window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   };
 
-  const fullParagraphs = useMemo(() => splitParagraphs(selected.storyFull || ""), [selected.storyFull]);
-
   const previewText = useMemo(
     () => cleanPreview(selected.logline || "", selected.storyPreview || ""),
     [selected.logline, selected.storyPreview]
+  );
+
+  const fullParagraphs = useMemo(
+    () => splitParagraphs(selected.storyFull || ""),
+    [selected.storyFull]
   );
 
   return (
@@ -178,17 +209,32 @@ export default function WorkExperience() {
 
           <div className="weHeroMeta">
             {featured.role ? <div className="weHeroRole">{featured.role}</div> : null}
-            {featured.organization ? <div className="weHeroOrg">{featured.organization}</div> : null}
-            {featured.dateRange ? <div className="weHeroDates">{featured.dateRange}</div> : null}
+            {featured.organization ? (
+              <div className="weHeroOrg">{featured.organization}</div>
+            ) : null}
+            {featured.dateRange ? (
+              <div className="weHeroDates">{featured.dateRange}</div>
+            ) : null}
           </div>
 
           {featured.logline ? <p className="weHeroLogline">{featured.logline}</p> : null}
 
           <div className="weHeroButtons">
-            <button type="button" className="weBtn weBtnPrimary" onClick={onHeroRead} aria-label="Read Story">
+            <button
+              type="button"
+              className="weBtn weBtnPrimary"
+              onClick={onHeroRead}
+              aria-label="Read Story"
+            >
               Read Story
             </button>
-            <button type="button" className="weBtn weBtnSecondary" onClick={onHeroBrowse} aria-label="Browse Seasons">
+
+            <button
+              type="button"
+              className="weBtn weBtnSecondary"
+              onClick={onHeroBrowse}
+              aria-label="Browse Seasons"
+            >
               Browse Seasons
             </button>
           </div>
@@ -200,7 +246,12 @@ export default function WorkExperience() {
       <section className="weSection" ref={shelfRef}>
         <div className="weSectionTop">
           <h2 className="weSectionTitle">Experience Seasons</h2>
-          <button type="button" className="weInlineBtn weInlineBtnStrong" onClick={onJumpGrid} aria-label="All Seasons Library">
+          <button
+            type="button"
+            className="weInlineBtn weInlineBtnStrong"
+            onClick={onJumpGrid}
+            aria-label="All Seasons Library"
+          >
             All Seasons Library
           </button>
         </div>
@@ -233,7 +284,9 @@ export default function WorkExperience() {
 
             <div className="weDockTopLine">
               {selected.role ? <div className="weDockRole">{selected.role}</div> : null}
-              {selected.organization ? <div className="weDockOrg">{selected.organization}</div> : null}
+              {selected.organization ? (
+                <div className="weDockOrg">{selected.organization}</div>
+              ) : null}
             </div>
 
             {selected.dateRange ? <div className="weDockDates">{selected.dateRange}</div> : null}
@@ -345,7 +398,12 @@ export default function WorkExperience() {
         ) : null}
 
         <div className="weModalFooter">
-          <button type="button" className="weBtn weBtnPrimary" onClick={() => setFullViewOpen(false)} aria-label="Close">
+          <button
+            type="button"
+            className="weBtn weBtnPrimary"
+            onClick={() => setFullViewOpen(false)}
+            aria-label="Close"
+          >
             Close
           </button>
         </div>
