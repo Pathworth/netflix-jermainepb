@@ -1,6 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { getFeaturedSeason, getSeasonById, workSeasons, WorkSeason } from "../data/workExperience";
+import {
+  getFeaturedSeason,
+  getSeasonById,
+  POSTER_PLACEHOLDER_DATA_URI,
+  workSeasons,
+  WorkSeason,
+} from "../data/workExperience";
 import "./WorkExperience.css";
+
+function splitParagraphs(text: string) {
+  return text
+    .split("\n\n")
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
 
 function scrollToDock(el: HTMLElement | null) {
   if (!el) return;
@@ -9,11 +22,12 @@ function scrollToDock(el: HTMLElement | null) {
   window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
 }
 
-function splitParagraphs(text: string) {
-  return text
-    .split("\n\n")
-    .map((p) => p.trim())
-    .filter(Boolean);
+function cleanPreview(logline: string, preview: string) {
+  const l = (logline || "").trim();
+  const p = (preview || "").trim();
+  if (!l || !p) return p;
+  if (p.startsWith(l)) return p.slice(l.length).trimStart();
+  return p;
 }
 
 function useBodyScrollLock(locked: boolean) {
@@ -77,13 +91,11 @@ function PosterTile({
   onSelect: () => void;
   variant: "shelf" | "grid";
 }) {
-  const hasImage = !!season.posterImage;
+  const img = season.posterImage || POSTER_PLACEHOLDER_DATA_URI;
 
-  const posterStyle: React.CSSProperties = hasImage
-    ? {
-        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.80)), url("${season.posterImage}")`,
-      }
-    : {};
+  const posterStyle: React.CSSProperties = {
+    backgroundImage: `url("${img}")`,
+  };
 
   return (
     <button
@@ -92,20 +104,25 @@ function PosterTile({
       onClick={onSelect}
       aria-label={`${season.order}. ${season.role}${season.organization ? `, ${season.organization}` : ""}`}
     >
-      <div className="weNumber" aria-hidden="true">
-        {season.order}
-      </div>
+      <div className="weTileVisual">
+        <div className="weNumber" aria-hidden="true">
+          {season.order}
+        </div>
 
-      <div className={["wePoster", hasImage ? "hasImage" : "isPlaceholder"].join(" ")} style={posterStyle}>
-        <div className="wePosterOverlay">
-          {season.role ? <div className="wePosterTitle">{season.role}</div> : null}
-          {season.organization ? <div className="wePosterOrg">{season.organization}</div> : null}
-          {season.dateRange ? (
-            <div className="wePosterMeta">
-              <span className="weDot" aria-hidden="true" />
-              <span>{season.dateRange}</span>
-            </div>
-          ) : null}
+        <div className="wePoster" style={posterStyle}>
+          <div className="wePosterSheen" aria-hidden="true" />
+          <div className="wePosterVignette" aria-hidden="true" />
+
+          <div className="wePosterOverlay">
+            {season.role ? <div className="wePosterTitle">{season.role}</div> : null}
+            {season.organization ? <div className="wePosterOrg">{season.organization}</div> : null}
+            {season.dateRange ? (
+              <div className="wePosterMeta">
+                <span className="weDot" aria-hidden="true" />
+                <span>{season.dateRange}</span>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </button>
@@ -119,8 +136,8 @@ export default function WorkExperience() {
   const [fullViewOpen, setFullViewOpen] = useState(false);
 
   const shelfRef = useRef<HTMLDivElement | null>(null);
-  const dockAnchorRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
+  const dockAnchorRef = useRef<HTMLDivElement | null>(null);
 
   const selected = useMemo(() => getSeasonById(selectedId), [selectedId]);
 
@@ -151,7 +168,12 @@ export default function WorkExperience() {
     window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   };
 
-  const dockParagraphs = useMemo(() => splitParagraphs(selected.storyFull || ""), [selected.storyFull]);
+  const fullParagraphs = useMemo(() => splitParagraphs(selected.storyFull || ""), [selected.storyFull]);
+
+  const previewText = useMemo(
+    () => cleanPreview(selected.logline || "", selected.storyPreview || ""),
+    [selected.logline, selected.storyPreview]
+  );
 
   return (
     <div className="wePage">
@@ -183,7 +205,7 @@ export default function WorkExperience() {
       <section className="weSection" ref={shelfRef}>
         <div className="weSectionTop">
           <h2 className="weSectionTitle">Experience Seasons</h2>
-          <button type="button" className="weInlineBtn" onClick={onJumpGrid} aria-label="All Seasons Library">
+          <button type="button" className="weInlineBtn weInlineBtnStrong" onClick={onJumpGrid} aria-label="All Seasons Library">
             All Seasons Library
           </button>
         </div>
@@ -209,9 +231,11 @@ export default function WorkExperience() {
 
         <section className="weDock" aria-label="Detail Dock">
           <div className="weDockWash" aria-hidden="true" />
+          <div className="weDockEdgeFade" aria-hidden="true" />
 
           <div className="weDockHeader">
             <div className="weRoleLabel">ROLE</div>
+
             <div className="weDockTopLine">
               {selected.role ? <div className="weDockRole">{selected.role}</div> : null}
               {selected.organization ? <div className="weDockOrg">{selected.organization}</div> : null}
@@ -235,9 +259,9 @@ export default function WorkExperience() {
 
             <div className="weStory">
               {!expanded ? (
-                selected.storyPreview ? <p className="weStoryText">{selected.storyPreview}</p> : null
+                previewText ? <p className="weStoryText">{previewText}</p> : null
               ) : (
-                dockParagraphs.map((p, idx) => (
+                fullParagraphs.map((p, idx) => (
                   <p className="weStoryText" key={`${selected.id}-p-${idx}`}>
                     {p}
                   </p>
