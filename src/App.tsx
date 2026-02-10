@@ -15,7 +15,10 @@ import MeetJermaine from "./pages/MeetJermaine";
 import Contact from "./pages/Contact";
 import OnePager from "./pages/OnePager";
 import Skills from "./pages/Skills";
-import Bio from "./pages/Bio"; // ✅ NEW
+import Bio from "./pages/Bio";
+
+// ✅ NEW: Work Experience page
+import WorkExperience from "./pages/WorkExperience";
 
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
@@ -138,12 +141,10 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/one-pager" element={<OnePager />} />
         <Route path="/skills" element={<Skills />} />
-
-        {/* ✅ NEW Bio page */}
         <Route path="/bio" element={<Bio />} />
 
-        {/* NOTE: We are NOT adding /work-experience, /projects, /contact-me yet.
-            Your NavBar will link to them, and they may 404 until added later. */}
+        {/* ✅ NEW Work Experience page */}
+        <Route path="/work-experience" element={<WorkExperience />} />
       </Route>
     </Routes>
   );
