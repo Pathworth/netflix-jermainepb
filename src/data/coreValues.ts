@@ -1,6 +1,3 @@
-// src/data/coreValues.ts
-// Source of truth: Core_Values_Guided_Room_Worksheet_Jermaine_Draft_v3.docx
-
 export type CoreValueId =
   | "self-reflection"
   | "authenticity"
@@ -161,7 +158,7 @@ export const coreValuesPage = {
       mappedValue: "freedom",
       jpLine: "I don’t ask for freedom. I create the door and design the path.",
     },
-  ] as Receipt[],
+  ],
 
   values: [
     {
@@ -180,7 +177,6 @@ export const coreValuesPage = {
       },
       voiceLines: [
         "Give me ten seconds. I’m scanning before I speak. I’d rather pause now than regret it all week.",
-        "If my body is yelling, I don’t answer out loud yet. I breathe, name it, then choose the response I can stand on.",
       ],
     },
     {
@@ -198,10 +194,7 @@ export const coreValuesPage = {
         whenImOff:
           "I overthink the room and start performing instead of being present, and social anxiety tries to write the script.",
       },
-      voiceLines: [
-        "You’re getting one Jermaine. Same in public, same in private. If I’m not aligned, I reset before I respond.",
-        "If I feel myself performing, that’s my cue. I slow down, come back to myself, and then I re-enter the room.",
-      ],
+      voiceLines: ["You’re getting one Jermaine. Same in public, same in private."],
     },
     {
       id: "courage",
@@ -216,10 +209,7 @@ export const coreValuesPage = {
           "Forward motion, because I’ll name what’s real and still move.",
         whenImOff: "I hesitate too long and let a small moment build momentum.",
       },
-      voiceLines: [
-        "Fear can ride in the car, but it can’t drive. I pick the direction and I move.",
-        "I don’t wait to feel ready. I take the next right step, and confidence catches up later.",
-      ],
+      voiceLines: ["Fear can ride in the car, but it can’t drive."],
     },
     {
       id: "integrity",
@@ -236,10 +226,7 @@ export const coreValuesPage = {
         whenImOff:
           "I let a “small” thing slide that should’ve been addressed early.",
       },
-      voiceLines: [
-        "If it costs my name, it costs too much. I’ll walk away and sleep good.",
-        "Shortcuts always come with receipts. I’m not signing my name to anything I wouldn’t stand on in daylight.",
-      ],
+      voiceLines: ["If it costs my name, it costs too much."],
     },
     {
       id: "accountability",
@@ -255,10 +242,7 @@ export const coreValuesPage = {
         whenImOff:
           "I carry too much instead of naming what needs to change and who owns it.",
       },
-      voiceLines: [
-        "If it’s on me, I say it. Then I fix it and tighten the pattern. No speeches.",
-        "I don’t apologize to feel better. I adjust so it doesn’t happen again.",
-      ],
+      voiceLines: ["I don’t apologize to feel better. I adjust."],
     },
     {
       id: "compassion",
@@ -275,10 +259,7 @@ export const coreValuesPage = {
         whenImOff:
           "I jump into fix-it mode too fast and don’t sit with them long enough to fully hear what they’re carrying.",
       },
-      voiceLines: [
-        "Tell me what’s heavy. I’ll listen first. Then we’ll build a next step that protects tomorrow, not just today.",
-        "I’m not here to hype you up and send you back into pain. We’re leaving with a plan.",
-      ],
+      voiceLines: ["Tell me what’s heavy. I’ll listen first. Then we move."],
     },
     {
       id: "freedom",
@@ -294,10 +275,7 @@ export const coreValuesPage = {
           "Space to be themselves, because I make room for people to be heard, creative, and respected.",
         whenImOff: "I overthink too long before I make the move.",
       },
-      voiceLines: [
-        "If I can’t breathe in it, I can’t stay in it. I start building options immediately.",
-        "Freedom is choices. Skills. Money. Relationships that don’t trap you. I build the door before I need it.",
-      ],
+      voiceLines: ["I don’t ask for freedom. I create the door."],
     },
     {
       id: "student-mode",
@@ -313,10 +291,7 @@ export const coreValuesPage = {
         whenImOff:
           "I get too comfortable and stop studying, and that’s when I start getting stagnant.",
       },
-      voiceLines: [
-        "I love being the student in a new room. Teach me the rules, then watch me get sharp.",
-        "Ego makes people slow. I ask the question, learn fast, then turn it into something repeatable.",
-      ],
+      voiceLines: ["Teach me the rules. Then watch my work ethic pay dividends."],
     },
   ] as ValueDef[],
 
@@ -340,105 +315,11 @@ export const coreValuesPage = {
       jpLine: "A quick pause saves a long regret.",
     },
     {
-      id: "s2",
-      valueId: "authenticity",
-      title: "Everybody’s gossiping.",
-      situation:
-        "The room is bonding over talking about someone. You can feel the pull to join in and keep it light.",
-      choices: [
-        { id: "A", text: "Jump in so you don’t look “weird.”" },
-        { id: "B", text: "Fake a laugh and stay close to the circle." },
-        { id: "C", text: "Exit the energy without making a scene.", isMyMove: true },
-      ],
-      mySteps: [
-        "I check alignment: “Is this me, or is this me trying to fit?”",
-        "I redirect the conversation or I remove myself calmly.",
-        "If needed, I say it plain: “I don’t talk about people like that.”",
-      ],
-      jpLine: "I’m not building a life I have to explain later.",
-    },
-    {
-      id: "s3",
-      valueId: "courage",
-      title: "Say it out loud.",
-      situation:
-        "Everyone sees the real issue, but nobody wants to be the one to name it. Silence is starting to cost more than honesty.",
-      choices: [
-        { id: "A", text: "Let it slide and hope it fixes itself." },
-        { id: "B", text: "Talk about it privately and never address it in the room." },
-        {
-          id: "C",
-          text: "Name it and bring it to attention, then move to the next step.",
-          isMyMove: true,
-        },
-      ],
-      mySteps: [
-        "I state the issue without attacking the person.",
-        "I say what “better” looks like in one sentence.",
-        "I set the next move with ownership and timing.",
-      ],
-      jpLine: "I don’t negotiate with fear.",
-    },
-    {
-      id: "s4",
-      valueId: "integrity",
-      title: "Do it off the record.",
-      situation:
-        "Somebody offers you an advantage, but it comes with a hidden trade or doesn’t feel right but you’ll have to live with. It’s the kind of thing people justify later.",
-      choices: [
-        { id: "A", text: "Take it and tell yourself it’s “how the game goes.”" },
-        { id: "B", text: "Avoid the decision and stay around the situation anyway." },
-        { id: "C", text: "Say no and keep my name intact.", isMyMove: true },
-      ],
-      mySteps: [
-        "I ask myself, “If this got exposed tomorrow, would I still be proud?”",
-        "I decline clearly without debating it.",
-        "I choose the longer road and keep moving.",
-      ],
-      jpLine: "My name is not for sale.",
-    },
-    {
-      id: "s5",
-      valueId: "accountability",
-      title: "You dropped the ball.",
-      situation:
-        "Something didn’t get done the way it needed to. You can feel the urge to explain, defend, or point to what other people didn’t do.",
-      choices: [
-        { id: "A", text: "Blame the circumstances and move on." },
-        { id: "B", text: "Stay quiet and hope nobody notices." },
-        { id: "C", text: "Own it, fix it, then adjust so it doesn’t repeat.", isMyMove: true },
-      ],
-      mySteps: [
-        "I say it straight: “That’s on me.”",
-        "I handle the situation with urgency and clarity.",
-        "I tighten the pattern that allowed it to happen.",
-      ],
-      jpLine: "I refuse to apologize without adjusting.",
-    },
-    {
-      id: "s6",
-      valueId: "compassion",
-      title: "I want to quit today.",
-      situation:
-        "Somebody is emotionally tapped and ready to make a big decision off a heavy day. They want comfort, but what they need is a plan.",
-      choices: [
-        { id: "A", text: "“Quit right now. You’ll figure it out.”" },
-        { id: "B", text: "“Just deal with it. That’s life.”" },
-        { id: "C", text: "Hold the weight, then help them move it.", isMyMove: true },
-      ],
-      mySteps: [
-        "I listen until I understand what’s really driving the feeling.",
-        "I map what happens if they move today vs. move prepared.",
-        "I help them build the next steps: timeline, money, options.",
-      ],
-      jpLine: "Comfort is easy. The next move is love.",
-    },
-    {
       id: "s7",
       valueId: "freedom",
       title: "You feel boxed in.",
       situation:
-        "You’re in a situation where you feel limited, unheard, or like your future depends on somebody else’s permission. You can feel the pressure building.",
+        "You’re in a situation where you feel limited, unheard, or like your future depends on somebody else’s permission.",
       choices: [
         { id: "A", text: "Stay quiet and accept it." },
         { id: "B", text: "Blow it up out of anger and walk away with no plan." },
@@ -451,30 +332,11 @@ export const coreValuesPage = {
       ],
       jpLine: "I don’t ask for freedom. I create the door and design the path.",
     },
-    {
-      id: "s8",
-      valueId: "student-mode",
-      title: "New room, new rules.",
-      situation:
-        "You’re in a space where you don’t know the full process yet. You can either fake it, freeze, or learn fast.",
-      choices: [
-        { id: "A", text: "Act like you already know and hope you don’t get exposed." },
-        { id: "B", text: "Stay quiet, wait, and fall behind." },
-        { id: "C", text: "Ask, learn, apply, then improve.", isMyMove: true },
-      ],
-      mySteps: [
-        "I ask the question that reveals the rules of the room.",
-        "I learn it the right way first and execute it the right way.",
-        "Once I’m solid, I improve it with ideas, processes, or a strategy.",
-      ],
-      jpLine: "Teach me the rules. Then watch my work ethic pay dividends.",
-    },
   ] as Scenario[],
 
   season2: {
     title: "Season 2",
     valueIds: ["freedom", "student-mode"] as CoreValueId[],
-    // receipts mapped to these values
     receiptIds: ["r4", "r8"],
   },
 
@@ -489,39 +351,6 @@ export const coreValuesPage = {
         { id: "generosity", name: "Generosity" },
         { id: "responsibility", name: "Responsibility" },
         { id: "self-respect", name: "Self-respect" },
-      ],
-    },
-    {
-      id: "shelf-skill-growth",
-      title: "Skill + Growth",
-      values: [
-        { id: "personal-growth", name: "Personal Growth" },
-        { id: "self-improvement", name: "Self-improvement" },
-        { id: "adaptability", name: "Adaptability" },
-        { id: "flexibility", name: "Flexibility" },
-        { id: "open-mindedness", name: "Open-mindedness" },
-        { id: "uniqueness", name: "Uniqueness" },
-        { id: "creativity", name: "Creativity" },
-      ],
-    },
-    {
-      id: "shelf-people-love",
-      title: "People + Love",
-      values: [
-        { id: "family", name: "Family" },
-        { id: "community", name: "Community" },
-        { id: "giving-support", name: "Giving Support" },
-        { id: "self-compassion", name: "Self-compassion" },
-      ],
-    },
-    {
-      id: "shelf-freedom-health",
-      title: "Freedom + Health",
-      values: [
-        { id: "independence", name: "Independence" },
-        { id: "frugality", name: "Frugality" },
-        { id: "sustainability", name: "Sustainability" },
-        { id: "wellness", name: "Wellness" },
       ],
     },
   ] as LibraryShelf[],
