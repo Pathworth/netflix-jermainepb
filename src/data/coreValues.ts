@@ -61,7 +61,20 @@ export type LibraryShelf = {
   values: LibraryValue[];
 };
 
-export const coreValuesPage = {
+export const coreValuesPage: {
+  constants: {
+    title: string;
+    primaryFeeling: string;
+    ctaLabel: string;
+    doneWhen: string;
+  };
+  featuredOrder: CoreValueId[];
+  receipts: Receipt[];
+  values: ValueDef[];
+  scenarios: Scenario[];
+  season2: { title: string; valueIds: CoreValueId[]; receiptIds: string[] };
+  libraryShelves: LibraryShelf[];
+} = {
   constants: {
     title: "Core Values",
     primaryFeeling: "Authentic Truth and self power",
@@ -79,7 +92,7 @@ export const coreValuesPage = {
     "compassion",
     "freedom",
     "student-mode",
-  ] as CoreValueId[],
+  ],
 
   receipts: [
     {
@@ -161,197 +174,20 @@ export const coreValuesPage = {
   ],
 
   values: [
-    {
-      id: "self-reflection",
-      name: "Self-reflection",
-      definition: "I pause long enough to be honest with myself.",
-      looksLike: "I do a body scan, an emotional scan, then I decide on purpose.",
-      iRefuse: "I refuse to let a mood make my choices and call it truth.",
-      reveal: {
-        mattersBecause:
-          "If I don’t pause and check myself, I’ll make a permanent decision off a temporary feeling.",
-        peopleFeelWhenImInCharge:
-          "Dependable, because I don’t let emotions run the room.",
-        whenImOff:
-          "I move too fast and realize later I skipped the self-scan.",
-      },
-      voiceLines: [
-        "Give me ten seconds. I’m scanning before I speak. I’d rather pause now than regret it all week.",
-      ],
-    },
-    {
-      id: "authenticity",
-      name: "Authenticity",
-      definition: "I live in one piece.",
-      looksLike:
-        "My spirit, my words, and my actions match, even when nobody’s watching.",
-      iRefuse: "I refuse to be two versions of me for anybody.",
-      reveal: {
-        mattersBecause:
-          "Living with multiple masks will drain you, and I’m not paying that price.",
-        peopleFeelWhenImInCharge:
-          "Consistent, because they know they’re getting the real me every time.",
-        whenImOff:
-          "I overthink the room and start performing instead of being present, and social anxiety tries to write the script.",
-      },
-      voiceLines: ["You’re getting one Jermaine. Same in public, same in private."],
-    },
-    {
-      id: "courage",
-      name: "Courage",
-      definition: "I move even when I’m scared.",
-      looksLike: "I name the fear, give it a job, and take the step anyway.",
-      iRefuse: "I refuse to negotiate with fear.",
-      reveal: {
-        mattersBecause:
-          "Fear will keep shrinking your life if you let it make choices.",
-        peopleFeelWhenImInCharge:
-          "Forward motion, because I’ll name what’s real and still move.",
-        whenImOff: "I hesitate too long and let a small moment build momentum.",
-      },
-      voiceLines: ["Fear can ride in the car, but it can’t drive."],
-    },
-    {
-      id: "integrity",
-      name: "Integrity",
-      definition: "My name is not for sale.",
-      looksLike:
-        "I turn down shortcuts that cost character, even when the offer looks sweet.",
-      iRefuse: "I refuse to win if it costs my name.",
-      reveal: {
-        mattersBecause:
-          "If your name gets damaged, everything you build sits on shaky ground.",
-        peopleFeelWhenImInCharge:
-          "Trust, because the standard doesn’t change based on the offer.",
-        whenImOff:
-          "I let a “small” thing slide that should’ve been addressed early.",
-      },
-      voiceLines: ["If it costs my name, it costs too much."],
-    },
-    {
-      id: "accountability",
-      name: "Accountability",
-      definition: "I own my choices, and I take the lesson.",
-      looksLike:
-        "I say “that’s on me,” fix what I can, and change the pattern for next time.",
-      iRefuse: "I refuse to apologize without adjusting.",
-      reveal: {
-        mattersBecause: "Ownership is how you grow without lying to yourself.",
-        peopleFeelWhenImInCharge:
-          "Relief, because excuses don’t live here and problems get handled.",
-        whenImOff:
-          "I carry too much instead of naming what needs to change and who owns it.",
-      },
-      voiceLines: ["I don’t apologize to feel better. I adjust."],
-    },
-    {
-      id: "compassion",
-      name: "Compassion",
-      definition: "I hold the weight, then help you move it.",
-      looksLike:
-        "I listen without judging, then I give you steps that protect your future, not just your feelings.",
-      iRefuse: "I refuse to comfort you into staying stuck.",
-      reveal: {
-        mattersBecause:
-          "People don’t need another speech, they need a way through.",
-        peopleFeelWhenImInCharge:
-          "Seen and heard, because I listen without judging and I don’t leave them unanswered.",
-        whenImOff:
-          "I jump into fix-it mode too fast and don’t sit with them long enough to fully hear what they’re carrying.",
-      },
-      voiceLines: ["Tell me what’s heavy. I’ll listen first. Then we move."],
-    },
-    {
-      id: "freedom",
-      name: "Freedom",
-      definition: "I build options so my life isn’t dependent on permission.",
-      looksLike:
-        "When I feel boxed in, I assess what’s real, then I create a plan that opens doors.",
-      iRefuse: "I refuse to beg for air.",
-      reveal: {
-        mattersBecause:
-          "I’m not built to need permission to live my life, or be micromanaged.",
-        peopleFeelWhenImInCharge:
-          "Space to be themselves, because I make room for people to be heard, creative, and respected.",
-        whenImOff: "I overthink too long before I make the move.",
-      },
-      voiceLines: ["I don’t ask for freedom. I create the door."],
-    },
-    {
-      id: "student-mode",
-      name: "Student Mode",
-      definition: "I stay teachable so life can keep giving me new options.",
-      looksLike:
-        "I learn it your way first, earn trust through action, then improve it with proof.",
-      iRefuse: "I refuse to let ego make me slow.",
-      reveal: {
-        mattersBecause: "The moment you stop learning, you stop growing.",
-        peopleFeelWhenImInCharge:
-          "Confidence, because I stay teachable and improve what’s in front of us.",
-        whenImOff:
-          "I get too comfortable and stop studying, and that’s when I start getting stagnant.",
-      },
-      voiceLines: ["Teach me the rules. Then watch my work ethic pay dividends."],
-    },
+    /* keep your existing values array as-is */
   ] as ValueDef[],
 
   scenarios: [
-    {
-      id: "s1",
-      valueId: "self-reflection",
-      title: "I’m triggered right now.",
-      situation:
-        "Somebody says something that hits a nerve. You can feel your body heat up and your thoughts start sprinting.",
-      choices: [
-        { id: "A", text: "Snap back and match their energy." },
-        { id: "B", text: "Swallow it, stay quiet, and carry it all day." },
-        { id: "C", text: "Pause, scan, then respond on purpose.", isMyMove: true },
-      ],
-      mySteps: [
-        "I do a quick body scan and name what I’m feeling.",
-        "I ask, “What do I actually need right now, and what’s the outcome I want?”",
-        "I respond with a boundary or a question, not a reaction.",
-      ],
-      jpLine: "A quick pause saves a long regret.",
-    },
-    {
-      id: "s7",
-      valueId: "freedom",
-      title: "You feel boxed in.",
-      situation:
-        "You’re in a situation where you feel limited, unheard, or like your future depends on somebody else’s permission.",
-      choices: [
-        { id: "A", text: "Stay quiet and accept it." },
-        { id: "B", text: "Blow it up out of anger and walk away with no plan." },
-        { id: "C", text: "Pause, assess, then create options.", isMyMove: true },
-      ],
-      mySteps: [
-        "I do an emotional scan so I’m not moving off anger.",
-        "I get honest about what I can control and what I can’t.",
-        "I build an exit or adjustment plan that creates choices, even if it takes longer.",
-      ],
-      jpLine: "I don’t ask for freedom. I create the door and design the path.",
-    },
+    /* keep your existing scenarios array as-is */
   ] as Scenario[],
 
   season2: {
     title: "Season 2",
-    valueIds: ["freedom", "student-mode"] as CoreValueId[],
+    valueIds: ["freedom", "student-mode"],
     receiptIds: ["r4", "r8"],
   },
 
   libraryShelves: [
-    {
-      id: "shelf-name-standard",
-      title: "Name + Standard",
-      values: [
-        { id: "honesty", name: "Honesty" },
-        { id: "fairness", name: "Fairness" },
-        { id: "loyalty", name: "Loyalty" },
-        { id: "generosity", name: "Generosity" },
-        { id: "responsibility", name: "Responsibility" },
-        { id: "self-respect", name: "Self-respect" },
-      ],
-    },
-  ] as LibraryShelf[],
+    /* keep your existing shelves array as-is */
+  ],
 };
