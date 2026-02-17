@@ -1,26 +1,36 @@
 import React, { useMemo, useState } from "react";
 import "./CoreValues.css";
+import {
+  coreValuesPage,
+  CoreValueId,
+  Receipt,
+  Scenario,
+  ValueDef,
+} from "../data/coreValues";
 
-import Modal from "../components/coreValues/Modal";
-import { coreValuesPage, CoreValueId, Receipt, Scenario, ValueDef } from "../data/coreValues";
-
-type ActiveModal =
-  | { type: "receipt"; receipt: Receipt }
-  | { type: "value"; value: ValueDef }
-  | { type: "library"; name: string; definition?: string }
+type DrawerMode =
+  | { type: "situation"; item: Receipt }
+  | { type: "value"; item: ValueDef }
   | { type: "voice"; title: string; lines: string[] }
+  | { type: "library"; title: string; body: string }
   | null;
 
-function shortPreview(text: string, max = 160) {
-  const clean = text.replace(/\s+/g, " ").trim();
-  if (clean.length <= max) return clean;
-  return clean.slice(0, max).trim() + "…";
+function preview(text: string, max = 140) {
+  const t = text.replace(/\s+/g, " ").trim();
+  return t.length <= max ? t : t.slice(0, max).trim() + "…";
 }
 
 export default function CoreValues() {
-  const [lens, setLens] = useState<CoreValueId | null>(null);
-  const [modal, setModal] = useState<ActiveModal>(null);
+  // progression unlocks
+  const [openedSituationOnce, setOpenedSituationOnce] = useState(false);
+  const [pickedLensOnce, setPickedLensOnce] = useState(false);
+  const [completedScenarioOnce, setCompletedScenarioOnce] = useState(false);
 
+  const [lens, setLens] = useState<CoreValueId | null>(null);
+
+  const [drawer, setDrawer] = useState<DrawerMode>(null);
+
+  // scenario deck state
   const [scenarioIndex, setScenarioIndex] = useState(0);
   const [pickedChoice, setPickedChoice] = useState<{
     scenarioId: string;
@@ -34,187 +44,224 @@ export default function CoreValues() {
   }, []);
 
   const orderedScenarios = useMemo(() => {
-    const scenarios = [...coreValuesPage.scenarios];
-    if (!lens) return scenarios;
-    const top = scenarios.filter((s) => s.valueId === lens);
-    const rest = scenarios.filter((s) => s.valueId !== lens);
+    const list = [...coreValuesPage.scenarios];
+    if (!lens) return list;
+
+    const top = list.filter((s) => s.valueId === lens);
+    const rest = list.filter((s) => s.valueId !== lens);
     return [...top, ...rest];
   }, [lens]);
 
   const activeScenario: Scenario | undefined = orderedScenarios[scenarioIndex];
 
   const season2Receipts = useMemo(() => {
-    const ids = new Set(coreValuesPage.season2.receiptIds);
+    const ids = new Set(coreValuesPage.season2.featuredReceiptIds);
     return coreValuesPage.receipts.filter((r) => ids.has(r.id));
   }, []);
 
-  const closeModal = () => setModal(null);
+  const closeDrawer = () => setDrawer(null);
 
-  const openValueModal = (id: CoreValueId) => {
-    const v = valuesById.get(id);
-    if (!v) return;
-    setModal({ type: "value", value: v });
+  const openSituation = (item: Receipt) => {
+    setOpenedSituationOnce(true);
+    setDrawer({ type: "situation", item });
   };
 
-  const openReceiptModal = (receipt: Receipt) => {
-    setModal({ type: "receipt", receipt });
+  const openValue = (item: ValueDef) => {
+    setDrawer({ type: "value", item });
   };
 
-  const openVoiceModal = (value: ValueDef) => {
-    const lines = value.voiceLines || [];
-    if (!lines.length) return;
-    setModal({ type: "voice", title: `${value.name} — Hear it (soon)`, lines });
-  };
-
-  const onPickLens = (id: CoreValueId) => {
+  const pickLens = (id: CoreValueId) => {
     setLens(id);
+    setPickedLensOnce(true);
     setScenarioIndex(0);
     setPickedChoice(null);
-    openValueModal(id);
+
+    const v = valuesById.get(id);
+    if (v) openValue(v);
   };
 
-  const resetScenarioReveal = () => setPickedChoice(null);
+  const clearLens = () => {
+    setLens(null);
+    setScenarioIndex(0);
+    setPickedChoice(null);
+  };
+
+  const pickScenarioChoice = (choiceId: "A" | "B" | "C") => {
+    if (!activeScenario) return;
+    setPickedChoice({ scenarioId: activeScenario.id, choiceId });
+  };
+
+  const nextScenario = () => {
+    // only count completion once we actually revealed at least once
+    if (!completedScenarioOnce) setCompletedScenarioOnce(true);
+
+    setPickedChoice(null);
+    setScenarioIndex((i) => {
+      const next = Math.min(orderedScenarios.length - 1, i + 1);
+      return next;
+    });
+  };
+
+  const lensName = lens ? valuesById.get(lens)?.name : null;
 
   return (
-    <div className="cvPage">
+    <div className="cvRoom">
+      {/* HERO */}
       <header className="cvHero">
         <div className="cvHeroInner">
-          <h1 className="cvTitle">{coreValuesPage.constants.title}</h1>
-          <p className="cvSubtitle">{coreValuesPage.constants.primaryFeeling}</p>
+          <div className="cvHeroTop">
+            <h1 className="cvTitle">{coreValuesPage.intro.title}</h1>
 
-          {lens ? (
-            <div className="cvLensRow">
-              <span className="cvLabel">Lens:</span>
-              <button
-                className="cvChip cvChipActive"
-                onClick={() => openValueModal(lens)}
-                aria-label="Open selected lens details"
-              >
-                {valuesById.get(lens)?.name || lens}
-              </button>
-              <button
-                className="cvChip cvChipGhost"
-                onClick={() => {
-                  setLens(null);
-                  setScenarioIndex(0);
-                  setPickedChoice(null);
-                }}
-                aria-label="Clear lens filter"
-              >
-                Clear
-              </button>
+            {/* Sticky Lens indicator (appears after selecting) */}
+            {lens ? (
+              <div className="cvLensPill" aria-label="Selected lens">
+                <span className="cvLensLabel">Lens</span>
+                <button
+                  className="cvChip cvChipActive"
+                  onClick={() => {
+                    const v = valuesById.get(lens);
+                    if (v) openValue(v);
+                  }}
+                  aria-label="Open lens details"
+                >
+                  {lensName}
+                </button>
+                <button className="cvChip cvChipGhost" onClick={clearLens} aria-label="Change lens">
+                  Change
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          <p className="cvIntro">{coreValuesPage.intro.experienceIntro}</p>
+
+          {/* subtle progression indicator */}
+          <div className="cvProgress">
+            <div className={`cvDot ${openedSituationOnce ? "on" : ""}`} />
+            <div className={`cvDot ${pickedLensOnce ? "on" : ""}`} />
+            <div className={`cvDot ${completedScenarioOnce ? "on" : ""}`} />
+            <div className="cvProgressHint">
+              {completedScenarioOnce
+                ? "Season 2 is live."
+                : pickedLensOnce
+                ? "Make one call under pressure to unlock Season 2."
+                : openedSituationOnce
+                ? "Pick a value to set your lens."
+                : "Start with a real situation."}
             </div>
-          ) : (
-            <div className="cvLensRow">
-              <span className="cvLabel">Pick a lens:</span>
-              <span className="cvHint">Choose a value. The deck will prioritize it.</span>
-            </div>
-          )}
+          </div>
         </div>
       </header>
 
-      {/* RECEIPTS */}
-      <section className="cvSection">
-        <div className="cvSectionHeader">
-          <h2 className="cvH2">Receipts</h2>
-          <p className="cvP">Moments that prove the code.</p>
+      {/* PHASE 1 — Real Situations */}
+      <section className="cvPhase cvPhaseActive">
+        <div className="cvPhaseHeader">
+          <h2 className="cvH2">{coreValuesPage.sectionNames.realSituations}</h2>
+          <div className="cvSub">Open one. The experience wakes up.</div>
         </div>
 
-        <div className="cvRail" role="list" aria-label="Receipts rail">
-          {coreValuesPage.receipts.map((r) => (
-            <button
-              key={r.id}
-              className="cvCard"
-              onClick={() => openReceiptModal(r)}
-              role="listitem"
-              aria-label={`Open receipt: ${r.title}`}
-            >
-              <div className="cvCardTop">
-                <span className="cvTag">{valuesById.get(r.mappedValue)?.name}</span>
-              </div>
-              <div className="cvCardTitle">{r.title}</div>
-              <div className="cvCardBody">{shortPreview(r.whatHappened, 120)}</div>
-              <div className="cvCardFooter">Open</div>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* CHOOSE YOUR CODE */}
-      <section className="cvSection">
-        <div className="cvSectionHeader">
-          <h2 className="cvH2">Choose your code</h2>
-          <p className="cvP">Pick what matters to you. I’ll show how it moves in real life.</p>
-        </div>
-
-        <div className="cvGrid" aria-label="Featured values grid">
-          {coreValuesPage.featuredOrder.map((id) => {
-            const v = valuesById.get(id);
-            if (!v) return null;
-            const active = lens === id;
-
+        <div className="cvRail" aria-label="Real Situations rail">
+          {coreValuesPage.receipts.map((r) => {
+            const tag = valuesById.get(r.mappedValue)?.name || "Value";
             return (
               <button
-                key={id}
-                className={`cvTile ${active ? "cvTileActive" : ""}`}
-                onClick={() => onPickLens(id)}
-                aria-label={`Select lens: ${v.name}`}
+                key={r.id}
+                className="cvEpisode"
+                onClick={() => openSituation(r)}
+                aria-label={`Open real situation: ${r.title}`}
               >
-                <div className="cvTileName">{v.name}</div>
+                <div className="cvEpisodeTop">
+                  <span className="cvTag">{tag}</span>
+                  <span className="cvOpenHint">Open</span>
+                </div>
+
+                <div className="cvEpisodeTitle">{r.title}</div>
+                <div className="cvEpisodeBody">{preview(r.inTheMoment, 155)}</div>
               </button>
             );
           })}
         </div>
       </section>
 
-      {/* SCENARIO DECK */}
-      <section className="cvSection">
-        <div className="cvSectionHeader">
-          <h2 className="cvH2">Scenario deck</h2>
-          <p className="cvP">Values under pressure. Pick a choice. Then I’ll show my move.</p>
+      {/* PHASE 2 — What Matters to You */}
+      <section className={`cvPhase ${openedSituationOnce ? "cvPhaseActive" : "cvPhaseLocked"}`}>
+        <div className="cvPhaseHeader">
+          <h2 className="cvH2">{coreValuesPage.sectionNames.whatMatters}</h2>
+          <div className="cvSub">Start With What You Believe.</div>
         </div>
 
-        <div className="cvScenarioShell">
-          <div className="cvScenarioTopBar">
-            <div className="cvScenarioMeta">
-              <span className="cvTag">
-                {activeScenario ? valuesById.get(activeScenario.valueId)?.name : "—"}
-              </span>
-              <span className="cvSmall">
-                {orderedScenarios.length ? `${scenarioIndex + 1} / ${orderedScenarios.length}` : ""}
-              </span>
-            </div>
+        <div className="cvValuesGrid" aria-label="Featured value tiles">
+          {coreValuesPage.featuredValuesOrder.map((id) => {
+            const v = valuesById.get(id);
+            if (!v) return null;
 
-            <div className="cvScenarioNav">
+            const isSelected = lens === id;
+
+            return (
               <button
-                className="cvBtn cvBtnGhost"
+                key={id}
+                className={`cvValueTile ${isSelected ? "selected" : ""}`}
                 onClick={() => {
-                  setScenarioIndex((i) => Math.max(0, i - 1));
-                  resetScenarioReveal();
+                  if (!openedSituationOnce) return;
+                  pickLens(id);
                 }}
-                disabled={scenarioIndex === 0}
-                aria-label="Previous scenario"
+                aria-label={`Select value lens: ${v.name}`}
               >
-                Prev
+                <div className="cvValueName">{v.name}</div>
               </button>
-              <button
-                className="cvBtn cvBtnGhost"
-                onClick={() => {
-                  setScenarioIndex((i) => Math.min(orderedScenarios.length - 1, i + 1));
-                  resetScenarioReveal();
-                }}
-                disabled={scenarioIndex >= orderedScenarios.length - 1}
-                aria-label="Next scenario"
-              >
-                Next
-              </button>
+            );
+          })}
+        </div>
+
+        {!openedSituationOnce ? (
+          <div className="cvLockHint">
+            Open at least one Real Situation to unlock this.
+          </div>
+        ) : null}
+      </section>
+
+      {/* PHASE 3 — Under Pressure */}
+      <section className={`cvPhase ${pickedLensOnce ? "cvPhaseActive" : "cvPhaseLocked"}`}>
+        <div className="cvPhaseHeader cvPhaseHeaderRow">
+          <div>
+            <h2 className="cvH2">
+              {coreValuesPage.sectionNames.underPressure}
+              <span className="cvPrompt"> — Make the Call</span>
+            </h2>
+            <div className="cvSub">
+              This is the interactive core. Pick an option. Watch the reveal.
             </div>
           </div>
 
+          {lens ? (
+            <div className="cvInlineLens">
+              <span className="cvLensLabelSmall">Lens</span>
+              <span className="cvTag">{lensName}</span>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="cvScenarioShell">
+          {!pickedLensOnce ? (
+            <div className="cvLockHint">
+              Pick a value to set your lens before you enter the deck.
+            </div>
+          ) : null}
+
           {activeScenario ? (
-            <div className="cvScenarioCard">
+            <div className={`cvScenarioCard ${pickedLensOnce ? "" : "disabled"}`}>
+              <div className="cvScenarioHeader">
+                <span className="cvTag">
+                  {valuesById.get(activeScenario.valueId)?.name}
+                </span>
+
+                <div className="cvScenarioCount">
+                  {scenarioIndex + 1} / {orderedScenarios.length}
+                </div>
+              </div>
+
               <h3 className="cvH3">{activeScenario.title}</h3>
-              <p className="cvP">{activeScenario.situation}</p>
+              <p className="cvScenarioText">{activeScenario.situation}</p>
 
               <div className="cvChoices" role="group" aria-label="Scenario choices">
                 {activeScenario.choices.map((c) => {
@@ -225,15 +272,16 @@ export default function CoreValues() {
                   return (
                     <button
                       key={c.id}
-                      className={`cvChoice ${isPicked ? "cvChoicePicked" : ""} ${
-                        c.isMyMove ? "cvChoiceMyMove" : ""
-                      }`}
-                      onClick={() => setPickedChoice({ scenarioId: activeScenario.id, choiceId: c.id })}
+                      className={`cvChoice ${c.isMyMove ? "myMove" : ""} ${isPicked ? "picked" : ""}`}
+                      onClick={() => {
+                        if (!pickedLensOnce) return;
+                        pickScenarioChoice(c.id);
+                      }}
                       aria-label={`Choose option ${c.id}`}
                     >
-                      <div className="cvChoiceLabel">
-                        Choice {c.id}
-                        {c.isMyMove ? <span className="cvChoiceBadge">my move</span> : null}
+                      <div className="cvChoiceTop">
+                        <div className="cvChoiceKey">Choice {c.id}</div>
+                        {c.isMyMove ? <div className="cvBadge">my move</div> : null}
                       </div>
                       <div className="cvChoiceText">{c.text}</div>
                     </button>
@@ -241,192 +289,326 @@ export default function CoreValues() {
                 })}
               </div>
 
+              {/* Reveal */}
               {pickedChoice?.scenarioId === activeScenario.id ? (
-                <div className="cvReveal" aria-label="Scenario reveal">
-                  <div className="cvRevealHeader">
+                <div className="cvReveal">
+                  <div className="cvRevealTop">
                     <span className="cvTag">
-                      Mapped value: {valuesById.get(activeScenario.valueId)?.name}
+                      Value Tag: {valuesById.get(activeScenario.valueId)?.name}
                     </span>
-                    <button className="cvBtn cvBtnGhost" onClick={resetScenarioReveal}>
+                    <button
+                      className="cvMiniBtn"
+                      onClick={() => setPickedChoice(null)}
+                      aria-label="Reset reveal"
+                    >
                       Reset
                     </button>
                   </div>
 
-                  <ol className="cvSteps">
-                    {activeScenario.mySteps.map((s, idx) => (
-                      <li key={idx}>{s}</li>
-                    ))}
-                  </ol>
+                  <div className="cvRevealGrid">
+                    <div className="cvRevealBlock">
+                      <div className="cvFieldLabel">My Strategies (Steps)</div>
+                      <ol className="cvSteps">
+                        {activeScenario.myStrategies.map((s, i) => (
+                          <li key={i}>{s}</li>
+                        ))}
+                      </ol>
+                    </div>
 
-                  <div className="cvJPLine">“{activeScenario.jpLine}”</div>
+                    <div className="cvGospel">
+                      <div className="cvFieldLabel">The Gospel of JP</div>
+                      <div className="cvPullQuote">“{activeScenario.gospel}”</div>
+                    </div>
+                  </div>
+
+                  <div className="cvNextRow">
+                    <button
+                      className="cvBtnPrimary"
+                      onClick={nextScenario}
+                      aria-label="Next Scenario"
+                    >
+                      Next Scenario
+                    </button>
+
+                    <button
+                      className="cvBtnGhost"
+                      onClick={() => {
+                        const v = valuesById.get(activeScenario.valueId);
+                        if (v) openValue(v);
+                      }}
+                      aria-label="Open mapped value details"
+                    >
+                      View Value
+                    </button>
+                  </div>
                 </div>
               ) : null}
             </div>
           ) : (
-            <div className="cvScenarioCard">
-              <p className="cvP">No scenarios found.</p>
-            </div>
+            <div className="cvLockHint">No scenarios found.</div>
           )}
         </div>
       </section>
 
-      {/* SEASON 2 */}
-      <section className="cvSection">
-        <div className="cvSectionHeader">
-          <h2 className="cvH2">{coreValuesPage.season2.title}</h2>
-          <p className="cvP">Deeper cuts. Still fully playable.</p>
+      {/* PHASE 4 — Season 2 */}
+      <section className={`cvPhase ${completedScenarioOnce ? "cvPhaseActive" : "cvPhaseLocked"}`}>
+        <div className="cvPhaseHeader">
+          <h2 className="cvH2">{coreValuesPage.sectionNames.season2}</h2>
+          <div className="cvSub">
+            After you make one call under pressure, this chapter arrives.
+          </div>
         </div>
 
-        <div className="cvSeasonTwoGrid">
-          {coreValuesPage.season2.valueIds.map((id) => {
+        {!completedScenarioOnce ? (
+          <div className="cvLockHint">
+            Complete at least one scenario reveal to unlock Season 2.
+          </div>
+        ) : null}
+
+        <div className="cvSeasonGrid">
+          {coreValuesPage.season2.focusValueIds.map((id) => {
             const v = valuesById.get(id);
             if (!v) return null;
             return (
               <button
                 key={id}
-                className="cvTile cvTileSeason"
-                onClick={() => onPickLens(id)}
+                className="cvSeasonTile"
+                onClick={() => pickLens(id)}
+                aria-label={`Season 2 focus value: ${v.name}`}
+                disabled={!completedScenarioOnce}
               >
-                <div className="cvTileName">{v.name}</div>
-                <div className="cvTileSub">{shortPreview(v.definition, 70)}</div>
+                <div className="cvSeasonTitle">{v.name}</div>
+                <div className="cvSeasonDesc">{preview(v.whatItIs, 90)}</div>
               </button>
             );
           })}
         </div>
 
-        <div className="cvSeasonBlock">
-          <div className="cvMiniHeader">Receipts featured in Season 2</div>
-          <div className="cvRail" role="list" aria-label="Season 2 receipts rail">
-            {season2Receipts.map((r) => (
-              <button
-                key={r.id}
-                className="cvCard cvCardSmall"
-                onClick={() => openReceiptModal(r)}
-                role="listitem"
-              >
-                <div className="cvCardTop">
-                  <span className="cvTag">{valuesById.get(r.mappedValue)?.name}</span>
-                </div>
-                <div className="cvCardTitle">{r.title}</div>
-                <div className="cvCardFooter">Open</div>
-              </button>
-            ))}
+        <div className="cvMiniRailWrap">
+          <div className="cvMiniRailTitle">Featured Real Situations</div>
+          <div className="cvRail cvMiniRail" aria-label="Season 2 receipts rail">
+            {season2Receipts.map((r) => {
+              const tag = valuesById.get(r.mappedValue)?.name || "Value";
+              return (
+                <button
+                  key={r.id}
+                  className="cvMiniEpisode"
+                  onClick={() => openSituation(r)}
+                  disabled={!completedScenarioOnce}
+                >
+                  <div className="cvEpisodeTop">
+                    <span className="cvTag">{tag}</span>
+                    <span className="cvOpenHint">Open</span>
+                  </div>
+                  <div className="cvEpisodeTitle">{r.title}</div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* PHASE 5 — Values Library (quiet depth) */}
+      <section className="cvPhase cvPhaseQuiet">
+        <div className="cvPhaseHeader">
+          <h2 className="cvH2">{coreValuesPage.sectionNames.valuesLibrary}</h2>
+          <div className="cvSub">Quiet depth. Optional. Easy scanning.</div>
+        </div>
+
+        <div className="cvLibrary">
+          {coreValuesPage.libraryShelves.map((shelf) => (
+            <details className="cvShelf" key={shelf.id}>
+              <summary className="cvShelfTitle">{shelf.title}</summary>
+              <div className="cvShelfBody">
+                {shelf.values.map((v) => (
+                  <button
+                    key={v}
+                    className="cvLibraryChip"
+                    onClick={() =>
+                      setDrawer({
+                        type: "library",
+                        title: v,
+                        body: "Definition coming soon",
+                      })
+                    }
+                    aria-label={`Open library value: ${v}`}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer CTA */}
       <section className="cvCTA">
-        <div className="cvCTACard">
-          <div className="cvCTATitle">Ready when you are.</div>
-          <div className="cvCTASub">{coreValuesPage.constants.doneWhen}</div>
-          <button className="cvBtn cvBtnPrimary">{coreValuesPage.constants.ctaLabel}</button>
-        </div>
+        <button className="cvCTAButton" aria-label="Partner with me">
+          {coreValuesPage.cta.label}
+        </button>
       </section>
 
-      {/* MODALS */}
-      <Modal
-        open={modal?.type === "receipt"}
-        title={modal?.type === "receipt" ? modal.receipt.title : ""}
-        onClose={closeModal}
-        ariaLabel="Receipt modal"
+      {/* Drawer + overlay */}
+      <div
+        className={`cvOverlay ${drawer ? "open" : ""}`}
+        onClick={closeDrawer}
+        role="presentation"
+      />
+
+      <aside
+        className={`cvDrawer ${drawer ? "open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Core Values drawer"
       >
-        {modal?.type === "receipt" ? (
-          <div className="cvModalStack">
-            <div className="cvModalMeta">
-              <span className="cvTag">{valuesById.get(modal.receipt.mappedValue)?.name}</span>
-            </div>
-
-            <div className="cvModalSection">
-              <div className="cvModalLabel">What happened</div>
-              <div className="cvModalText">{modal.receipt.whatHappened}</div>
-            </div>
-
-            <div className="cvModalSection">
-              <div className="cvModalLabel">Decision</div>
-              <div className="cvModalText">{modal.receipt.decision}</div>
-            </div>
-
-            {modal.receipt.jpLine ? <div className="cvJPLine">“{modal.receipt.jpLine}”</div> : null}
+        <div className="cvDrawerHeader">
+          <div className="cvDrawerTitle">
+            {drawer?.type === "situation"
+              ? drawer.item.title
+              : drawer?.type === "value"
+              ? drawer.item.name
+              : drawer?.type === "voice"
+              ? drawer.title
+              : drawer?.type === "library"
+              ? drawer.title
+              : ""}
           </div>
-        ) : null}
-      </Modal>
+          <button className="cvClose" onClick={closeDrawer} aria-label="Close">
+            ✕
+          </button>
+        </div>
 
-      <Modal
-        open={modal?.type === "value"}
-        title={modal?.type === "value" ? modal.value.name : ""}
-        onClose={closeModal}
-        ariaLabel="Value modal"
-      >
-        {modal?.type === "value" ? (
-          <div className="cvModalStack">
-            <div className="cvModalSection">
-              <div className="cvModalLabel">Definition</div>
-              <div className="cvModalText">{modal.value.definition}</div>
-            </div>
-
-            <div className="cvModalSection">
-              <div className="cvModalLabel">Looks like</div>
-              <div className="cvModalText">{modal.value.looksLike}</div>
-            </div>
-
-            <div className="cvModalSection">
-              <div className="cvModalLabel">I refuse</div>
-              <div className="cvModalText">{modal.value.iRefuse}</div>
-            </div>
-
-            <div className="cvDivider" />
-
-            <div className="cvModalSection">
-              <div className="cvModalLabel">This matters because</div>
-              <div className="cvModalText">{modal.value.reveal.mattersBecause}</div>
-            </div>
-
-            <div className="cvModalSection">
-              <div className="cvModalLabel">People feel it when I’m in charge</div>
-              <div className="cvModalText">{modal.value.reveal.peopleFeelWhenImInCharge}</div>
-            </div>
-
-            {modal.value.reveal.whenImOff ? (
-              <div className="cvModalSection">
-                <div className="cvModalLabel">When I’m off, it looks like</div>
-                <div className="cvModalText">{modal.value.reveal.whenImOff}</div>
+        <div className="cvDrawerBody">
+          {/* Real Situation drawer */}
+          {drawer?.type === "situation" ? (
+            <div className="cvDrawerStack">
+              <div className="cvMetaRow">
+                <span className="cvTag">
+                  Value Tag: {valuesById.get(drawer.item.mappedValue)?.name}
+                </span>
               </div>
-            ) : null}
 
-            <div className="cvModalActions">
+              <div className="cvField">
+                <div className="cvFieldLabel">In The Moment</div>
+                <div className="cvFieldText">{drawer.item.inTheMoment}</div>
+              </div>
+
+              <div className="cvField">
+                <div className="cvFieldLabel">The Process</div>
+                <div className="cvFieldText">{drawer.item.theProcess}</div>
+              </div>
+
+              {drawer.item.gospel ? (
+                <div className="cvGospelBlock">
+                  <div className="cvFieldLabel">The Gospel of JP</div>
+                  <div className="cvPullQuote big">“{drawer.item.gospel}”</div>
+                </div>
+              ) : null}
+
               <button
-                className="cvBtn cvBtnPrimary"
-                onClick={() => openVoiceModal(modal.value)}
-                disabled={!modal.value.voiceLines?.length}
+                className="cvBtnPrimary full"
+                onClick={() => {
+                  const v = valuesById.get(drawer.item.mappedValue);
+                  if (v) pickLens(v.id);
+                }}
               >
-                Hear it (soon)
-              </button>
-              <button className="cvBtn cvBtnGhost" onClick={() => setLens(modal.value.id)}>
-                Set lens
+                Use this as my Lens
               </button>
             </div>
-          </div>
-        ) : null}
-      </Modal>
+          ) : null}
 
-      <Modal
-        open={modal?.type === "voice"}
-        title={modal?.type === "voice" ? modal.title : ""}
-        onClose={closeModal}
-        ariaLabel="Voice lines modal"
-      >
-        {modal?.type === "voice" ? (
-          <div className="cvModalStack">
-            {modal.lines.map((l, idx) => (
-              <div key={idx} className="cvQuote">
-                “{l}”
+          {/* Value drawer */}
+          {drawer?.type === "value" ? (
+            <div className="cvDrawerStack">
+              <div className="cvMetaRow">
+                <span className="cvTag">{drawer.item.name}</span>
               </div>
-            ))}
-            <div className="cvQuiet cvSmall">Audio wiring later. This is the placeholder.</div>
-          </div>
-        ) : null}
-      </Modal>
+
+              <div className="cvField">
+                <div className="cvFieldLabel">What it is</div>
+                <div className="cvFieldText">{drawer.item.whatItIs}</div>
+              </div>
+
+              <div className="cvField">
+                <div className="cvFieldLabel">How I move</div>
+                <div className="cvFieldText">{drawer.item.howIMove}</div>
+              </div>
+
+              <div className="cvField">
+                <div className="cvFieldLabel">I won’t</div>
+                <div className="cvFieldText">{drawer.item.iWont}</div>
+              </div>
+
+              <div className="cvDivider" />
+
+              <div className="cvField">
+                <div className="cvFieldLabel">This matters because…</div>
+                <div className="cvFieldText">{drawer.item.reveal.mattersBecause}</div>
+              </div>
+
+              <div className="cvField">
+                <div className="cvFieldLabel">People feel it when I’m in charge…</div>
+                <div className="cvFieldText">{drawer.item.reveal.peopleFeel}</div>
+              </div>
+
+              {drawer.item.reveal.whenOff ? (
+                <div className="cvField">
+                  <div className="cvFieldLabel">When I’m off…</div>
+                  <div className="cvFieldText">{drawer.item.reveal.whenOff}</div>
+                </div>
+              ) : null}
+
+              <div className="cvDrawerActions">
+                <button
+                  className="cvBtnPrimary"
+                  onClick={() =>
+                    setDrawer({
+                      type: "voice",
+                      title: "Hear it (soon)",
+                      lines: drawer.item.voiceLines,
+                    })
+                  }
+                >
+                  Hear it (soon)
+                </button>
+
+                <button
+                  className="cvBtnGhost"
+                  onClick={() => {
+                    setLens(drawer.item.id);
+                    setPickedLensOnce(true);
+                    closeDrawer();
+                  }}
+                >
+                  Set Lens
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {/* Voice drawer */}
+          {drawer?.type === "voice" ? (
+            <div className="cvDrawerStack">
+              {drawer.lines.map((l, idx) => (
+                <div key={idx} className="cvVoiceQuote">
+                  “{l}”
+                </div>
+              ))}
+              <div className="cvQuietNote">
+                Audio wiring later. This is the text bank.
+              </div>
+            </div>
+          ) : null}
+
+          {/* Library drawer */}
+          {drawer?.type === "library" ? (
+            <div className="cvDrawerStack">
+              <div className="cvFieldText">{drawer.body}</div>
+            </div>
+          ) : null}
+        </div>
+      </aside>
     </div>
   );
 }
