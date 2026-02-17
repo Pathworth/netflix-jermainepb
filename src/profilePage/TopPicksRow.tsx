@@ -174,12 +174,15 @@ const topPicksConfig: Record<ProfileType, Pick[]> = {
       icon: <FaBriefcase />,
       route: "/work-experience",
     },
+
+    // ✅ CHANGED: Values -> Core Values
     {
-      title: "Values",
-      imgSrc: "https://picsum.photos/seed/values/250/200",
+      title: "Core Values",
+      imgSrc: "https://picsum.photos/seed/core-values/250/200",
       icon: <FaHandsHelping />,
-      route: "/browse",
+      route: "/core-values",
     },
+
     {
       title: "What I Do",
       imgSrc: "https://picsum.photos/seed/what-i-do/250/200",
