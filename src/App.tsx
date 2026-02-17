@@ -17,6 +17,9 @@ import Skills from "./pages/Skills";
 import Bio from "./pages/Bio";
 import WorkExperience from "./pages/WorkExperience";
 
+// ✅ NEW page import
+import CoreValues from "./pages/CoreValues";
+
 // Hero / superhero art
 import neoHero from "./images/neo-matrix-jermaine-right.png";
 import pantherHero from "./images/black-panther-jermaine.png";
@@ -144,6 +147,9 @@ export default function App() {
         <Route path="/skills" element={<Skills />} />
         <Route path="/bio" element={<Bio />} />
         <Route path="/work-experience" element={<WorkExperience />} />
+
+        {/* ✅ NEW route */}
+        <Route path="/core-values" element={<CoreValues />} />
       </Route>
     </Routes>
   );
