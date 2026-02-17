@@ -1,0 +1,631 @@
+/* src/pages/CoreValues.css */
+:root {
+  --cv-blue: #007bff;
+  --cv-black: #000000;
+  --cv-white: #ffffff;
+  --cv-grey: #f4f4f4;
+
+  --cv-card: rgba(255, 255, 255, 0.06);
+  --cv-card2: rgba(255, 255, 255, 0.08);
+  --cv-border: rgba(255, 255, 255, 0.12);
+  --cv-border2: rgba(255, 255, 255, 0.18);
+}
+
+.cvPage {
+  min-height: 100vh;
+  background: var(--cv-black);
+  color: var(--cv-white);
+  padding-bottom: 64px;
+}
+
+.cvHero {
+  padding: 56px 20px 18px;
+  border-bottom: 1px solid var(--cv-border);
+  background: radial-gradient(1200px 500px at 30% -10%, rgba(0, 123, 255, 0.18), transparent);
+}
+
+.cvHeroInner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.cvTitle {
+  font-size: 44px;
+  line-height: 1.08;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.cvSubtitle {
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 16px;
+}
+
+.cvLensRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cvLabel {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+}
+
+.cvHint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+}
+
+.cvSection {
+  padding: 28px 20px;
+}
+
+.cvSectionHeader {
+  max-width: 1120px;
+  margin: 0 auto 14px;
+}
+
+.cvH2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.cvH3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.cvP {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cvQuiet {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.cvSmall {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cvRail {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 10px 2px 2px;
+  scroll-snap-type: x mandatory;
+}
+
+.cvRail::-webkit-scrollbar {
+  height: 10px;
+}
+.cvRail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+}
+.cvRail::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cvCard {
+  scroll-snap-align: start;
+  width: 320px;
+  min-width: 320px;
+  background: var(--cv-card);
+  border: 1px solid var(--cv-border);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.cvCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 123, 255, 0.55);
+  background: var(--cv-card2);
+}
+
+.cvCard:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.cvCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cvCardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.cvCardBody {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.5;
+  min-height: 40px;
+}
+
+.cvCardFooter {
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.cvCardSmall {
+  width: 260px;
+  min-width: 260px;
+}
+
+.cvTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 123, 255, 0.16);
+  border: 1px solid rgba(0, 123, 255, 0.38);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.cvChip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  border: 1px solid var(--cv-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cvChip:hover {
+  border-color: rgba(0, 123, 255, 0.55);
+}
+
+.cvChip:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.cvChipActive {
+  border-color: rgba(0, 123, 255, 0.8);
+  background: rgba(0, 123, 255, 0.18);
+}
+
+.cvChipGhost {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cvGrid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .cvGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cvTitle {
+    font-size: 36px;
+  }
+}
+
+.cvTile {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--cv-border);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.cvTile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 123, 255, 0.55);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.cvTile:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.cvTileActive {
+  border-color: rgba(0, 123, 255, 0.85);
+  background: rgba(0, 123, 255, 0.12);
+}
+
+.cvTileName {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.cvTileSub {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.5;
+}
+
+.cvScenarioShell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.cvScenarioTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cvScenarioMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cvScenarioNav {
+  display: flex;
+  gap: 10px;
+}
+
+.cvScenarioCard {
+  border: 1px solid var(--cv-border);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.cvChoices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .cvChoices {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cvChoice {
+  border: 1px solid var(--cv-border);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.cvChoice:hover {
+  border-color: rgba(0, 123, 255, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.cvChoice:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.cvChoicePicked {
+  border-color: rgba(0, 123, 255, 0.9);
+  background: rgba(0, 123, 255, 0.12);
+}
+
+.cvChoiceMyMove {
+  border-color: rgba(0, 123, 255, 0.55);
+}
+
+.cvChoiceLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12px;
+}
+
+.cvChoiceBadge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 123, 255, 0.55);
+  background: rgba(0, 123, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+}
+
+.cvChoiceText {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cvReveal {
+  margin-top: 14px;
+  border: 1px solid rgba(0, 123, 255, 0.35);
+  background: rgba(0, 123, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.cvRevealHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cvSteps {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.cvJPLine {
+  margin-top: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.cvSeasonTwoGrid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .cvSeasonTwoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cvTileSeason {
+  background: radial-gradient(900px 300px at 20% -10%, rgba(0, 123, 255, 0.18), rgba(255, 255, 255, 0.05));
+  border-color: rgba(0, 123, 255, 0.22);
+}
+
+.cvSeasonBlock {
+  max-width: 1120px;
+  margin: 14px auto 0;
+}
+
+.cvMiniHeader {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 10px 0;
+}
+
+.cvInlineLink {
+  background: transparent;
+  border: 0;
+  color: rgba(0, 123, 255, 0.95);
+  padding: 0;
+  margin-right: 14px;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.cvAccordion {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.cvShelf {
+  border: 1px solid var(--cv-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.cvShelfSummary {
+  cursor: pointer;
+  padding: 14px 16px;
+  font-weight: 700;
+}
+
+.cvShelfBody {
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cvCTA {
+  padding: 32px 20px 0;
+}
+
+.cvCTACard {
+  max-width: 1120px;
+  margin: 0 auto;
+  border: 1px solid rgba(0, 123, 255, 0.25);
+  background: rgba(0, 123, 255, 0.08);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.cvCTATitle {
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.cvCTASub {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.cvBtn {
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--cv-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.cvBtn:hover {
+  border-color: rgba(0, 123, 255, 0.55);
+}
+
+.cvBtn:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.cvBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cvBtnPrimary {
+  background: rgba(0, 123, 255, 0.92);
+  border-color: rgba(0, 123, 255, 0.92);
+  color: var(--cv-white);
+}
+
+.cvBtnPrimary:hover {
+  background: rgba(0, 123, 255, 1);
+  border-color: rgba(0, 123, 255, 1);
+}
+
+.cvBtnGhost {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Modal (shared classes used by Modal.tsx) */
+.cvModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+  z-index: 9999;
+}
+
+.cvModalPanel {
+  width: min(860px, 100%);
+  max-height: 86vh;
+  overflow: auto;
+  border-radius: 16px;
+  background: rgba(10, 10, 10, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.55);
+}
+
+.cvModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cvModalTitle {
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.cvIconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.cvIconBtn:hover {
+  border-color: rgba(0, 123, 255, 0.55);
+}
+
+.cvModalBody {
+  padding: 14px;
+}
+
+.cvModalStack {
+  display: grid;
+  gap: 14px;
+}
+
+.cvModalMeta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cvModalSection {
+  display: grid;
+  gap: 6px;
+}
+
+.cvModalLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.cvModalText {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cvDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cvModalActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cvQuote {
+  border-left: 3px solid rgba(0, 123, 255, 0.65);
+  padding-left: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
