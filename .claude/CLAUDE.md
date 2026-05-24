@@ -23,8 +23,9 @@ The site sends every visitor into one of four lanes via the `/browse` profile pi
 - `/` — splash / title card
 - `/browse` — "Where should we start?" profile picker
 - `/chairman-of-ai`, `/community-builder`, `/speaking-workshops`, `/meet-jermaine` — the four lane heroes
-- `/chairman-of-ai/about` — placeholder for the More Info modal (Phase 3 turns this into a real modal)
+- `/chairman-of-ai/about`, `/community-builder/about`, `/speaking-workshops/about`, `/meet-jermaine/about` — placeholder More Info pages (Phase 3 turns these into real modals)
 - `/chairman-of-ai/manifesto` — placeholder for the Chairman of AI manifesto video
+- `/chairman-of-ai/coming-soon`, `/community-builder/coming-soon`, `/speaking-workshops/coming-soon`, `/meet-jermaine/coming-soon` — generic placeholder pages for cards still in production. Read `?title=` query param to name what the visitor clicked.
 - `/ai-strategist` — 301-redirects to `/chairman-of-ai` (legacy URL)
 - `/skills` — Superpowers (15 pillars)
 - `/bio` — Blueprint: Bio
@@ -74,15 +75,20 @@ Do not invent accomplishments, clients, numbers, partnerships, awards, or person
 - Bio (`/bio`) — Blueprint and Assets, 376 lines, query-string state.
 - Work Experience (`/work-experience`) — Experience Seasons, 430 lines, Pathworth featured first.
 - Core Values (`/core-values`) — 614 lines, guided room with eight featured values including Student Mode.
-- **Chairman of AI** (`/chairman-of-ai`) — new `BillboardHero` component (Phase 1, branch `cinematic/chairman-of-ai-billboard-hero-v1`). First lane migrated off the legacy ProfilePage + GIF.
+- **All four lane pages** — running the new `BillboardHero` + `ContentRow` system. Chairman of AI shipped first (Phase 1, branch `cinematic/chairman-of-ai-billboard-hero-v1`). Community Builder, Speaking & Workshops, and Meet Jermaine shipped together in Phase 2 (branch `cinematic/three-pillars-v1`). Each lane has its own pillar config in `src/data/pillarConfig.ts` and its own row data file in `src/data/`.
 
-These six are the spine. Do not rewrite them.
+These nine surfaces are the spine. Do not rewrite them.
 
 ## What is broken and prioritized
 
-The other three lanes (`/community-builder`, `/speaking-workshops`, `/meet-jermaine`) still mount the starter template's `ProfilePage` and render the same default Giphy GIF behind the hero. Phase 2 migrates each onto `BillboardHero` with its own pillar config in `src/data/pillarConfig.ts`.
+All four lanes are on the new `BillboardHero` + `ContentRow` system. The legacy `ProfilePage` component is no longer imported by any lane page but still lives in `src/profilePage/` as starter-template residue. Do not delete without approval.
 
-The cinematic hero architect agent (`.claude/agents/cinematic-hero-architect.md`) owns this work.
+**Next priorities (Phase 3 and beyond):**
+1. Replace placeholder "coming soon" pages with real content as it ships (manifesto video, framework PDFs, workshop recap reels, etc).
+2. Build the real Netflix-style More Info modal that replaces the `/[pillar]/about` placeholder pages.
+3. Swap row card placeholder gradient covers for real cover art as it's designed.
+
+The cinematic hero architect agent (`.claude/agents/cinematic-hero-architect.md`) owns hero motion work.
 
 ## Approval gates — stop and ask
 

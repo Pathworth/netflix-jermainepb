@@ -10,8 +10,12 @@ import ChairmanOfAIAbout from "./pages/ChairmanOfAIAbout";
 import ChairmanOfAIManifesto from "./pages/ChairmanOfAIManifesto";
 import ChairmanOfAIComingSoon from "./pages/ChairmanOfAIComingSoon";
 import CommunityBuilder from "./pages/CommunityBuilder";
+import CommunityBuilderAbout from "./pages/CommunityBuilderAbout";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
+import SpeakingWorkshopsAbout from "./pages/SpeakingWorkshopsAbout";
 import MeetJermaine from "./pages/MeetJermaine";
+import MeetJermaineAbout from "./pages/MeetJermaineAbout";
+import PillarComingSoon from "./pages/PillarComingSoon";
 
 // Extra / Pages
 import Contact from "./pages/Contact";
@@ -154,8 +158,32 @@ export default function App() {
           element={<ChairmanOfAIComingSoon />}
         />
         <Route path="/community-builder" element={<CommunityBuilder />} />
+        <Route
+          path="/community-builder/about"
+          element={<CommunityBuilderAbout />}
+        />
+        <Route
+          path="/community-builder/coming-soon"
+          element={<PillarComingSoon pillar="community-builder" />}
+        />
         <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
+        <Route
+          path="/speaking-workshops/about"
+          element={<SpeakingWorkshopsAbout />}
+        />
+        <Route
+          path="/speaking-workshops/coming-soon"
+          element={<PillarComingSoon pillar="speaking-workshops" />}
+        />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
+        <Route
+          path="/meet-jermaine/about"
+          element={<MeetJermaineAbout />}
+        />
+        <Route
+          path="/meet-jermaine/coming-soon"
+          element={<PillarComingSoon pillar="meet-jermaine" />}
+        />
 
         {/* Extra pages */}
         <Route path="/contact" element={<Contact />} />
