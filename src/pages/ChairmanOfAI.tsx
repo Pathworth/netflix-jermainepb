@@ -1,17 +1,17 @@
 import React from "react";
 import BillboardHero from "../components/BillboardHero";
-import TopPicksRow from "../profilePage/TopPicksRow";
-import ContinueWatching from "../profilePage/ContinueWatching";
+import ContentRow from "../components/ContentRow";
 import { pillarConfig } from "../data/pillarConfig";
+import { chairmanOfAIRows } from "../data/chairmanOfAIRows";
 
 /**
  * Chairman of AI lane page.
  *
- * Replaces the old AI Strategist page. Uses the new BillboardHero in place of
- * the old static-GIF ProfileBanner. The two existing rows (TopPicksRow,
- * ContinueWatching) still key off "ai-strategist" in their internal config
- * during Phase 1; row keys get renamed in Phase 2 when the rest of the lanes
- * migrate to BillboardHero.
+ * Phase 1: BillboardHero replaced the legacy AI Strategist banner.
+ * Phase 1.5: ContentRows replace TopPicksRow + ContinueWatching with
+ * five curated rows drawn from the Pathworth Business Bible v4.0
+ * catalog. Card destinations point to internal placeholder pages until
+ * the real product and content pages come online.
  */
 export default function ChairmanOfAI() {
   const config = pillarConfig["chairman-of-ai"];
@@ -27,8 +27,11 @@ export default function ChairmanOfAI() {
   return (
     <>
       <BillboardHero {...config} />
-      <TopPicksRow profile="ai-strategist" />
-      <ContinueWatching profile="ai-strategist" />
+      <div className="chairman-rows">
+        {chairmanOfAIRows.map((row, i) => (
+          <ContentRow key={row.title} row={row} index={i} />
+        ))}
+      </div>
     </>
   );
 }

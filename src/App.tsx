@@ -8,6 +8,7 @@ import Navbar from "./components/NavBar";
 import ChairmanOfAI from "./pages/ChairmanOfAI";
 import ChairmanOfAIAbout from "./pages/ChairmanOfAIAbout";
 import ChairmanOfAIManifesto from "./pages/ChairmanOfAIManifesto";
+import ChairmanOfAIComingSoon from "./pages/ChairmanOfAIComingSoon";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
@@ -147,6 +148,10 @@ export default function App() {
         <Route
           path="/chairman-of-ai/manifesto"
           element={<ChairmanOfAIManifesto />}
+        />
+        <Route
+          path="/chairman-of-ai/coming-soon"
+          element={<ChairmanOfAIComingSoon />}
         />
         <Route path="/community-builder" element={<CommunityBuilder />} />
         <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
