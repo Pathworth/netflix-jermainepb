@@ -1,0 +1,332 @@
+/* ============================================================
+   BillboardHero — Netflix-style cinematic lane hero
+   Pure black base + electric blue radial sweep + character composite
+   ============================================================ */
+
+.billboard-hero {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  min-height: 600px;
+  overflow: hidden;
+  color: #fff;
+  background: #000;
+}
+
+/* ---------- Background layers ---------- */
+
+.billboard-hero__bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Electric-blue radial sweep behind the character */
+.billboard-hero__bg-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 75% 55%,
+      rgba(72, 176, 255, 0.35) 0%,
+      rgba(72, 176, 255, 0.10) 35%,
+      rgba(0, 0, 0, 0) 65%
+    ),
+    #000;
+  z-index: 1;
+}
+
+.billboard-hero__bg-image {
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  z-index: 2;
+  /* Tiny horizontal shift so the Ken Burns scale reads as motion */
+  transform-origin: bottom right;
+}
+
+.billboard-hero__bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+}
+
+/* ---------- Gradient overlays ---------- */
+
+.billboard-hero__gradient {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.billboard-hero__gradient--top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.billboard-hero__gradient--left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.billboard-hero__gradient--bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 220px;
+  background: linear-gradient(0deg, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* ---------- Content block ---------- */
+
+.billboard-hero__content {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Badge chip — JP icon, vertical blue rule, then the words */
+.billboard-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  align-self: flex-start;
+}
+
+.billboard-hero__badge-icon {
+  height: 26px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.billboard-hero__badge-text {
+  font-family: "Bebas Neue", "Impact", "Arial Narrow", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: #48b0ff;
+  text-transform: uppercase;
+  border-left: 3px solid #48b0ff;
+  padding-left: 10px;
+  line-height: 1.1;
+}
+
+/* Metadata chip row */
+.billboard-hero__metadata {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.billboard-hero__metadata-chip {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* Title */
+.billboard-hero__title {
+  margin: 4px 0 0;
+}
+
+.billboard-hero__title-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.billboard-hero__title-text {
+  font-family: "Bebas Neue", "Impact", "Arial Narrow", sans-serif;
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: 0.04em;
+  margin: 0;
+  color: #48b0ff;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  display: inline-block;
+  border-bottom: 2px solid #48b0ff;
+  padding-bottom: 6px;
+}
+
+/* Eyebrow */
+.billboard-hero__eyebrow {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0;
+}
+
+/* Tagline */
+.billboard-hero__tagline {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
+  max-width: 560px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Buttons ---------- */
+
+.billboard-hero__buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.billboard-hero__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  border: none;
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.billboard-hero__btn svg {
+  display: block;
+}
+
+.billboard-hero__btn:hover {
+  transform: scale(1.04);
+  filter: brightness(1.08);
+}
+
+.billboard-hero__btn:active {
+  transform: scale(0.98);
+}
+
+.billboard-hero__btn--primary {
+  background: #ffffff;
+  color: #000;
+}
+
+.billboard-hero__btn--secondary {
+  background: rgba(109, 109, 110, 0.6);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ---------- Down chevron ---------- */
+
+.billboard-hero__chevron {
+  position: absolute;
+  z-index: 5;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 22px;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 768px) {
+  .billboard-hero {
+    height: 75vh;
+    min-height: 520px;
+  }
+
+  .billboard-hero__bg-image {
+    background-size: cover;
+    background-position: center right;
+    opacity: 0.5;
+  }
+
+  .billboard-hero__gradient--left {
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.3) 80%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  .billboard-hero__content {
+    left: 6%;
+    right: 6%;
+    max-width: none;
+    gap: 14px;
+  }
+
+  .billboard-hero__title-text {
+    font-size: clamp(3rem, 11vw, 4.5rem);
+  }
+
+  .billboard-hero__tagline {
+    font-size: 15px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .billboard-hero__buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .billboard-hero__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .billboard-hero__metadata {
+    display: none;
+  }
+}

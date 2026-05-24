@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Routes, Route, Link, Outlet, useLocation } from "react-router-dom";
+import { Routes, Route, Link, Outlet, useLocation, Navigate } from "react-router-dom";
 import "./App.css";
 
 import NetflixTitle from "./NetflixTitle";
 import Navbar from "./components/NavBar";
 
-import AIstrategist from "./pages/AIstrategist";
+import ChairmanOfAI from "./pages/ChairmanOfAI";
+import ChairmanOfAIAbout from "./pages/ChairmanOfAIAbout";
+import ChairmanOfAIManifesto from "./pages/ChairmanOfAIManifesto";
 import CommunityBuilder from "./pages/CommunityBuilder";
 import SpeakingWorkshops from "./pages/SpeakingWorkshops";
 import MeetJermaine from "./pages/MeetJermaine";
@@ -35,8 +37,8 @@ import strategistCover from "./images/Strategist-Mag-cover-trans.png";
 // Tiles for the “Where should we start?” screen
 const tiles = [
   {
-    label: "AI Strategist",
-    path: "/ai-strategist",
+    label: "Chairman of AI",
+    path: "/chairman-of-ai",
     heroImg: neoHero,
     magImg: strategistCover,
   },
@@ -136,7 +138,16 @@ export default function App() {
         <Route path="/browse" element={<Home />} />
 
         {/* Pillars */}
-        <Route path="/ai-strategist" element={<AIstrategist />} />
+        <Route
+          path="/ai-strategist"
+          element={<Navigate to="/chairman-of-ai" replace />}
+        />
+        <Route path="/chairman-of-ai" element={<ChairmanOfAI />} />
+        <Route path="/chairman-of-ai/about" element={<ChairmanOfAIAbout />} />
+        <Route
+          path="/chairman-of-ai/manifesto"
+          element={<ChairmanOfAIManifesto />}
+        />
         <Route path="/community-builder" element={<CommunityBuilder />} />
         <Route path="/speaking-workshops" element={<SpeakingWorkshops />} />
         <Route path="/meet-jermaine" element={<MeetJermaine />} />
