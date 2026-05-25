@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import "./Bio.css";
-
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, useReducedMotion } from "framer-motion";
+import { FaPlay, FaInfoCircle, FaDownload, FaFilePdf, FaImages, FaEnvelope, FaLinkedin, FaInstagram, FaExternalLinkAlt, FaChevronDown } from "react-icons/fa";
+import jpIcon from "../images/01 - Icon JP - Initials - Blue Trans - PNG.png";
 import {
   BIO_BLUEPRINTS,
   BIO_COPY,
@@ -8,6 +10,60 @@ import {
   type BlueprintKey,
   type AssetItem,
 } from "../data/bio";
+import "./Bio.css";
+
+/**
+ * Bio — Netflix Limited Series treatment.
+ *
+ * Hero up top in the lane-page idiom (JP icon stripe, badge chip,
+ * metadata, big title, logline, two buttons, scroll chevron). Tab bar
+ * below mirrors the existing six BIO_BLUEPRINTS. The Master Bio renders
+ * as numbered "episodes" — each paragraph becomes its own card with a
+ * chapter title and runtime estimate. Variants (Value Proposition, AI
+ * Origin Story) use the same episode treatment with their own chapter
+ * titles. Bio Kit / Media / Contact use download/action card layouts.
+ *
+ * Deep-link URLs (?bp=master-bio etc) keep working.
+ */
+
+type ChapterMeta = {
+  title: string;
+  runtime: string;
+};
+
+const CHAPTERS: Partial<Record<string, ChapterMeta[]>> = {
+  // Master Bio — 7 paragraphs
+  "master-bio": [
+    { title: "Episode 1 · The Way He Walks In", runtime: "1 min" },
+    { title: "Episode 2 · The Standard", runtime: "1 min" },
+    { title: "Episode 3 · Promises Kept", runtime: "45 sec" },
+    { title: "Episode 4 · Pathworth", runtime: "1 min" },
+    { title: "Episode 5 · Detroit", runtime: "1.5 min" },
+    { title: "Episode 6 · The Chapter", runtime: "45 sec" },
+    { title: "Episode 7 · The Pattern", runtime: "30 sec" },
+  ],
+  // Value Proposition — 4 paragraphs
+  "value-prop": [
+    { title: "Chapter 1 · From Intention To Outcome", runtime: "30 sec" },
+    { title: "Chapter 2 · Across The Work", runtime: "30 sec" },
+    { title: "Chapter 3 · Standards With Care", runtime: "20 sec" },
+    { title: "Chapter 4 · Bring Him In For The Outcome", runtime: "20 sec" },
+  ],
+  // AI Origin Story — 4 paragraphs
+  "ai-origin": [
+    { title: "Chapter 1 · First Contact", runtime: "30 sec" },
+    { title: "Chapter 2 · The Wall", runtime: "30 sec" },
+    { title: "Chapter 3 · Master The Skill", runtime: "30 sec" },
+    { title: "Chapter 4 · Expertise And Passion", runtime: "30 sec" },
+  ],
+};
+
+// Map of which COPY key each blueprint shows in Episodes view.
+const COPY_KEY_FOR_BP: Partial<Record<BlueprintKey, string>> = {
+  "master-bio": "master-bio",
+  "value-proposition": "value-prop",
+  "ai-origin-story": "ai-origin",
+};
 
 function getBpFromUrl(defaultBp: BlueprintKey): BlueprintKey {
   try {
@@ -30,17 +86,18 @@ function setBpInUrl(bp: BlueprintKey) {
   }
 }
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
 export default function Bio() {
   const defaultBp: BlueprintKey = "master-bio";
+  const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
-  const [activeBp, setActiveBp] = useState<BlueprintKey>(() => getBpFromUrl(defaultBp));
-  const [focusedAssetId, setFocusedAssetId] = useState<string | null>(null);
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [activeBp, setActiveBp] = useState<BlueprintKey>(() =>
+    getBpFromUrl(defaultBp)
+  );
+  const [openChapterIdx, setOpenChapterIdx] = useState<number>(0);
+  const detailsRef = useRef<HTMLDivElement>(null);
 
+  // Hydrate URL state on browser back/forward
   useEffect(() => {
     function onPop() {
       setActiveBp(getBpFromUrl(defaultBp));
@@ -49,8 +106,10 @@ export default function Bio() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  // Reflect active blueprint in URL
   useEffect(() => {
     setBpInUrl(activeBp);
+    setOpenChapterIdx(0);
   }, [activeBp]);
 
   const blueprint = useMemo(
@@ -58,319 +117,404 @@ export default function Bio() {
     [activeBp]
   );
 
-  useEffect(() => {
-    const first = blueprint.assets[0]?.id ?? null;
-    setFocusedAssetId(first);
-    setSelectedAssetId(first);
-  }, [blueprint.key, blueprint.assets]);
+  const copyKey = COPY_KEY_FOR_BP[activeBp];
+  const copy = copyKey ? BIO_COPY[copyKey] : undefined;
+  const chapters = copyKey ? CHAPTERS[copyKey] : undefined;
 
-  const focusedAsset: AssetItem | null = useMemo(() => {
-    const id = focusedAssetId ?? selectedAssetId;
-    if (!id) return null;
-    return blueprint.assets.find((a) => a.id === id) ?? null;
-  }, [blueprint.assets, focusedAssetId, selectedAssetId]);
+  const scrollToDetails = () => {
+    detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
-  const featuredKey = focusedAsset?.id ?? "";
-  const featuredCopy = BIO_COPY[featuredKey];
-
-  function onBlueprintChange(next: BlueprintKey) {
-    setActiveBp(next);
-  }
-
-  function onAssetFocus(assetId: string) {
-    setFocusedAssetId(assetId);
-  }
-
-  function onAssetSelect(assetId: string) {
-    setSelectedAssetId(assetId);
-    setFocusedAssetId(assetId);
-  }
-
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      const tag = (document.activeElement?.tagName || "").toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") return;
-
-      const bpIndex = BIO_BLUEPRINTS.findIndex((b) => b.key === activeBp);
-      const assets = blueprint.assets;
-      const currentAssetId = focusedAssetId ?? selectedAssetId;
-      const aIndex = assets.findIndex((a) => a.id === currentAssetId);
-
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-
-        if (aIndex >= 0) {
-          const next = clamp(aIndex - 1, 0, assets.length - 1);
-          onAssetFocus(assets[next].id);
-          return;
-        }
-
-        const nextBp = clamp(bpIndex - 1, 0, BIO_BLUEPRINTS.length - 1);
-        onBlueprintChange(BIO_BLUEPRINTS[nextBp].key);
-        return;
-      }
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-
-        if (aIndex >= 0) {
-          const next = clamp(aIndex + 1, 0, assets.length - 1);
-          onAssetFocus(assets[next].id);
-          return;
-        }
-
-        const nextBp = clamp(bpIndex + 1, 0, BIO_BLUEPRINTS.length - 1);
-        onBlueprintChange(BIO_BLUEPRINTS[nextBp].key);
-        return;
-      }
-
-      if (e.key === "Enter") {
-        if (focusedAssetId) {
-          e.preventDefault();
-          onAssetSelect(focusedAssetId);
-        }
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeBp, blueprint.assets, focusedAssetId, selectedAssetId]);
-
-  async function handlePrimaryAction(asset: AssetItem | null) {
-    if (!asset) return;
-
-    if (activeBp === "contact" && asset.id === "email") {
-      try {
-        await navigator.clipboard.writeText(CONTACT_VALUES.email);
-      } catch {
-        // ignore
-      }
-    }
-  }
-
-  const rightMeta =
-    focusedAsset?.metaLeft || focusedAsset?.metaRight
-      ? `${focusedAsset?.metaLeft ?? ""}${
-          focusedAsset?.metaLeft && focusedAsset?.metaRight ? " • " : ""
-        }${focusedAsset?.metaRight ?? ""}`
-      : "";
+  const fadeUp = (delay: number) => ({
+    initial: reduceMotion ? false : { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay },
+  });
 
   return (
-    <main className="bioN-page">
-      <header className="bioN-hero">
-        <div className="bioN-hero-inner">
-          <div className="bioN-hero-left">
-            <h1 className="bioN-title">Blueprint: Bio</h1>
-            <p className="bioN-sub">
-              Browse the Blueprint rail. Preview assets instantly. Click to commit.
-            </p>
-
-            <div className="bioN-hero-ctas">
-              <button
-                type="button"
-                className="bioN-btn bioN-btn-primary"
-                disabled
-                aria-disabled="true"
-              >
-                Download Master Bio
-              </button>
-              <button
-                type="button"
-                className="bioN-btn bioN-btn-secondary"
-                disabled
-                aria-disabled="true"
-              >
-                Download Bio Kit
-              </button>
-            </div>
-          </div>
-
-          <div className="bioN-hero-right">
-            <div className="bioN-pill">Updated: 2026</div>
-          </div>
+    <main className="bio-page">
+      {/* ============================================================
+          HERO — Netflix Limited Series title card
+          ============================================================ */}
+      <section className="bio-hero" aria-label="Bio hero">
+        <div className="bio-hero__bg">
+          <div className="bio-hero__bg-sweep" />
+          <div className="bio-hero__bg-portrait" />
+          <div className="bio-hero__gradient bio-hero__gradient--top" />
+          <div className="bio-hero__gradient bio-hero__gradient--left" />
+          <div className="bio-hero__gradient bio-hero__gradient--bottom" />
         </div>
-      </header>
 
-      {/* Netflix-style: 3 columns */}
-      <section className="bioN-ntx" aria-label="Blueprint and assets">
-        {/* LEFT: Blueprint list (with counts column aligned per row) */}
-        <aside className="bioN-rail" aria-label="Blueprint rail">
-          <div className="bioN-rail-head">
-            <div className="bioN-rail-title">BLUEPRINTS</div>
-          </div>
+        <div className="bio-hero__content">
+          <motion.div className="bio-hero__badge" {...fadeUp(0)}>
+            <img
+              src={jpIcon}
+              alt=""
+              className="bio-hero__badge-icon"
+              aria-hidden
+            />
+            <span className="bio-hero__badge-text">
+              JP ORIGINAL · LIMITED SERIES
+            </span>
+          </motion.div>
 
-          <div className="bioN-rail-list" role="list">
-            {BIO_BLUEPRINTS.map((b) => {
-              const isActive = b.key === activeBp;
-              const countLabel = `${b.assets.length} ${b.assets.length === 1 ? "asset" : "assets"}`;
+          <motion.ul className="bio-hero__metadata" {...fadeUp(0.15)}>
+            <li className="bio-hero__metadata-chip">2026</li>
+            <li className="bio-hero__metadata-chip">7 Episodes</li>
+            <li className="bio-hero__metadata-chip">Documentary</li>
+            <li className="bio-hero__metadata-chip">Detroit</li>
+          </motion.ul>
 
-              return (
-                <button
-                  key={b.key}
-                  type="button"
-                  className={[
-                    "bioN-rail-item",
-                    isActive ? "bioN-rail-item-active" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  onClick={() => onBlueprintChange(b.key)}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  <span className="bioN-rail-left">
-                    <span className="bioN-rail-dot" aria-hidden="true" />
-                    <span className="bioN-rail-text">
-                      <span className="bioN-rail-label">{b.label}</span>
-                      {b.sublabel ? (
-                        <span className="bioN-rail-sublabel">{b.sublabel}</span>
-                      ) : null}
-                    </span>
-                  </span>
+          <motion.h1 className="bio-hero__title" {...fadeUp(0.3)}>
+            JERMAINE PEGUESE
+          </motion.h1>
 
-                  <span className="bioN-rail-count" aria-label={countLabel}>
-                    {countLabel}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </aside>
+          <motion.p className="bio-hero__eyebrow" {...fadeUp(0.5)}>
+            FOUNDER · CHAIRMAN OF AI · DETROIT
+          </motion.p>
 
-        {/* RIGHT: Viewer */}
-        <section className="bioN-lane" aria-label="Assets lane">
-          <div className="bioN-laneScroll">
-            {/* FEATURED */}
-            <div className="bioN-feature" aria-label="Featured asset">
-              <div className="bioN-feature-thumb" aria-hidden="true">
-                <div className="bioN-feature-thumb-inner">16:9</div>
-              </div>
+          <motion.p className="bio-hero__tagline" {...fadeUp(0.65)}>
+            Enters rooms with intentional purpose. Listens long enough to
+            understand the mission, the people, and what nobody is saying
+            out loud. Then moves with intention.
+          </motion.p>
 
-              <div className="bioN-feature-body">
-                <div className="bioN-feature-kicker">FEATURED</div>
-                <div className="bioN-feature-title">{focusedAsset?.title ?? "—"}</div>
-                <div className="bioN-feature-desc">{focusedAsset?.description ?? ""}</div>
+          <motion.div className="bio-hero__buttons" {...fadeUp(0.85)}>
+            <button
+              type="button"
+              className="bio-hero__btn bio-hero__btn--primary"
+              onClick={() =>
+                navigate("/meet-jermaine/coming-soon?title=The%20Bio%20Reel")
+              }
+            >
+              <FaPlay aria-hidden /> Play Bio Reel
+            </button>
+            <button
+              type="button"
+              className="bio-hero__btn bio-hero__btn--secondary"
+              onClick={scrollToDetails}
+            >
+              <FaInfoCircle aria-hidden /> More Info
+            </button>
+          </motion.div>
+        </div>
 
-                {rightMeta ? <div className="bioN-feature-meta">{rightMeta}</div> : null}
+        <motion.div
+          className="bio-hero__chevron"
+          aria-hidden
+          animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
+          transition={
+            reduceMotion
+              ? undefined
+              : { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          }
+        >
+          <FaChevronDown />
+        </motion.div>
+      </section>
 
-                <div className="bioN-feature-actions">
-                  <button
-                    type="button"
-                    className="bioN-btn bioN-btn-primary"
-                    onClick={() => handlePrimaryAction(focusedAsset)}
-                    disabled={!focusedAsset?.available}
-                    aria-disabled={!focusedAsset?.available}
-                  >
-                    {activeBp === "contact" && focusedAsset?.id === "email"
-                      ? "Copy Email"
-                      : "Open"}
-                  </button>
+      {/* ============================================================
+          TAB BAR — series detail navigation
+          ============================================================ */}
+      <nav className="bio-tabs" aria-label="Bio sections" ref={detailsRef}>
+        <div className="bio-tabs__inner">
+          {BIO_BLUEPRINTS.map((b) => {
+            const isActive = b.key === activeBp;
+            const shortLabel = SHORT_LABEL[b.key] ?? b.label;
+            return (
+              <button
+                key={b.key}
+                type="button"
+                className={`bio-tab ${isActive ? "bio-tab--active" : ""}`}
+                onClick={() => setActiveBp(b.key)}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {shortLabel}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
-                  <button
-                    type="button"
-                    className="bioN-btn bioN-btn-secondary"
-                    disabled
-                    aria-disabled="true"
-                  >
-                    Coming soon
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* ============================================================
+          TAB CONTENT — varies per blueprint
+          ============================================================ */}
+      <section className="bio-content" aria-label="Section content">
+        {/* Episodes / Chapters view for text blueprints */}
+        {copy && chapters ? (
+          <EpisodeList
+            heading={blueprint.label}
+            sublabel={blueprint.sublabel}
+            body={copy.body}
+            chapters={chapters}
+            openIdx={openChapterIdx}
+            onToggle={(i) => setOpenChapterIdx(i === openChapterIdx ? -1 : i)}
+          />
+        ) : null}
 
-            {/* COPY */}
-            <div className="bioN-copy" aria-label="Featured copy">
-              {activeBp === "contact" && focusedAsset?.id === "email" ? (
-                <>
-                  <h2 className="bioN-copy-h">Email</h2>
-                  <p className="bioN-copy-p">{CONTACT_VALUES.email}</p>
-                  <p className="bioN-copy-p bioN-muted">
-                    Click “Copy Email” above. Social links will go live when added.
-                  </p>
-                </>
-              ) : featuredCopy ? (
-                <>
-                  <h2 className="bioN-copy-h">{featuredCopy.heading}</h2>
-                  {featuredCopy.body.map((p, idx) => (
-                    <p key={idx} className="bioN-copy-p">
-                      {p}
-                    </p>
-                  ))}
-                </>
-              ) : (
-                <>
-                  <h2 className="bioN-copy-h">Preview</h2>
-                  <p className="bioN-copy-p bioN-muted">
-                    This blueprint’s featured preview will appear here when the asset copy is added.
-                  </p>
-                </>
-              )}
-            </div>
+        {/* Bio Kit — downloads */}
+        {activeBp === "bio-kit" ? (
+          <DownloadGrid
+            heading="Bio Kit"
+            sublabel={blueprint.sublabel ?? "Downloads & brand assets"}
+            assets={blueprint.assets}
+          />
+        ) : null}
 
-            {/* ASSETS LIST */}
-            <div className="bioN-listWrap" aria-label="Assets list">
-              <div className="bioN-listHead">
-                <div className="bioN-listTitle">ASSETS</div>
-                <div className="bioN-listCount">{blueprint.assets.length}</div>
-              </div>
+        {/* Media — feature cards */}
+        {activeBp === "media" ? (
+          <MediaList
+            heading="Media"
+            sublabel={blueprint.sublabel ?? "Press, clips, features"}
+            assets={blueprint.assets}
+          />
+        ) : null}
 
-              <div className="bioN-list" role="list">
-                {blueprint.assets.map((a, idx) => {
-                  const current = focusedAssetId ?? selectedAssetId;
-                  const isFocused = a.id === current;
-                  const isSelected = a.id === selectedAssetId;
-
-                  return (
-                    <button
-                      key={a.id}
-                      type="button"
-                      className={[
-                        "bioN-row",
-                        isFocused ? "bioN-row-focused" : "",
-                        isSelected ? "bioN-row-selected" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      onMouseEnter={() => onAssetFocus(a.id)}
-                      onFocus={() => onAssetFocus(a.id)}
-                      onClick={() => onAssetSelect(a.id)}
-                      aria-label={`Preview ${a.title}`}
-                      style={{ animationDelay: `${idx * 0.04}s` }}
-                    >
-                      <span className="bioN-row-bar" aria-hidden="true" />
-                      <span className="bioN-row-thumb" aria-hidden="true">
-                        <span className="bioN-row-thumb-inner">16:9</span>
-                      </span>
-
-                      <span className="bioN-row-main">
-                        <span className="bioN-row-title">{a.title}</span>
-                        <span className="bioN-row-desc">{a.description}</span>
-                        <span className="bioN-row-meta">
-                          {(a.metaLeft || a.metaRight)
-                            ? `${a.metaLeft ?? ""}${
-                                a.metaLeft && a.metaRight ? " • " : ""
-                              }${a.metaRight ?? ""}`
-                            : ""}
-                        </span>
-                      </span>
-
-                      <span className="bioN-row-cta">
-                        <span
-                          className={[
-                            "bioN-tag",
-                            a.available ? "bioN-tag-live" : "bioN-tag-soon",
-                          ].join(" ")}
-                        >
-                          {a.available ? "Preview" : "Soon"}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Contact */}
+        {activeBp === "contact" ? <ContactPanel /> : null}
       </section>
     </main>
   );
 }
+
+// ============================================================
+// Short tab labels — keep the bar tight
+// ============================================================
+const SHORT_LABEL: Partial<Record<BlueprintKey, string>> = {
+  "master-bio": "Episodes",
+  "value-proposition": "Value Prop",
+  "ai-origin-story": "AI Origin",
+  "bio-kit": "Bio Kit",
+  media: "Media",
+  contact: "Contact",
+};
+
+// ============================================================
+// Sub-components
+// ============================================================
+
+type EpisodeListProps = {
+  heading: string;
+  sublabel?: string;
+  body: string[];
+  chapters: ChapterMeta[];
+  openIdx: number;
+  onToggle: (idx: number) => void;
+};
+
+const EpisodeList: React.FC<EpisodeListProps> = ({
+  heading,
+  sublabel,
+  body,
+  chapters,
+  openIdx,
+  onToggle,
+}) => {
+  return (
+    <div className="bio-episodes">
+      <header className="bio-section-head">
+        <h2 className="bio-section-title">{heading}</h2>
+        {sublabel ? <p className="bio-section-sub">{sublabel}</p> : null}
+      </header>
+
+      <ol className="bio-episodes__list">
+        {body.map((paragraph, idx) => {
+          const meta = chapters[idx];
+          const isOpen = idx === openIdx;
+          const episodeNumber = String(idx + 1).padStart(2, "0");
+          return (
+            <li
+              key={idx}
+              className={`bio-episode ${isOpen ? "bio-episode--open" : ""}`}
+            >
+              <button
+                type="button"
+                className="bio-episode__head"
+                onClick={() => onToggle(idx)}
+                aria-expanded={isOpen}
+              >
+                <span className="bio-episode__num" aria-hidden>
+                  {episodeNumber}
+                </span>
+                <span className="bio-episode__thumb" aria-hidden>
+                  <img
+                    src={jpIcon}
+                    alt=""
+                    className="bio-episode__thumb-mark"
+                  />
+                </span>
+                <span className="bio-episode__meta">
+                  <span className="bio-episode__title">
+                    {meta?.title ?? `Episode ${idx + 1}`}
+                  </span>
+                  <span className="bio-episode__teaser">
+                    {paragraph.length > 110
+                      ? paragraph.slice(0, 110) + "…"
+                      : paragraph}
+                  </span>
+                </span>
+                <span className="bio-episode__runtime">
+                  {meta?.runtime ?? ""}
+                </span>
+              </button>
+              {isOpen ? (
+                <div className="bio-episode__body">
+                  <p className="bio-episode__paragraph">{paragraph}</p>
+                </div>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+};
+
+type DownloadGridProps = {
+  heading: string;
+  sublabel?: string;
+  assets: AssetItem[];
+};
+
+const DownloadGrid: React.FC<DownloadGridProps> = ({
+  heading,
+  sublabel,
+  assets,
+}) => {
+  const iconFor = (type: string) => {
+    if (type === "PDF") return <FaFilePdf aria-hidden />;
+    if (type === "ZIP") return <FaImages aria-hidden />;
+    return <FaDownload aria-hidden />;
+  };
+
+  return (
+    <div className="bio-downloads">
+      <header className="bio-section-head">
+        <h2 className="bio-section-title">{heading}</h2>
+        {sublabel ? <p className="bio-section-sub">{sublabel}</p> : null}
+      </header>
+
+      <div className="bio-downloads__grid">
+        {assets.map((a) => (
+          <div
+            key={a.id}
+            className={`bio-download ${
+              a.available ? "" : "bio-download--soon"
+            }`}
+          >
+            <div className="bio-download__icon">{iconFor(a.type)}</div>
+            <div className="bio-download__meta">
+              <h3 className="bio-download__title">{a.title}</h3>
+              <p className="bio-download__desc">{a.description}</p>
+              <span
+                className={`bio-download__tag ${
+                  a.available
+                    ? "bio-download__tag--live"
+                    : "bio-download__tag--soon"
+                }`}
+              >
+                {a.available ? a.metaLeft || "Live" : "Coming soon"}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+type MediaListProps = {
+  heading: string;
+  sublabel?: string;
+  assets: AssetItem[];
+};
+
+const MediaList: React.FC<MediaListProps> = ({ heading, sublabel, assets }) => {
+  return (
+    <div className="bio-media">
+      <header className="bio-section-head">
+        <h2 className="bio-section-title">{heading}</h2>
+        {sublabel ? <p className="bio-section-sub">{sublabel}</p> : null}
+      </header>
+
+      <div className="bio-media__grid">
+        {assets.map((a) => (
+          <div key={a.id} className="bio-media-card">
+            <div className="bio-media-card__cover">
+              <FaExternalLinkAlt aria-hidden className="bio-media-card__icon" />
+              <span className="bio-media-card__tag">
+                {a.available ? "Live" : "Coming soon"}
+              </span>
+            </div>
+            <div className="bio-media-card__meta">
+              <h3 className="bio-media-card__title">{a.title}</h3>
+              <p className="bio-media-card__desc">{a.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ContactPanel: React.FC = () => {
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_VALUES.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // ignore
+    }
+  };
+
+  return (
+    <div className="bio-contact">
+      <header className="bio-section-head">
+        <h2 className="bio-section-title">Contact</h2>
+        <p className="bio-section-sub">Reach out direct.</p>
+      </header>
+
+      <div className="bio-contact__grid">
+        <button
+          type="button"
+          className="bio-contact-card"
+          onClick={copyEmail}
+        >
+          <FaEnvelope aria-hidden className="bio-contact-card__icon" />
+          <div className="bio-contact-card__meta">
+            <h3 className="bio-contact-card__title">Email</h3>
+            <p className="bio-contact-card__value">{CONTACT_VALUES.email}</p>
+            <span className="bio-contact-card__tag">
+              {copied ? "Copied" : "Tap to copy"}
+            </span>
+          </div>
+        </button>
+
+        <div className="bio-contact-card bio-contact-card--soon">
+          <FaLinkedin aria-hidden className="bio-contact-card__icon" />
+          <div className="bio-contact-card__meta">
+            <h3 className="bio-contact-card__title">LinkedIn</h3>
+            <p className="bio-contact-card__value">Profile link added soon.</p>
+            <span className="bio-contact-card__tag bio-contact-card__tag--soon">
+              Coming soon
+            </span>
+          </div>
+        </div>
+
+        <div className="bio-contact-card bio-contact-card--soon">
+          <FaInstagram aria-hidden className="bio-contact-card__icon" />
+          <div className="bio-contact-card__meta">
+            <h3 className="bio-contact-card__title">Instagram</h3>
+            <p className="bio-contact-card__value">Profile link added soon.</p>
+            <span className="bio-contact-card__tag bio-contact-card__tag--soon">
+              Coming soon
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
