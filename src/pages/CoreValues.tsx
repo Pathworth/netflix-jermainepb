@@ -1,41 +1,87 @@
-import React, { useMemo, useState } from "react";
-import "./CoreValues.css";
+import React, { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import {
+  FaArrowRight,
+  FaArrowLeft,
+  FaTimes,
+  FaPlay,
+  FaBookOpen,
+  FaChevronRight,
+  FaRedo,
+} from "react-icons/fa";
+import jpIcon from "../images/01 - Icon JP - Initials - Blue Trans - PNG.png";
 import {
   coreValuesPage,
-  CoreValueId,
-  Receipt,
-  Scenario,
-  ValueDef,
+  type CoreValueId,
+  type Receipt,
+  type Scenario,
+  type ValueDef,
 } from "../data/coreValues";
+import "./CoreValues.css";
 
-type DrawerMode =
-  | { type: "situation"; item: Receipt }
-  | { type: "value"; item: ValueDef }
-  | { type: "voice"; title: string; lines: string[] }
-  | { type: "library"; title: string; body: string }
-  | null;
+/**
+ * Core Values — The Code Room (Guided Room) experience.
+ *
+ * A stage-based, cinematic, "step into my shoes" interactive page. One
+ * full-viewport stage at a time. The user moves through a loop:
+ *
+ *   Cold Open → Real Situations → Pick Your Lens → Under Pressure →
+ *   Reveal → Next Scenario → Season 2 → More Supporting Values
+ *
+ * The signature interaction: at the Under Pressure stage, the user picks
+ * one of three choices (A/B/C). The reveal acknowledges what was picked
+ * versus what Jermaine would do. Same scenario, different framings.
+ *
+ * Browse all 30 supporting values is available from any stage via the
+ * persistent corner menu.
+ */
 
-function preview(text: string, max = 140) {
-  const t = text.replace(/\s+/g, " ").trim();
-  return t.length <= max ? t : t.slice(0, max).trim() + "…";
-}
+// ──────────────────────────────────────────────────────────────────────
+// Stage state machine
+// ──────────────────────────────────────────────────────────────────────
+
+type Stage =
+  | "cold-open"
+  | "situations"
+  | "lens"
+  | "pressure"
+  | "season-2"
+  | "supporting";
+
+type Season = 1 | 2;
+
+// ──────────────────────────────────────────────────────────────────────
+// Main component
+// ──────────────────────────────────────────────────────────────────────
 
 export default function CoreValues() {
-  // progression unlocks
-  const [openedSituationOnce, setOpenedSituationOnce] = useState(false);
-  const [pickedLensOnce, setPickedLensOnce] = useState(false);
-  const [completedScenarioOnce, setCompletedScenarioOnce] = useState(false);
+  const reduceMotion = useReducedMotion();
 
+  // Stage and lens
+  const [stage, setStage] = useState<Stage>("cold-open");
+  const [season, setSeason] = useState<Season>(1);
   const [lens, setLens] = useState<CoreValueId | null>(null);
 
-  const [drawer, setDrawer] = useState<DrawerMode>(null);
+  // Situations stage
+  const [openReceipt, setOpenReceipt] = useState<Receipt | null>(null);
+  const [activeReceiptIdx, setActiveReceiptIdx] = useState(0);
 
-  // scenario deck state
-  const [scenarioIndex, setScenarioIndex] = useState(0);
-  const [pickedChoice, setPickedChoice] = useState<{
+  // Pressure stage
+  const [scenarioIdx, setScenarioIdx] = useState(0);
+  const [picked, setPicked] = useState<{
     scenarioId: string;
     choiceId: "A" | "B" | "C";
+    isMyMove: boolean;
   } | null>(null);
+
+  // Supporting values modal
+  const [openSupporting, setOpenSupporting] = useState<{
+    name: string;
+  } | null>(null);
+
+  // ──────────────────────────────────────────────────────────────
+  // Derived data
+  // ──────────────────────────────────────────────────────────────
 
   const valuesById = useMemo(() => {
     const map = new Map<CoreValueId, ValueDef>();
@@ -43,572 +89,992 @@ export default function CoreValues() {
     return map;
   }, []);
 
-  const orderedScenarios = useMemo(() => {
+  // Scenarios used in current run: Season 1 = all 8; Season 2 = Freedom + Student Mode only
+  const scenarios: Scenario[] = useMemo(() => {
+    if (season === 2) {
+      const focusIds = new Set(coreValuesPage.season2.focusValueIds);
+      return coreValuesPage.scenarios.filter((s) => focusIds.has(s.valueId));
+    }
+
+    // Season 1 — if lens is set, put lens scenarios first
     const list = [...coreValuesPage.scenarios];
     if (!lens) return list;
-
     const top = list.filter((s) => s.valueId === lens);
     const rest = list.filter((s) => s.valueId !== lens);
     return [...top, ...rest];
-  }, [lens]);
+  }, [season, lens]);
 
-  const activeScenario: Scenario | undefined = orderedScenarios[scenarioIndex];
+  const activeScenario: Scenario | undefined = scenarios[scenarioIdx];
 
-  const season2Receipts = useMemo(() => {
-    const ids = new Set(coreValuesPage.season2.featuredReceiptIds);
-    return coreValuesPage.receipts.filter((r) => ids.has(r.id));
+  const lensValue = lens ? valuesById.get(lens) : null;
+
+  // ──────────────────────────────────────────────────────────────
+  // Stage transitions
+  // ──────────────────────────────────────────────────────────────
+
+  const goToStage = (next: Stage) => {
+    setStage(next);
+    // Reset transient state when entering a new stage
+    if (next === "pressure") {
+      setScenarioIdx(0);
+      setPicked(null);
+    }
+    if (next === "situations") {
+      setOpenReceipt(null);
+    }
+    // Keep URL hash in sync
+    try {
+      window.history.replaceState({}, "", `#stage=${next}`);
+    } catch {
+      // ignore
+    }
+    // Scroll to top of viewport
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      // ignore
+    }
+  };
+
+  // Initialize stage from URL hash on mount
+  useEffect(() => {
+    try {
+      const hash = window.location.hash;
+      const match = hash.match(/stage=([a-z0-9-]+)/);
+      const fromHash = match?.[1] as Stage | undefined;
+      if (
+        fromHash &&
+        (
+          [
+            "cold-open",
+            "situations",
+            "lens",
+            "pressure",
+            "season-2",
+            "supporting",
+          ] as Stage[]
+        ).includes(fromHash)
+      ) {
+        setStage(fromHash);
+      }
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const closeDrawer = () => setDrawer(null);
-
-  const openSituation = (item: Receipt) => {
-    setOpenedSituationOnce(true);
-    setDrawer({ type: "situation", item });
-  };
-
-  const openValue = (item: ValueDef) => {
-    setDrawer({ type: "value", item });
-  };
-
-  const pickLens = (id: CoreValueId) => {
+  const handlePickLens = (id: CoreValueId) => {
     setLens(id);
-    setPickedLensOnce(true);
-    setScenarioIndex(0);
-    setPickedChoice(null);
-
-    const v = valuesById.get(id);
-    if (v) openValue(v);
   };
 
-  const clearLens = () => {
-    setLens(null);
-    setScenarioIndex(0);
-    setPickedChoice(null);
+  const handleAdvanceToPressure = () => {
+    if (!lens) return;
+    setSeason(1);
+    goToStage("pressure");
   };
 
-  const pickScenarioChoice = (choiceId: "A" | "B" | "C") => {
+  const handlePickChoice = (choiceId: "A" | "B" | "C") => {
     if (!activeScenario) return;
-    setPickedChoice({ scenarioId: activeScenario.id, choiceId });
-  };
-
-  const nextScenario = () => {
-    // only count completion once we actually revealed at least once
-    if (!completedScenarioOnce) setCompletedScenarioOnce(true);
-
-    setPickedChoice(null);
-    setScenarioIndex((i) => {
-      const next = Math.min(orderedScenarios.length - 1, i + 1);
-      return next;
+    const choice = activeScenario.choices.find((c) => c.id === choiceId);
+    if (!choice) return;
+    setPicked({
+      scenarioId: activeScenario.id,
+      choiceId,
+      isMyMove: !!choice.isMyMove,
     });
   };
 
-  const lensName = lens ? valuesById.get(lens)?.name : null;
+  const handleNextScenario = () => {
+    setPicked(null);
+    if (scenarioIdx >= scenarios.length - 1) {
+      // End of deck — drop into Season 2 interstitial unless already there
+      if (season === 1) {
+        goToStage("season-2");
+      } else {
+        goToStage("supporting");
+      }
+      return;
+    }
+    setScenarioIdx((i) => i + 1);
+  };
+
+  const handleEnterSeason2 = () => {
+    setSeason(2);
+    setScenarioIdx(0);
+    setPicked(null);
+    goToStage("pressure");
+  };
+
+  const handleRestart = () => {
+    setSeason(1);
+    setLens(null);
+    setOpenReceipt(null);
+    setActiveReceiptIdx(0);
+    setScenarioIdx(0);
+    setPicked(null);
+    goToStage("cold-open");
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  // Persistent corner UI
+  // ──────────────────────────────────────────────────────────────
+
+  const CornerMenu = () => (
+    <div className="cv2-corner">
+      {lensValue && stage !== "cold-open" ? (
+        <button
+          type="button"
+          className="cv2-lens-chip"
+          onClick={() => goToStage("lens")}
+          aria-label="Change lens"
+        >
+          <span className="cv2-lens-chip__label">Lens</span>
+          <span className="cv2-lens-chip__value">{lensValue.name}</span>
+        </button>
+      ) : null}
+
+      {stage !== "supporting" ? (
+        <button
+          type="button"
+          className="cv2-corner-btn"
+          onClick={() => goToStage("supporting")}
+          title="Browse all values"
+        >
+          <FaBookOpen aria-hidden />
+          <span>All Values</span>
+        </button>
+      ) : null}
+
+      {stage !== "cold-open" ? (
+        <button
+          type="button"
+          className="cv2-corner-btn"
+          onClick={handleRestart}
+          title="Restart experience"
+        >
+          <FaRedo aria-hidden />
+          <span>Restart</span>
+        </button>
+      ) : null}
+    </div>
+  );
+
+  // ──────────────────────────────────────────────────────────────
+  // Stage renderers
+  // ──────────────────────────────────────────────────────────────
+
+  const stageVariants = {
+    initial: { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -24 },
+  };
+
+  const renderStage = () => {
+    switch (stage) {
+      case "cold-open":
+        return (
+          <ColdOpen
+            key="cold-open"
+            onBegin={() => goToStage("situations")}
+            onBrowse={() => goToStage("supporting")}
+          />
+        );
+
+      case "situations":
+        return (
+          <SituationsStage
+            key="situations"
+            valuesById={valuesById}
+            openReceipt={openReceipt}
+            onOpenReceipt={setOpenReceipt}
+            onCloseReceipt={() => setOpenReceipt(null)}
+            activeIdx={activeReceiptIdx}
+            onActiveIdxChange={setActiveReceiptIdx}
+            onContinue={() => goToStage("lens")}
+          />
+        );
+
+      case "lens":
+        return (
+          <LensStage
+            key="lens"
+            valuesById={valuesById}
+            picked={lens}
+            onPick={handlePickLens}
+            onContinue={handleAdvanceToPressure}
+          />
+        );
+
+      case "pressure":
+        return (
+          <PressureStage
+            key={`pressure-${season}`}
+            season={season}
+            scenarios={scenarios}
+            scenarioIdx={scenarioIdx}
+            activeScenario={activeScenario}
+            valuesById={valuesById}
+            picked={picked}
+            onPickChoice={handlePickChoice}
+            onNextScenario={handleNextScenario}
+            onChangeLens={() => goToStage("lens")}
+            reduceMotion={!!reduceMotion}
+          />
+        );
+
+      case "season-2":
+        return (
+          <Season2Interstitial
+            key="season-2"
+            onEnter={handleEnterSeason2}
+            onSkip={() => goToStage("supporting")}
+            valuesById={valuesById}
+          />
+        );
+
+      case "supporting":
+        return (
+          <SupportingValuesStage
+            key="supporting"
+            onBack={() => goToStage("cold-open")}
+            open={openSupporting}
+            onOpen={setOpenSupporting}
+            onClose={() => setOpenSupporting(null)}
+          />
+        );
+    }
+  };
 
   return (
-    <div className="cvRoom">
-      {/* HERO */}
-      <header className="cvHero">
-        <div className="cvHeroInner">
-          <div className="cvHeroTop">
-            <h1 className="cvTitle">{coreValuesPage.intro.title}</h1>
+    <div className={`cv2-room cv2-stage-${stage}`}>
+      <CornerMenu />
 
-            {/* Sticky Lens indicator (appears after selecting) */}
-            {lens ? (
-              <div className="cvLensPill" aria-label="Selected lens">
-                <span className="cvLensLabel">Lens</span>
-                <button
-                  className="cvChip cvChipActive"
-                  onClick={() => {
-                    const v = valuesById.get(lens);
-                    if (v) openValue(v);
-                  }}
-                  aria-label="Open lens details"
-                >
-                  {lensName}
-                </button>
-                <button className="cvChip cvChipGhost" onClick={clearLens} aria-label="Change lens">
-                  Change
-                </button>
-              </div>
-            ) : null}
-          </div>
-
-          <p className="cvIntro">{coreValuesPage.intro.experienceIntro}</p>
-
-          {/* subtle progression indicator */}
-          <div className="cvProgress">
-            <div className={`cvDot ${openedSituationOnce ? "on" : ""}`} />
-            <div className={`cvDot ${pickedLensOnce ? "on" : ""}`} />
-            <div className={`cvDot ${completedScenarioOnce ? "on" : ""}`} />
-            <div className="cvProgressHint">
-              {completedScenarioOnce
-                ? "Season 2 is live."
-                : pickedLensOnce
-                ? "Make one call under pressure to unlock Season 2."
-                : openedSituationOnce
-                ? "Pick a value to set your lens."
-                : "Start with a real situation."}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* PHASE 1 — Real Situations */}
-      <section className="cvPhase cvPhaseActive">
-        <div className="cvPhaseHeader">
-          <h2 className="cvH2">{coreValuesPage.sectionNames.realSituations}</h2>
-          <div className="cvSub">Open one. The experience wakes up.</div>
-        </div>
-
-        <div className="cvRail" aria-label="Real Situations rail">
-          {coreValuesPage.receipts.map((r) => {
-            const tag = valuesById.get(r.mappedValue)?.name || "Value";
-            return (
-              <button
-                key={r.id}
-                className="cvEpisode"
-                onClick={() => openSituation(r)}
-                aria-label={`Open real situation: ${r.title}`}
-              >
-                <div className="cvEpisodeTop">
-                  <span className="cvTag">{tag}</span>
-                  <span className="cvOpenHint">Open</span>
-                </div>
-
-                <div className="cvEpisodeTitle">{r.title}</div>
-                <div className="cvEpisodeBody">{preview(r.inTheMoment, 155)}</div>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* PHASE 2 — What Matters to You */}
-      <section className={`cvPhase ${openedSituationOnce ? "cvPhaseActive" : "cvPhaseLocked"}`}>
-        <div className="cvPhaseHeader">
-          <h2 className="cvH2">{coreValuesPage.sectionNames.whatMatters}</h2>
-          <div className="cvSub">Start With What You Believe.</div>
-        </div>
-
-        <div className="cvValuesGrid" aria-label="Featured value tiles">
-          {coreValuesPage.featuredValuesOrder.map((id) => {
-            const v = valuesById.get(id);
-            if (!v) return null;
-
-            const isSelected = lens === id;
-
-            return (
-              <button
-                key={id}
-                className={`cvValueTile ${isSelected ? "selected" : ""}`}
-                onClick={() => {
-                  if (!openedSituationOnce) return;
-                  pickLens(id);
-                }}
-                aria-label={`Select value lens: ${v.name}`}
-              >
-                <div className="cvValueName">{v.name}</div>
-              </button>
-            );
-          })}
-        </div>
-
-        {!openedSituationOnce ? (
-          <div className="cvLockHint">
-            Open at least one Real Situation to unlock this.
-          </div>
-        ) : null}
-      </section>
-
-      {/* PHASE 3 — Under Pressure */}
-      <section className={`cvPhase ${pickedLensOnce ? "cvPhaseActive" : "cvPhaseLocked"}`}>
-        <div className="cvPhaseHeader cvPhaseHeaderRow">
-          <div>
-            <h2 className="cvH2">
-              {coreValuesPage.sectionNames.underPressure}
-              <span className="cvPrompt"> — Make the Call</span>
-            </h2>
-            <div className="cvSub">
-              This is the interactive core. Pick an option. Watch the reveal.
-            </div>
-          </div>
-
-          {lens ? (
-            <div className="cvInlineLens">
-              <span className="cvLensLabelSmall">Lens</span>
-              <span className="cvTag">{lensName}</span>
-            </div>
-          ) : null}
-        </div>
-
-        <div className="cvScenarioShell">
-          {!pickedLensOnce ? (
-            <div className="cvLockHint">
-              Pick a value to set your lens before you enter the deck.
-            </div>
-          ) : null}
-
-          {activeScenario ? (
-            <div className={`cvScenarioCard ${pickedLensOnce ? "" : "disabled"}`}>
-              <div className="cvScenarioHeader">
-                <span className="cvTag">
-                  {valuesById.get(activeScenario.valueId)?.name}
-                </span>
-
-                <div className="cvScenarioCount">
-                  {scenarioIndex + 1} / {orderedScenarios.length}
-                </div>
-              </div>
-
-              <h3 className="cvH3">{activeScenario.title}</h3>
-              <p className="cvScenarioText">{activeScenario.situation}</p>
-
-              <div className="cvChoices" role="group" aria-label="Scenario choices">
-                {activeScenario.choices.map((c) => {
-                  const isPicked =
-                    pickedChoice?.scenarioId === activeScenario.id &&
-                    pickedChoice.choiceId === c.id;
-
-                  return (
-                    <button
-                      key={c.id}
-                      className={`cvChoice ${c.isMyMove ? "myMove" : ""} ${isPicked ? "picked" : ""}`}
-                      onClick={() => {
-                        if (!pickedLensOnce) return;
-                        pickScenarioChoice(c.id);
-                      }}
-                      aria-label={`Choose option ${c.id}`}
-                    >
-                      <div className="cvChoiceTop">
-                        <div className="cvChoiceKey">Choice {c.id}</div>
-                        {c.isMyMove ? <div className="cvBadge">my move</div> : null}
-                      </div>
-                      <div className="cvChoiceText">{c.text}</div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Reveal */}
-              {pickedChoice?.scenarioId === activeScenario.id ? (
-                <div className="cvReveal">
-                  <div className="cvRevealTop">
-                    <span className="cvTag">
-                      Value Tag: {valuesById.get(activeScenario.valueId)?.name}
-                    </span>
-                    <button
-                      className="cvMiniBtn"
-                      onClick={() => setPickedChoice(null)}
-                      aria-label="Reset reveal"
-                    >
-                      Reset
-                    </button>
-                  </div>
-
-                  <div className="cvRevealGrid">
-                    <div className="cvRevealBlock">
-                      <div className="cvFieldLabel">My Strategies (Steps)</div>
-                      <ol className="cvSteps">
-                        {activeScenario.myStrategies.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ol>
-                    </div>
-
-                    <div className="cvGospel">
-                      <div className="cvFieldLabel">The Gospel of JP</div>
-                      <div className="cvPullQuote">“{activeScenario.gospel}”</div>
-                    </div>
-                  </div>
-
-                  <div className="cvNextRow">
-                    <button
-                      className="cvBtnPrimary"
-                      onClick={nextScenario}
-                      aria-label="Next Scenario"
-                    >
-                      Next Scenario
-                    </button>
-
-                    <button
-                      className="cvBtnGhost"
-                      onClick={() => {
-                        const v = valuesById.get(activeScenario.valueId);
-                        if (v) openValue(v);
-                      }}
-                      aria-label="Open mapped value details"
-                    >
-                      View Value
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <div className="cvLockHint">No scenarios found.</div>
-          )}
-        </div>
-      </section>
-
-      {/* PHASE 4 — Season 2 */}
-      <section className={`cvPhase ${completedScenarioOnce ? "cvPhaseActive" : "cvPhaseLocked"}`}>
-        <div className="cvPhaseHeader">
-          <h2 className="cvH2">{coreValuesPage.sectionNames.season2}</h2>
-          <div className="cvSub">
-            After you make one call under pressure, this chapter arrives.
-          </div>
-        </div>
-
-        {!completedScenarioOnce ? (
-          <div className="cvLockHint">
-            Complete at least one scenario reveal to unlock Season 2.
-          </div>
-        ) : null}
-
-        <div className="cvSeasonGrid">
-          {coreValuesPage.season2.focusValueIds.map((id) => {
-            const v = valuesById.get(id);
-            if (!v) return null;
-            return (
-              <button
-                key={id}
-                className="cvSeasonTile"
-                onClick={() => pickLens(id)}
-                aria-label={`Season 2 focus value: ${v.name}`}
-                disabled={!completedScenarioOnce}
-              >
-                <div className="cvSeasonTitle">{v.name}</div>
-                <div className="cvSeasonDesc">{preview(v.whatItIs, 90)}</div>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="cvMiniRailWrap">
-          <div className="cvMiniRailTitle">Featured Real Situations</div>
-          <div className="cvRail cvMiniRail" aria-label="Season 2 receipts rail">
-            {season2Receipts.map((r) => {
-              const tag = valuesById.get(r.mappedValue)?.name || "Value";
-              return (
-                <button
-                  key={r.id}
-                  className="cvMiniEpisode"
-                  onClick={() => openSituation(r)}
-                  disabled={!completedScenarioOnce}
-                >
-                  <div className="cvEpisodeTop">
-                    <span className="cvTag">{tag}</span>
-                    <span className="cvOpenHint">Open</span>
-                  </div>
-                  <div className="cvEpisodeTitle">{r.title}</div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* PHASE 5 — Values Library (quiet depth) */}
-      <section className="cvPhase cvPhaseQuiet">
-        <div className="cvPhaseHeader">
-          <h2 className="cvH2">{coreValuesPage.sectionNames.valuesLibrary}</h2>
-          <div className="cvSub">Quiet depth. Optional. Easy scanning.</div>
-        </div>
-
-        <div className="cvLibrary">
-          {coreValuesPage.libraryShelves.map((shelf) => (
-            <details className="cvShelf" key={shelf.id}>
-              <summary className="cvShelfTitle">{shelf.title}</summary>
-              <div className="cvShelfBody">
-                {shelf.values.map((v) => (
-                  <button
-                    key={v}
-                    className="cvLibraryChip"
-                    onClick={() =>
-                      setDrawer({
-                        type: "library",
-                        title: v,
-                        body: "Definition coming soon",
-                      })
-                    }
-                    aria-label={`Open library value: ${v}`}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer CTA */}
-      <section className="cvCTA">
-        <button className="cvCTAButton" aria-label="Partner with me">
-          {coreValuesPage.cta.label}
-        </button>
-      </section>
-
-      {/* Drawer + overlay */}
-      <div
-        className={`cvOverlay ${drawer ? "open" : ""}`}
-        onClick={closeDrawer}
-        role="presentation"
-      />
-
-      <aside
-        className={`cvDrawer ${drawer ? "open" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Core Values drawer"
-      >
-        <div className="cvDrawerHeader">
-          <div className="cvDrawerTitle">
-            {drawer?.type === "situation"
-              ? drawer.item.title
-              : drawer?.type === "value"
-              ? drawer.item.name
-              : drawer?.type === "voice"
-              ? drawer.title
-              : drawer?.type === "library"
-              ? drawer.title
-              : ""}
-          </div>
-          <button className="cvClose" onClick={closeDrawer} aria-label="Close">
-            ✕
-          </button>
-        </div>
-
-        <div className="cvDrawerBody">
-          {/* Real Situation drawer */}
-          {drawer?.type === "situation" ? (
-            <div className="cvDrawerStack">
-              <div className="cvMetaRow">
-                <span className="cvTag">
-                  Value Tag: {valuesById.get(drawer.item.mappedValue)?.name}
-                </span>
-              </div>
-
-              <div className="cvField">
-                <div className="cvFieldLabel">In The Moment</div>
-                <div className="cvFieldText">{drawer.item.inTheMoment}</div>
-              </div>
-
-              <div className="cvField">
-                <div className="cvFieldLabel">The Process</div>
-                <div className="cvFieldText">{drawer.item.theProcess}</div>
-              </div>
-
-              {drawer.item.gospel ? (
-                <div className="cvGospelBlock">
-                  <div className="cvFieldLabel">The Gospel of JP</div>
-                  <div className="cvPullQuote big">“{drawer.item.gospel}”</div>
-                </div>
-              ) : null}
-
-              <button
-                className="cvBtnPrimary full"
-                onClick={() => {
-                  const v = valuesById.get(drawer.item.mappedValue);
-                  if (v) pickLens(v.id);
-                }}
-              >
-                Use this as my Lens
-              </button>
-            </div>
-          ) : null}
-
-          {/* Value drawer */}
-          {drawer?.type === "value" ? (
-            <div className="cvDrawerStack">
-              <div className="cvMetaRow">
-                <span className="cvTag">{drawer.item.name}</span>
-              </div>
-
-              <div className="cvField">
-                <div className="cvFieldLabel">What it is</div>
-                <div className="cvFieldText">{drawer.item.whatItIs}</div>
-              </div>
-
-              <div className="cvField">
-                <div className="cvFieldLabel">How I move</div>
-                <div className="cvFieldText">{drawer.item.howIMove}</div>
-              </div>
-
-              <div className="cvField">
-                <div className="cvFieldLabel">I won’t</div>
-                <div className="cvFieldText">{drawer.item.iWont}</div>
-              </div>
-
-              <div className="cvDivider" />
-
-              <div className="cvField">
-                <div className="cvFieldLabel">This matters because…</div>
-                <div className="cvFieldText">{drawer.item.reveal.mattersBecause}</div>
-              </div>
-
-              <div className="cvField">
-                <div className="cvFieldLabel">People feel it when I’m in charge…</div>
-                <div className="cvFieldText">{drawer.item.reveal.peopleFeel}</div>
-              </div>
-
-              {drawer.item.reveal.whenOff ? (
-                <div className="cvField">
-                  <div className="cvFieldLabel">When I’m off…</div>
-                  <div className="cvFieldText">{drawer.item.reveal.whenOff}</div>
-                </div>
-              ) : null}
-
-              <div className="cvDrawerActions">
-                <button
-                  className="cvBtnPrimary"
-                  onClick={() =>
-                    setDrawer({
-                      type: "voice",
-                      title: "Hear it (soon)",
-                      lines: drawer.item.voiceLines,
-                    })
-                  }
-                >
-                  Hear it (soon)
-                </button>
-
-                <button
-                  className="cvBtnGhost"
-                  onClick={() => {
-                    setLens(drawer.item.id);
-                    setPickedLensOnce(true);
-                    closeDrawer();
-                  }}
-                >
-                  Set Lens
-                </button>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Voice drawer */}
-          {drawer?.type === "voice" ? (
-            <div className="cvDrawerStack">
-              {drawer.lines.map((l, idx) => (
-                <div key={idx} className="cvVoiceQuote">
-                  “{l}”
-                </div>
-              ))}
-              <div className="cvQuietNote">
-                Audio wiring later. This is the text bank.
-              </div>
-            </div>
-          ) : null}
-
-          {/* Library drawer */}
-          {drawer?.type === "library" ? (
-            <div className="cvDrawerStack">
-              <div className="cvFieldText">{drawer.body}</div>
-            </div>
-          ) : null}
-        </div>
-      </aside>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={stage}
+          variants={stageVariants}
+          initial={reduceMotion ? false : "initial"}
+          animate="animate"
+          exit={reduceMotion ? undefined : "exit"}
+          transition={{ duration: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
+          className="cv2-stage"
+        >
+          {renderStage()}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// Stage 1 — Cold Open
+// ══════════════════════════════════════════════════════════════════════
+
+const ColdOpen: React.FC<{
+  onBegin: () => void;
+  onBrowse: () => void;
+}> = ({ onBegin, onBrowse }) => {
+  return (
+    <section className="cv2-cold" aria-label="Core Values cold open">
+      <div className="cv2-cold__bg" />
+
+      <div className="cv2-cold__content">
+        <div className="cv2-badge">
+          <img src={jpIcon} alt="" aria-hidden className="cv2-badge__icon" />
+          <span className="cv2-badge__text">JP ORIGINAL · INTERACTIVE</span>
+        </div>
+
+        <h1 className="cv2-cold__title">CORE VALUES</h1>
+
+        <p className="cv2-cold__lede">
+          {coreValuesPage.intro.experienceIntro}
+        </p>
+
+        <div className="cv2-cold__actions">
+          <button
+            type="button"
+            className="cv2-btn cv2-btn--primary"
+            onClick={onBegin}
+          >
+            <FaPlay aria-hidden /> Begin Experience
+          </button>
+          <button
+            type="button"
+            className="cv2-link"
+            onClick={onBrowse}
+          >
+            <FaBookOpen aria-hidden /> Browse all values
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// Stage 2 — Real Situations
+// ══════════════════════════════════════════════════════════════════════
+
+const SituationsStage: React.FC<{
+  valuesById: Map<CoreValueId, ValueDef>;
+  openReceipt: Receipt | null;
+  onOpenReceipt: (r: Receipt) => void;
+  onCloseReceipt: () => void;
+  activeIdx: number;
+  onActiveIdxChange: (i: number) => void;
+  onContinue: () => void;
+}> = ({
+  valuesById,
+  openReceipt,
+  onOpenReceipt,
+  onCloseReceipt,
+  activeIdx,
+  onActiveIdxChange,
+  onContinue,
+}) => {
+  const receipts = coreValuesPage.receipts;
+  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
+
+  const next = () => onActiveIdxChange(Math.min(activeIdx + 1, receipts.length - 1));
+  const prev = () => onActiveIdxChange(Math.max(activeIdx - 1, 0));
+
+  const handleOpen = (r: Receipt) => {
+    setHasOpenedOnce(true);
+    onOpenReceipt(r);
+  };
+
+  return (
+    <section className="cv2-situations" aria-label="Real Situations">
+      <header className="cv2-section-head">
+        <p className="cv2-eyebrow">REAL SITUATIONS</p>
+        <h2 className="cv2-section-title">
+          Open one. The room is listening.
+        </h2>
+        <p className="cv2-section-sub">
+          These are real moments. Tap one to step inside.
+        </p>
+      </header>
+
+      <div className="cv2-deck">
+        <button
+          type="button"
+          className="cv2-deck-arrow cv2-deck-arrow--left"
+          onClick={prev}
+          disabled={activeIdx === 0}
+          aria-label="Previous"
+        >
+          <FaArrowLeft />
+        </button>
+
+        <div className="cv2-deck-track">
+          {receipts.map((r, i) => {
+            const offset = i - activeIdx;
+            const isActive = offset === 0;
+            return (
+              <motion.button
+                type="button"
+                key={r.id}
+                className={`cv2-rcard ${isActive ? "cv2-rcard--active" : ""}`}
+                onClick={() => (isActive ? handleOpen(r) : onActiveIdxChange(i))}
+                animate={{
+                  x: `${offset * 110}%`,
+                  scale: isActive ? 1 : 0.78,
+                  opacity: Math.abs(offset) > 2 ? 0 : isActive ? 1 : 0.5,
+                  zIndex: 10 - Math.abs(offset),
+                }}
+                transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
+                aria-label={`Real situation: ${r.title}`}
+              >
+                <div className="cv2-rcard__bg" />
+                <div className="cv2-rcard__overlay" />
+                <div className="cv2-rcard__content">
+                  <span className="cv2-tag">
+                    {valuesById.get(r.mappedValue)?.name || "Value"}
+                  </span>
+                  <h3 className="cv2-rcard__title">{r.title}</h3>
+                  {isActive && (
+                    <p className="cv2-rcard__teaser">
+                      {r.inTheMoment.slice(0, 140)}…
+                    </p>
+                  )}
+                  {isActive && (
+                    <span className="cv2-rcard__cta">
+                      Tap to step inside <FaChevronRight aria-hidden />
+                    </span>
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          className="cv2-deck-arrow cv2-deck-arrow--right"
+          onClick={next}
+          disabled={activeIdx === receipts.length - 1}
+          aria-label="Next"
+        >
+          <FaArrowRight />
+        </button>
+      </div>
+
+      <div className="cv2-deck-counter">
+        {activeIdx + 1} / {receipts.length}
+      </div>
+
+      <div className="cv2-section-foot">
+        {hasOpenedOnce ? (
+          <button
+            type="button"
+            className="cv2-btn cv2-btn--primary"
+            onClick={onContinue}
+          >
+            Pick a Value Lens <FaArrowRight aria-hidden />
+          </button>
+        ) : (
+          <p className="cv2-foot-hint">Open at least one to continue.</p>
+        )}
+      </div>
+
+      {/* Receipt full-screen overlay */}
+      <AnimatePresence>
+        {openReceipt && (
+          <motion.div
+            className="cv2-receipt-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={onCloseReceipt}
+          >
+            <motion.article
+              className="cv2-receipt-modal__panel"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <header className="cv2-receipt-modal__head">
+                <span className="cv2-tag">
+                  Value Tag: {valuesById.get(openReceipt.mappedValue)?.name}
+                </span>
+                <button
+                  type="button"
+                  className="cv2-icon-btn"
+                  onClick={onCloseReceipt}
+                  aria-label="Close"
+                >
+                  <FaTimes />
+                </button>
+              </header>
+
+              <h2 className="cv2-receipt-modal__title">{openReceipt.title}</h2>
+
+              <div className="cv2-receipt-modal__body">
+                <div className="cv2-field">
+                  <p className="cv2-field__label">In The Moment</p>
+                  <p className="cv2-field__text">{openReceipt.inTheMoment}</p>
+                </div>
+
+                <div className="cv2-field">
+                  <p className="cv2-field__label">The Process</p>
+                  <p className="cv2-field__text">{openReceipt.theProcess}</p>
+                </div>
+
+                {openReceipt.gospel && (
+                  <blockquote className="cv2-gospel">
+                    <span className="cv2-gospel__label">The Gospel of JP</span>
+                    <p className="cv2-gospel__quote">
+                      &ldquo;{openReceipt.gospel}&rdquo;
+                    </p>
+                  </blockquote>
+                )}
+              </div>
+
+              <footer className="cv2-receipt-modal__foot">
+                <button
+                  type="button"
+                  className="cv2-btn cv2-btn--primary"
+                  onClick={() => {
+                    onCloseReceipt();
+                    onContinue();
+                  }}
+                >
+                  Pick a Value Lens <FaArrowRight aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  className="cv2-btn cv2-btn--ghost"
+                  onClick={onCloseReceipt}
+                >
+                  Back to Situations
+                </button>
+              </footer>
+            </motion.article>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// Stage 3 — Pick Your Lens
+// ══════════════════════════════════════════════════════════════════════
+
+const LensStage: React.FC<{
+  valuesById: Map<CoreValueId, ValueDef>;
+  picked: CoreValueId | null;
+  onPick: (id: CoreValueId) => void;
+  onContinue: () => void;
+}> = ({ valuesById, picked, onPick, onContinue }) => {
+  const [expanded, setExpanded] = useState<CoreValueId | null>(null);
+
+  return (
+    <section className="cv2-lens" aria-label="Pick your lens">
+      <header className="cv2-section-head">
+        <p className="cv2-eyebrow">START WITH WHAT YOU BELIEVE</p>
+        <h2 className="cv2-section-title">
+          Pick the value that matters most to you.
+        </h2>
+        <p className="cv2-section-sub">
+          One tap sets your lens for the rest of the experience.
+        </p>
+      </header>
+
+      <div className="cv2-lens-grid">
+        {coreValuesPage.featuredValuesOrder.map((id) => {
+          const v = valuesById.get(id);
+          if (!v) return null;
+          const isPicked = picked === id;
+          const isExpanded = expanded === id;
+          return (
+            <motion.button
+              type="button"
+              key={id}
+              className={`cv2-lens-tile ${isPicked ? "cv2-lens-tile--picked" : ""}`}
+              onClick={() => {
+                if (isPicked) {
+                  setExpanded(isExpanded ? null : id);
+                } else {
+                  onPick(id);
+                  setExpanded(id);
+                }
+              }}
+              animate={{
+                scale: picked && !isPicked ? 0.95 : 1,
+                opacity: picked && !isPicked ? 0.55 : 1,
+              }}
+              transition={{ duration: 0.3 }}
+              aria-label={`Pick value: ${v.name}`}
+              aria-pressed={isPicked}
+            >
+              <div className="cv2-lens-tile__name">{v.name}</div>
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    className="cv2-lens-tile__details"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <p className="cv2-lens-tile__row">
+                      <span className="cv2-lens-tile__row-label">What it is</span>
+                      <span className="cv2-lens-tile__row-text">{v.whatItIs}</span>
+                    </p>
+                    <p className="cv2-lens-tile__row">
+                      <span className="cv2-lens-tile__row-label">How I move</span>
+                      <span className="cv2-lens-tile__row-text">{v.howIMove}</span>
+                    </p>
+                    <p className="cv2-lens-tile__row">
+                      <span className="cv2-lens-tile__row-label">I won't</span>
+                      <span className="cv2-lens-tile__row-text">{v.iWont}</span>
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      <div className="cv2-section-foot">
+        {picked ? (
+          <button
+            type="button"
+            className="cv2-btn cv2-btn--primary"
+            onClick={onContinue}
+          >
+            Enter Under Pressure <FaArrowRight aria-hidden />
+          </button>
+        ) : (
+          <p className="cv2-foot-hint">Pick one to continue.</p>
+        )}
+      </div>
+    </section>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// Stage 4 — Under Pressure
+// ══════════════════════════════════════════════════════════════════════
+
+const PressureStage: React.FC<{
+  season: Season;
+  scenarios: Scenario[];
+  scenarioIdx: number;
+  activeScenario: Scenario | undefined;
+  valuesById: Map<CoreValueId, ValueDef>;
+  picked: { scenarioId: string; choiceId: "A" | "B" | "C"; isMyMove: boolean } | null;
+  onPickChoice: (id: "A" | "B" | "C") => void;
+  onNextScenario: () => void;
+  onChangeLens: () => void;
+  reduceMotion: boolean;
+}> = ({
+  season,
+  scenarios,
+  scenarioIdx,
+  activeScenario,
+  valuesById,
+  picked,
+  onPickChoice,
+  onNextScenario,
+  onChangeLens,
+  reduceMotion,
+}) => {
+  if (!activeScenario) {
+    return (
+      <section className="cv2-pressure">
+        <p className="cv2-foot-hint">No scenarios available.</p>
+      </section>
+    );
+  }
+
+  const scenarioValue = valuesById.get(activeScenario.valueId);
+  const hasRevealed = picked?.scenarioId === activeScenario.id;
+  const isLast = scenarioIdx === scenarios.length - 1;
+
+  return (
+    <section className="cv2-pressure" aria-label="Under Pressure">
+      <header className="cv2-section-head">
+        <p className="cv2-eyebrow">
+          {season === 2 ? "SEASON 2 · UNDER PRESSURE" : "UNDER PRESSURE"}
+        </p>
+        <h2 className="cv2-section-title">Make the call.</h2>
+        <div className="cv2-pressure__meta">
+          <span className="cv2-tag">{scenarioValue?.name}</span>
+          <span className="cv2-counter">
+            {scenarioIdx + 1} / {scenarios.length}
+          </span>
+        </div>
+      </header>
+
+      <article className="cv2-scenario">
+        <h3 className="cv2-scenario__title">{activeScenario.title}</h3>
+        <p className="cv2-scenario__prose">{activeScenario.situation}</p>
+
+        <div className="cv2-choices" role="group" aria-label="Make your call">
+          {activeScenario.choices.map((c) => {
+            const isThisPicked =
+              picked?.scenarioId === activeScenario.id &&
+              picked.choiceId === c.id;
+            const otherPicked =
+              picked?.scenarioId === activeScenario.id &&
+              picked.choiceId !== c.id;
+            return (
+              <motion.button
+                type="button"
+                key={c.id}
+                className={`cv2-choice ${isThisPicked ? "cv2-choice--picked" : ""}`}
+                onClick={() => onPickChoice(c.id)}
+                disabled={!!picked}
+                animate={{
+                  opacity: otherPicked ? 0.3 : 1,
+                  scale: isThisPicked ? 1.02 : 1,
+                }}
+                transition={{ duration: 0.3 }}
+                aria-label={`Choice ${c.id}: ${c.text}`}
+              >
+                <span className="cv2-choice__text">{c.text}</span>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <AnimatePresence>
+          {hasRevealed && (
+            <motion.div
+              className="cv2-reveal"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <RevealContent
+                isMyMove={picked.isMyMove}
+                scenario={activeScenario}
+                reduceMotion={reduceMotion}
+                onNext={onNextScenario}
+                isLast={isLast}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </article>
+
+      {!hasRevealed && (
+        <div className="cv2-pressure__foot">
+          <button
+            type="button"
+            className="cv2-link"
+            onClick={onChangeLens}
+          >
+            Change lens
+          </button>
+        </div>
+      )}
+    </section>
+  );
+};
+
+const RevealContent: React.FC<{
+  isMyMove: boolean;
+  scenario: Scenario;
+  reduceMotion: boolean;
+  onNext: () => void;
+  isLast: boolean;
+}> = ({ isMyMove, scenario, reduceMotion, onNext, isLast }) => {
+  const beatVariants = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+  };
+
+  return (
+    <div className="cv2-reveal__inner">
+      <motion.p
+        className={`cv2-reveal__verdict ${isMyMove ? "cv2-reveal__verdict--match" : ""}`}
+        variants={beatVariants}
+        initial={reduceMotion ? false : "initial"}
+        animate="animate"
+        transition={{ duration: 0.5, delay: 0.0 }}
+      >
+        {isMyMove
+          ? "You moved like Jermaine."
+          : "Jermaine would have moved differently. Here's how:"}
+      </motion.p>
+
+      <motion.div
+        className="cv2-reveal__strategies"
+        variants={beatVariants}
+        initial={reduceMotion ? false : "initial"}
+        animate="animate"
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
+        <p className="cv2-field__label">My Strategies</p>
+        <ol className="cv2-steps">
+          {scenario.myStrategies.map((s, i) => (
+            <motion.li
+              key={i}
+              className="cv2-steps__item"
+              initial={reduceMotion ? false : { opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.7 + i * 0.25 }}
+            >
+              {s}
+            </motion.li>
+          ))}
+        </ol>
+      </motion.div>
+
+      <motion.blockquote
+        className="cv2-gospel"
+        variants={beatVariants}
+        initial={reduceMotion ? false : "initial"}
+        animate="animate"
+        transition={{ duration: 0.5, delay: 1.7 }}
+      >
+        <span className="cv2-gospel__label">The Gospel of JP</span>
+        <p className="cv2-gospel__quote">&ldquo;{scenario.gospel}&rdquo;</p>
+      </motion.blockquote>
+
+      <motion.div
+        className="cv2-reveal__actions"
+        variants={beatVariants}
+        initial={reduceMotion ? false : "initial"}
+        animate="animate"
+        transition={{ duration: 0.5, delay: 2.1 }}
+      >
+        <button type="button" className="cv2-btn cv2-btn--primary" onClick={onNext}>
+          {isLast ? "Finish Run" : "Next Scenario"} <FaArrowRight aria-hidden />
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// Stage 5 — Season 2 Interstitial
+// ══════════════════════════════════════════════════════════════════════
+
+const Season2Interstitial: React.FC<{
+  onEnter: () => void;
+  onSkip: () => void;
+  valuesById: Map<CoreValueId, ValueDef>;
+}> = ({ onEnter, onSkip, valuesById }) => {
+  const focusValues = coreValuesPage.season2.focusValueIds
+    .map((id) => valuesById.get(id))
+    .filter(Boolean) as ValueDef[];
+
+  return (
+    <section className="cv2-season2" aria-label="Season 2 interstitial">
+      <header className="cv2-section-head cv2-section-head--center">
+        <p className="cv2-eyebrow">SEASON 2</p>
+        <h2 className="cv2-section-title">More Life. More Values.</h2>
+        <p className="cv2-section-sub cv2-section-sub--center">
+          Two values worth going deeper on. Same format. Different pressure.
+        </p>
+      </header>
+
+      <div className="cv2-season2__cards">
+        {focusValues.map((v) => (
+          <div key={v.id} className="cv2-season2-card">
+            <span className="cv2-tag">Focus Value</span>
+            <h3 className="cv2-season2-card__name">{v.name}</h3>
+            <p className="cv2-season2-card__what">{v.whatItIs}</p>
+            <p className="cv2-season2-card__row">
+              <span className="cv2-season2-card__row-label">How I move</span>
+              <span>{v.howIMove}</span>
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="cv2-section-foot">
+        <button type="button" className="cv2-btn cv2-btn--primary" onClick={onEnter}>
+          Enter Season 2 <FaArrowRight aria-hidden />
+        </button>
+        <button type="button" className="cv2-link" onClick={onSkip}>
+          Skip to all values
+        </button>
+      </div>
+    </section>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// Stage 6 — More Supporting Values
+// ══════════════════════════════════════════════════════════════════════
+
+const SupportingValuesStage: React.FC<{
+  onBack: () => void;
+  open: { name: string } | null;
+  onOpen: (v: { name: string }) => void;
+  onClose: () => void;
+}> = ({ onBack, open, onOpen, onClose }) => {
+  return (
+    <section className="cv2-supporting" aria-label="More Supporting Values">
+      <header className="cv2-section-head">
+        <p className="cv2-eyebrow">MORE SUPPORTING VALUES</p>
+        <h2 className="cv2-section-title">Browse the rest of the code.</h2>
+        <p className="cv2-section-sub">
+          {coreValuesPage.libraryShelves.reduce(
+            (sum, s) => sum + s.values.length,
+            0
+          )}{" "}
+          values across {coreValuesPage.libraryShelves.length} shelves.
+        </p>
+      </header>
+
+      <div className="cv2-shelves">
+        {coreValuesPage.libraryShelves.map((shelf) => (
+          <div key={shelf.id} className="cv2-shelf">
+            <h3 className="cv2-shelf__title">{shelf.title}</h3>
+            <div className="cv2-shelf__grid">
+              {shelf.values.map((name) => (
+                <button
+                  type="button"
+                  key={name}
+                  className="cv2-supporting-tile"
+                  onClick={() => onOpen({ name })}
+                  aria-label={`Open ${name}`}
+                >
+                  <div className="cv2-supporting-tile__cover">
+                    <img
+                      src={jpIcon}
+                      alt=""
+                      aria-hidden
+                      className="cv2-supporting-tile__mark"
+                    />
+                  </div>
+                  <div className="cv2-supporting-tile__name">{name}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="cv2-section-foot">
+        <button type="button" className="cv2-btn cv2-btn--ghost" onClick={onBack}>
+          Back to start
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="cv2-receipt-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={onClose}
+          >
+            <motion.div
+              className="cv2-receipt-modal__panel cv2-receipt-modal__panel--small"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ duration: 0.35 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <header className="cv2-receipt-modal__head">
+                <span className="cv2-tag">Supporting Value</span>
+                <button
+                  type="button"
+                  className="cv2-icon-btn"
+                  onClick={onClose}
+                  aria-label="Close"
+                >
+                  <FaTimes />
+                </button>
+              </header>
+
+              <h2 className="cv2-receipt-modal__title">{open.name}</h2>
+
+              <p className="cv2-field__text">
+                This is part of Jermaine's wider code. Featured values get the
+                full experience treatment. This one lives in the library for
+                now, and may move into the featured rotation in a future
+                season.
+              </p>
+
+              <footer className="cv2-receipt-modal__foot">
+                <button
+                  type="button"
+                  className="cv2-btn cv2-btn--primary"
+                  onClick={onClose}
+                >
+                  Close
+                </button>
+              </footer>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+};

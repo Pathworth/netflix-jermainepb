@@ -91,7 +91,7 @@ export const coreValuesPage: {
     whatMatters: "What Matters to You",
     underPressure: "Under Pressure",
     season2: "Season 2: More Life. More Values",
-    valuesLibrary: "Values Library",
+    valuesLibrary: "More Supporting Values",
   },
 
   featuredValuesOrder: [
