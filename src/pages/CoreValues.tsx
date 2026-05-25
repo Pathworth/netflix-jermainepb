@@ -292,6 +292,7 @@ export default function CoreValues() {
             key="cold-open"
             onBegin={() => goToStage("situations")}
             onBrowse={() => goToStage("supporting")}
+            onHowItWorks={() => setHowOpen(true)}
           />
         );
 
@@ -491,7 +492,8 @@ const HowItWorksModal: React.FC<{
 const ColdOpen: React.FC<{
   onBegin: () => void;
   onBrowse: () => void;
-}> = ({ onBegin, onBrowse }) => {
+  onHowItWorks: () => void;
+}> = ({ onBegin, onBrowse, onHowItWorks }) => {
   return (
     <section className="cv2-cold" aria-label="Core Values cold open">
       <div className="cv2-cold__bg" />
@@ -515,6 +517,13 @@ const ColdOpen: React.FC<{
             onClick={onBegin}
           >
             <FaPlay aria-hidden /> Begin Experience
+          </button>
+          <button
+            type="button"
+            className="cv2-btn cv2-btn--ghost"
+            onClick={onHowItWorks}
+          >
+            <FaQuestionCircle aria-hidden /> How It Works
           </button>
           <button
             type="button"
@@ -762,8 +771,8 @@ const LensStage: React.FC<{
         <p className="cv2-section-sub">
           There's no wrong answer. Your pick becomes the lens. I'll use it
           to order the scenarios you see next, so the experience starts
-          where it matters to you. Tap any tile to read what the value
-          means. Tap again to lock it in.
+          where it matters to you. Tap a tile and the value is locked in.
+          Tap a different one anytime to change your pick.
         </p>
       </header>
 
@@ -831,7 +840,7 @@ const LensStage: React.FC<{
             className="cv2-btn cv2-btn--primary"
             onClick={onContinue}
           >
-            Enter Under Pressure <FaArrowRight aria-hidden />
+            See How I Move <FaArrowRight aria-hidden />
           </button>
         ) : (
           <p className="cv2-foot-hint">Pick one to continue.</p>
