@@ -406,11 +406,11 @@ const HowItWorksModal: React.FC<{
     },
     {
       title: "03 · Make the Call Under Pressure",
-      body: "I'll put you in a real moment with three ways to handle it. Pick the one that feels like your move. This is the interactive part — you're not just watching, you're deciding.",
+      body: "I'll put you in a real moment with three ways to handle it. Pick the one that feels like your move. This is the interactive part. You're not just watching, you're deciding.",
     },
     {
       title: "04 · See How I Moved",
-      body: "I'll show you exactly what I would do, step by step. If your call matched mine, you'll see it. If we moved differently, you'll see that too — and how.",
+      body: "I'll show you exactly what I would do, step by step. If your call matched mine, you'll see it. If we moved differently, you'll see that too, and how.",
     },
     {
       title: "05 · Run as Many as You Want",
@@ -899,7 +899,7 @@ const PressureStage: React.FC<{
         <p className="cv2-section-sub">
           This is the interactive part. Below is a real moment I've lived.
           Three ways to handle it. Pick the one that feels like YOUR move.
-          Then I'll show you how I moved — and whether we moved together
+          Then I'll show you how I moved, and whether we moved together
           or differently.
         </p>
         <div className="cv2-pressure__meta">
