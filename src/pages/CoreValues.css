@@ -1083,13 +1083,77 @@
   z-index: 2;
 }
 
+.cv2-supporting-tile__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 4px;
+}
+
 .cv2-supporting-tile__name {
   font-family: "Inter", system-ui, sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #fff;
   letter-spacing: 0.02em;
-  padding: 2px 4px;
+  line-height: 1.3;
+}
+
+.cv2-supporting-tile__desc {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cv2-shelf__head {
+  margin: 0 0 14px;
+}
+
+.cv2-shelf__desc {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 4px 0 0;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  padding-left: 13px;
+}
+
+/* How It Works walkthrough */
+.cv2-how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.cv2-how-step {
+  padding: 14px 18px;
+  background: rgba(72, 176, 255, 0.05);
+  border-left: 3px solid var(--cv2-blue);
+  border-radius: 6px;
+}
+
+.cv2-how-step__title {
+  font-family: "Bebas Neue", "Impact", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: var(--cv2-blue);
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+.cv2-how-step__body {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
 }
 
 /* ============================================================
@@ -1108,21 +1172,31 @@
 
 @media (max-width: 768px) {
   .cv2-stage {
-    padding: 88px 6% 60px;
+    padding: 96px 5% 60px;
   }
 
   .cv2-corner {
-    top: 76px;
-    right: 14px;
+    top: 72px;
+    right: 10px;
+    left: 10px;
     flex-direction: row;
     align-items: center;
-    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
     gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 0;
+  }
+
+  .cv2-corner::-webkit-scrollbar {
+    display: none;
   }
 
   .cv2-corner-btn,
   .cv2-lens-chip {
     padding: 6px 10px;
+    flex-shrink: 0;
   }
 
   .cv2-corner-btn span {
@@ -1131,6 +1205,27 @@
 
   .cv2-lens-chip__label {
     display: none;
+  }
+
+  .cv2-supporting-tile__cover {
+    aspect-ratio: 1 / 1;
+  }
+
+  .cv2-supporting-tile__name {
+    font-size: 13px;
+  }
+
+  .cv2-supporting-tile__desc {
+    font-size: 11px;
+    -webkit-line-clamp: 2;
+  }
+
+  .cv2-how-step {
+    padding: 12px 14px;
+  }
+
+  .cv2-how-step__body {
+    font-size: 14px;
   }
 
   .cv2-deck {

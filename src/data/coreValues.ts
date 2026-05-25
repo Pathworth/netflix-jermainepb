@@ -49,10 +49,20 @@ export type Scenario = {
   gospel: string; // JP line → The Gospel of JP
 };
 
+export type SupportingValue = {
+  name: string;
+  /** One-line preview shown on the tile in the grid. */
+  description: string;
+  /** Longer reflection shown when the tile is opened in a modal. */
+  reflection: string;
+};
+
 export type LibraryShelf = {
   id: string;
   title: string;
-  values: string[];
+  /** Optional one-line shelf description shown under the shelf title. */
+  description?: string;
+  values: SupportingValue[];
 };
 
 export const coreValuesPage: {
@@ -490,23 +500,157 @@ export const coreValuesPage: {
   libraryShelves: [
     {
       id: "name-standard",
-      title: "Name + Standard",
-      values: ["Honesty", "Fairness", "Loyalty", "Generosity", "Responsibility", "Self-respect"],
+      title: "How I Carry My Name",
+      description: "The values that hold up when nobody is watching.",
+      values: [
+        {
+          name: "Honesty",
+          description: "Say it plain or don't say it.",
+          reflection:
+            "If a regular person can't understand what I just said, I didn't say it right. I read it out loud before it leaves my mouth. Honesty isn't volume. It's clarity that nobody has to translate.",
+        },
+        {
+          name: "Fairness",
+          description: "Same rules whether you're in the room or not.",
+          reflection:
+            "I don't change the standard based on who's watching or who can pay more. Fairness is the standard I hold for the room when nobody is keeping score. If I let it slide once, I'll let it slide twice.",
+        },
+        {
+          name: "Loyalty",
+          description: "Loyalty is not a feeling. It's something I engineer in.",
+          reflection:
+            "Loyalty is not a feeling I ask for. It's a thing I build into the relationship from the first conversation. I show up the way I said I'd show up, especially when it costs me. That's how loyalty earns itself.",
+        },
+        {
+          name: "Generosity",
+          description: "I give without making you ask twice.",
+          reflection:
+            "I'd rather over-give than make somebody perform for help. If I have it and you need it and the timing is right, it moves. I don't keep score. I keep moving.",
+        },
+        {
+          name: "Responsibility",
+          description: "I show up for what I said I'd show up for.",
+          reflection:
+            "If I said it, I'm doing it. If something gets in the way, I name it early and I bring options, not excuses. Responsibility is just integrity under a deadline.",
+        },
+        {
+          name: "Self-respect",
+          description: "I don't need a room to tell me what I'm worth.",
+          reflection:
+            "Self-respect is the floor. If I lose it for an opportunity, I lost more than I won. I keep my own opinion of me at the top of the stack so nobody else's opinion can pull me out of who I am.",
+        },
+      ],
     },
     {
       id: "skill-growth",
-      title: "Skill + Growth",
-      values: ["Personal Growth", "Self-improvement", "Adaptability", "Flexibility", "Open-mindedness", "Uniqueness", "Creativity"],
+      title: "How I Keep Growing",
+      description: "The values that keep me sharp and movable.",
+      values: [
+        {
+          name: "Personal Growth",
+          description: "I'm not the same man I was last quarter. Good.",
+          reflection:
+            "Growth is the proof that I'm still in the conversation with myself. If I look back six months and don't see a difference, I missed something. I track the version I'm becoming, not just the wins.",
+        },
+        {
+          name: "Self-improvement",
+          description: "Small reps over big speeches.",
+          reflection:
+            "I don't announce what I'm working on. I work on it. Quietly. Then the room notices the difference before I name it. Small reps over big speeches, every time.",
+        },
+        {
+          name: "Adaptability",
+          description: "The terrain keeps changing. I keep moving.",
+          reflection:
+            "Every wave hits the same way: the people who stand still lose the most. I stay light enough to adjust without losing what makes me me. The standard doesn't change. The route to it does.",
+        },
+        {
+          name: "Flexibility",
+          description: "Hold the standard. Move with the moment.",
+          reflection:
+            "I'm not rigid. I'm anchored. Big difference. I'll change my approach in real time if the situation calls for it. What I won't change is what I stand on.",
+        },
+        {
+          name: "Open-mindedness",
+          description: "I learn it your way first. Then I see if mine fits.",
+          reflection:
+            "I don't walk into rooms ready to teach. I walk in ready to learn. When I'm being trained, I follow the process all the way through before I offer a better one. After I've earned the right to speak, then I share.",
+        },
+        {
+          name: "Uniqueness",
+          description: "I don't blend. I'm not built for it.",
+          reflection:
+            "Trying to look like everybody else is the fastest way to disappear. I lean into the parts of me that don't fit clean. Those are usually the parts the work actually needs.",
+        },
+        {
+          name: "Creativity",
+          description: "There's always a third option if I sit with it long enough.",
+          reflection:
+            "When the room says A or B, I check for C. Creativity for me isn't about being clever. It's about refusing to accept a false choice. Sit with the problem longer than the room expects, and the third option shows up.",
+        },
+      ],
     },
     {
       id: "people-love",
-      title: "People + Love",
-      values: ["Family", "Community", "Giving Support", "Self-compassion"],
+      title: "How I Hold People",
+      description: "The values that decide how I show up for everybody around me.",
+      values: [
+        {
+          name: "Family",
+          description: "Family is who I protect first.",
+          reflection:
+            "Family for me isn't only blood. It's the people I'd put my time, my name, and my work on the line for. They get the first version of me, not the public one. Whoever made the list gets protected from there.",
+        },
+        {
+          name: "Community",
+          description: "I don't show up because it pays. I show up because they built me.",
+          reflection:
+            "Detroit raised me. The chapters and committees and rooms I sit in didn't owe me a seat. The work I do for the community is rent on the foundation that got me here. It's not charity. It's accounting.",
+        },
+        {
+          name: "Giving Support",
+          description: "I hold the weight, then I help you move it.",
+          reflection:
+            "When somebody comes to me carrying something heavy, I don't rush to fix it. I sit with it long enough to understand. Then we move it together. I'm not here to comfort you into staying stuck.",
+        },
+        {
+          name: "Self-compassion",
+          description: "I extend myself the same grace I give everybody else.",
+          reflection:
+            "I'm hardest on me. I have to remember that the same patience I give a friend who's struggling is the patience I owe myself when I'm in it. Self-compassion isn't soft. It's how I stay in the game long enough to keep showing up.",
+        },
+      ],
     },
     {
       id: "freedom-health",
-      title: "Freedom + Health",
-      values: ["Independence", "Frugality", "Sustainability", "Wellness"],
+      title: "How I Stay Free",
+      description: "The values that keep me in command of my own life.",
+      values: [
+        {
+          name: "Independence",
+          description: "I build options. I don't beg for them.",
+          reflection:
+            "Independence isn't being alone. It's having choices. When I feel boxed in, I don't blow up the room. I build a door. Then I decide whether to walk through it.",
+        },
+        {
+          name: "Frugality",
+          description: "I don't spend what doesn't matter.",
+          reflection:
+            "I'm not cheap. I'm intentional. If a dollar serves the goal, it moves. If it doesn't, it stays. Frugality for me is just respect for the work it took to earn the dollar in the first place.",
+        },
+        {
+          name: "Sustainability",
+          description: "Build it so it lasts. Build it so it pays.",
+          reflection:
+            "I don't build flashes. I build foundations. If a system or a relationship can't run for years, I'd rather not start it. Sustainability is the long game disguised as patience.",
+        },
+        {
+          name: "Wellness",
+          description: "Body, mind, spirit. All three need maintenance.",
+          reflection:
+            "I can't lead anything if I'm running on empty. I treat my body, my mind, and my spirit like equipment I depend on. Maintenance isn't optional. It's how I stay useful to the people who need me.",
+        },
+      ],
     },
   ],
 

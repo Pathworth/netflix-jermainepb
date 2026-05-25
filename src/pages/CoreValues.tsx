@@ -8,6 +8,7 @@ import {
   FaBookOpen,
   FaChevronRight,
   FaRedo,
+  FaQuestionCircle,
 } from "react-icons/fa";
 import jpIcon from "../images/01 - Icon JP - Initials - Blue Trans - PNG.png";
 import {
@@ -16,6 +17,7 @@ import {
   type Receipt,
   type Scenario,
   type ValueDef,
+  type SupportingValue,
 } from "../data/coreValues";
 import "./CoreValues.css";
 
@@ -75,9 +77,12 @@ export default function CoreValues() {
   } | null>(null);
 
   // Supporting values modal
-  const [openSupporting, setOpenSupporting] = useState<{
-    name: string;
-  } | null>(null);
+  const [openSupporting, setOpenSupporting] = useState<SupportingValue | null>(
+    null
+  );
+
+  // How It Works walkthrough overlay
+  const [howOpen, setHowOpen] = useState(false);
 
   // ──────────────────────────────────────────────────────────────
   // Derived data
@@ -233,6 +238,16 @@ export default function CoreValues() {
         </button>
       ) : null}
 
+      <button
+        type="button"
+        className="cv2-corner-btn"
+        onClick={() => setHowOpen(true)}
+        title="How this works"
+      >
+        <FaQuestionCircle aria-hidden />
+        <span>How It Works</span>
+      </button>
+
       {stage !== "supporting" ? (
         <button
           type="button"
@@ -362,9 +377,112 @@ export default function CoreValues() {
           {renderStage()}
         </motion.div>
       </AnimatePresence>
+
+      <HowItWorksModal
+        open={howOpen}
+        onClose={() => setHowOpen(false)}
+      />
     </div>
   );
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// How It Works — overlay walkthrough
+// ══════════════════════════════════════════════════════════════════════
+
+const HowItWorksModal: React.FC<{
+  open: boolean;
+  onClose: () => void;
+}> = ({ open, onClose }) => {
+  const steps: { title: string; body: string }[] = [
+    {
+      title: "01 · Step Into a Real Situation",
+      body: "Each card is a real moment from my life. Tap one. You'll see what happened, what I decided, and the value behind the call.",
+    },
+    {
+      title: "02 · Pick a Value Lens",
+      body: "Choose the value that matters most to YOU. There's no wrong answer. Your pick sets the lens I'll use to order what comes next.",
+    },
+    {
+      title: "03 · Make the Call Under Pressure",
+      body: "I'll put you in a real moment with three ways to handle it. Pick the one that feels like your move. This is the interactive part — you're not just watching, you're deciding.",
+    },
+    {
+      title: "04 · See How I Moved",
+      body: "I'll show you exactly what I would do, step by step. If your call matched mine, you'll see it. If we moved differently, you'll see that too — and how.",
+    },
+    {
+      title: "05 · Run as Many as You Want",
+      body: "Eight scenarios. Stop anytime. Season 2 opens after your first call and goes deeper on Freedom and Student Mode. Browse the rest of my values anytime from the menu.",
+    },
+  ];
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="cv2-receipt-modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="cv2-receipt-modal__panel"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 40, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className="cv2-receipt-modal__head">
+              <span className="cv2-tag">How This Works</span>
+              <button
+                type="button"
+                className="cv2-icon-btn"
+                onClick={onClose}
+                aria-label="Close"
+              >
+                <FaTimes />
+              </button>
+            </header>
+
+            <h2 className="cv2-receipt-modal__title">
+              An interactive look at how I move.
+            </h2>
+
+            <p className="cv2-field__text" style={{ marginBottom: 18 }}>
+              Nobody else has built this experience yet, so let me walk you
+              through what's happening. You're not just reading my values.
+              You're stepping into the moments those values were forged in,
+              and making the same calls I had to make.
+            </p>
+
+            <div className="cv2-how-steps">
+              {steps.map((s) => (
+                <div key={s.title} className="cv2-how-step">
+                  <p className="cv2-how-step__title">{s.title}</p>
+                  <p className="cv2-how-step__body">{s.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <footer className="cv2-receipt-modal__foot">
+              <button
+                type="button"
+                className="cv2-btn cv2-btn--primary"
+                onClick={onClose}
+              >
+                Got it. Let's go. <FaArrowRight aria-hidden />
+              </button>
+            </footer>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 // ══════════════════════════════════════════════════════════════════════
 // Stage 1 — Cold Open
@@ -451,7 +569,9 @@ const SituationsStage: React.FC<{
           Open one. The room is listening.
         </h2>
         <p className="cv2-section-sub">
-          These are real moments. Tap one to step inside.
+          Each card is a real moment from my life. Tap one to see what
+          happened, what I decided, and the value behind the call. Start
+          anywhere.
         </p>
       </header>
 
@@ -637,10 +757,13 @@ const LensStage: React.FC<{
       <header className="cv2-section-head">
         <p className="cv2-eyebrow">START WITH WHAT YOU BELIEVE</p>
         <h2 className="cv2-section-title">
-          Pick the value that matters most to you.
+          Pick the value that matters most to YOU.
         </h2>
         <p className="cv2-section-sub">
-          One tap sets your lens for the rest of the experience.
+          There's no wrong answer. Your pick becomes the lens. I'll use it
+          to order the scenarios you see next, so the experience starts
+          where it matters to you. Tap any tile to read what the value
+          means. Tap again to lock it in.
         </p>
       </header>
 
@@ -764,6 +887,12 @@ const PressureStage: React.FC<{
           {season === 2 ? "SEASON 2 · UNDER PRESSURE" : "UNDER PRESSURE"}
         </p>
         <h2 className="cv2-section-title">Make the call.</h2>
+        <p className="cv2-section-sub">
+          This is the interactive part. Below is a real moment I've lived.
+          Three ways to handle it. Pick the one that feels like YOUR move.
+          Then I'll show you how I moved — and whether we moved together
+          or differently.
+        </p>
         <div className="cv2-pressure__meta">
           <span className="cv2-tag">{scenarioValue?.name}</span>
           <span className="cv2-counter">
@@ -970,36 +1099,41 @@ const Season2Interstitial: React.FC<{
 
 const SupportingValuesStage: React.FC<{
   onBack: () => void;
-  open: { name: string } | null;
-  onOpen: (v: { name: string }) => void;
+  open: SupportingValue | null;
+  onOpen: (v: SupportingValue) => void;
   onClose: () => void;
 }> = ({ onBack, open, onOpen, onClose }) => {
   return (
     <section className="cv2-supporting" aria-label="More Supporting Values">
       <header className="cv2-section-head">
         <p className="cv2-eyebrow">MORE SUPPORTING VALUES</p>
-        <h2 className="cv2-section-title">Browse the rest of the code.</h2>
+        <h2 className="cv2-section-title">
+          The values that live underneath the featured eight.
+        </h2>
         <p className="cv2-section-sub">
-          {coreValuesPage.libraryShelves.reduce(
-            (sum, s) => sum + s.values.length,
-            0
-          )}{" "}
-          values across {coreValuesPage.libraryShelves.length} shelves.
+          The eight featured values run the interactive experience. These
+          are the rest of the values that shape how I move, grouped by how
+          they show up. Tap any to read how I relate to it.
         </p>
       </header>
 
       <div className="cv2-shelves">
         {coreValuesPage.libraryShelves.map((shelf) => (
           <div key={shelf.id} className="cv2-shelf">
-            <h3 className="cv2-shelf__title">{shelf.title}</h3>
+            <div className="cv2-shelf__head">
+              <h3 className="cv2-shelf__title">{shelf.title}</h3>
+              {shelf.description ? (
+                <p className="cv2-shelf__desc">{shelf.description}</p>
+              ) : null}
+            </div>
             <div className="cv2-shelf__grid">
-              {shelf.values.map((name) => (
+              {shelf.values.map((v) => (
                 <button
                   type="button"
-                  key={name}
+                  key={v.name}
                   className="cv2-supporting-tile"
-                  onClick={() => onOpen({ name })}
-                  aria-label={`Open ${name}`}
+                  onClick={() => onOpen(v)}
+                  aria-label={`Open ${v.name}`}
                 >
                   <div className="cv2-supporting-tile__cover">
                     <img
@@ -1009,7 +1143,12 @@ const SupportingValuesStage: React.FC<{
                       className="cv2-supporting-tile__mark"
                     />
                   </div>
-                  <div className="cv2-supporting-tile__name">{name}</div>
+                  <div className="cv2-supporting-tile__meta">
+                    <div className="cv2-supporting-tile__name">{v.name}</div>
+                    <div className="cv2-supporting-tile__desc">
+                      {v.description}
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
@@ -1055,12 +1194,17 @@ const SupportingValuesStage: React.FC<{
 
               <h2 className="cv2-receipt-modal__title">{open.name}</h2>
 
-              <p className="cv2-field__text">
-                This is part of Jermaine's wider code. Featured values get the
-                full experience treatment. This one lives in the library for
-                now, and may move into the featured rotation in a future
-                season.
+              <p
+                className="cv2-field__text"
+                style={{ fontStyle: "italic", color: "rgba(255,255,255,0.78)" }}
+              >
+                {open.description}
               </p>
+
+              <div className="cv2-field" style={{ marginTop: 18 }}>
+                <p className="cv2-field__label">How I relate to it</p>
+                <p className="cv2-field__text">{open.reflection}</p>
+              </div>
 
               <footer className="cv2-receipt-modal__foot">
                 <button
